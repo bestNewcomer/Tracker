@@ -12,6 +12,11 @@ class TrackerViewController: UIViewController {
     //MARK:  - Private Properties
    
     
+    
+    
+    var categories: [TrackerCategory] = []
+    var completedTrackers: [TrackerRecord] = []
+    
     //MARK:  - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +39,7 @@ class TrackerViewController: UIViewController {
             target: TrackerViewController?.self,
             action: #selector(pressAddSkillButton))
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem( // Сделать дата 
+        navigationItem.rightBarButtonItem = UIBarButtonItem( // Сделать дата
             title: "14.12.22",
             style: .plain ,
             target: TrackerViewController?.self,
