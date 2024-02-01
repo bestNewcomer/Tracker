@@ -28,10 +28,10 @@ class MainTabBarController: UITabBarController {
                 title: "Трекеры",
                 image: UIImage(named: "imageTracker"))
             ),
-            generateVC(
+            UINavigationController(rootViewController: generateVC(
                 viewController: StatisticsViewController(),
                 title: "Статистика",
-                image: UIImage(named: "imageStatistics")
+                image: UIImage(named: "imageStatistics"))
             )
         ]
         

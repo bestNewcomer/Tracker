@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E1C09462B6AA67900F1CAF4 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E1C09452B6AA67900F1CAF4 /* DateFormatter.swift */; };
 		0E71CE472B62A7000099C261 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E71CE462B62A7000099C261 /* Tracker.swift */; };
 		0E71CE492B62A7200099C261 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E71CE482B62A7200099C261 /* TrackerCategory.swift */; };
 		0E71CE4B2B62AA8E0099C261 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E71CE4A2B62AA8E0099C261 /* TrackerRecord.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E1C09452B6AA67900F1CAF4 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		0E71CE462B62A7000099C261 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		0E71CE482B62A7200099C261 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		0E71CE4A2B62AA8E0099C261 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
@@ -45,6 +47,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E1C09442B6AA59700F1CAF4 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				0E1C09452B6AA67900F1CAF4 /* DateFormatter.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		0E71CE452B62A67A0099C261 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -74,6 +84,7 @@
 		0E8479202B02877A00FDEE72 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				0E1C09442B6AA59700F1CAF4 /* Helpers */,
 				0E71CE452B62A67A0099C261 /* Models */,
 				0E8479212B02877A00FDEE72 /* AppDelegate.swift */,
 				0E8479232B02877A00FDEE72 /* SceneDelegate.swift */,
@@ -157,6 +168,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E1C09462B6AA67900F1CAF4 /* DateFormatter.swift in Sources */,
 				0E71CE472B62A7000099C261 /* Tracker.swift in Sources */,
 				0E71CE4B2B62AA8E0099C261 /* TrackerRecord.swift in Sources */,
 				0E8479262B02877A00FDEE72 /* TrackerViewController.swift in Sources */,

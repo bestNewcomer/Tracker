@@ -22,6 +22,7 @@ class TrackerViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+
         navBarTracker()
         trackerStub()
       
@@ -39,11 +40,14 @@ class TrackerViewController: UIViewController {
             target: TrackerViewController?.self,
             action: #selector(pressAddSkillButton))
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem( // Сделать дата
-            title: "14.12.22",
-            style: .plain ,
-            target: TrackerViewController?.self,
-            action: #selector(pressData))
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.calendar.locale = Locale(identifier: "ru_RU")
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         
         let searchController = UISearchController(searchResultsController: nil)
         navigationItem.searchController = searchController
@@ -84,7 +88,13 @@ class TrackerViewController: UIViewController {
     @objc
     private func pressAddSkillButton () {}
     
-    @objc
-    private func pressData () {}
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
+        let formattedDate = dateFormatter.string(from: selectedDate)
+        print("Выбранная дата: \(formattedDate)")
+    }
+   
 }
 
