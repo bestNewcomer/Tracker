@@ -13,7 +13,7 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhiteDay
         generateTabBar()
         borderTabBar()
        
@@ -41,6 +41,7 @@ class MainTabBarController: UITabBarController {
         tabBar.layer.borderColor = UIColor.gray.cgColor
         tabBar.layer.borderWidth = 1.0
         tabBar.clipsToBounds = true
+        tabBar.backgroundColor = .ypWhiteDay
     }
     
     private func generateVC(viewController: UIViewController, title: String, image: UIImage?) -> UIViewController {
