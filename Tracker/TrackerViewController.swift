@@ -48,7 +48,7 @@ final class TrackerViewController: UIViewController {
     // MARK: - Actions
     @objc
     private func pressAddSkillButton () {
-        let jump = CreatingTrackerViewController()
+        let jump = ChoiceTrackerViewController()
         jump.modalPresentationStyle = .pageSheet
         present(jump, animated: true)
     }

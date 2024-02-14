@@ -44,7 +44,14 @@ class SpecialView: UIView {
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         settingsView()
+        
+        isUserInteractionEnabled = true
+        addGestureRecognizer({
+            let tap = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+            return tap
+        }())
     }
     
     required init?(coder: NSCoder) {
@@ -53,12 +60,15 @@ class SpecialView: UIView {
     
     
     // MARK: - Actions
-    
+    @objc func didTapView() {
+        print("Кнопка \(String(describing: labelBasic.text)) работает")
+    }
     // MARK: - Public Methods
     func customizeView(nameView: String, surnameView: String? ) {
         labelBasic.text = nameView
         labelSecondary.text = surnameView
     }
+    
     // MARK: - Private Methods
     private func settingsView() {
         addSubview(stackView)

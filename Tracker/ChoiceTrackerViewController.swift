@@ -24,10 +24,14 @@ final class ChoiceTrackerViewController: UIViewController {
     // MARK: - Actions
     @objc
     private func tabCreatingButton(){
+        let jump = CreatingTrackerViewController()
+        jump.modalPresentationStyle = .pageSheet
+        present(jump, animated: true)
     }
     
     @objc
     private func tabIrregularButton(){
+        print("Переход на экран создания нерегулярного событие")
     }
     //MARK:  - Private Methods
     private func settingsView () {
