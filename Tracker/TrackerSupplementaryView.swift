@@ -8,10 +8,12 @@
 import Foundation
 import UIKit
 
-class TrackerSupplementaryView: UICollectionReusableView {
+final class TrackerSupplementaryView: UICollectionReusableView {
+    // MARK: - Public Properties
     static let headerID = "TrackersHeader"
     let titleLabel = UILabel()
     
+    // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
         

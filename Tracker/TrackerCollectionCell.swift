@@ -80,7 +80,9 @@ final class TrackerCollectionCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
+    // MARK: - Actions
+    @objc
+    private func pressCounterButton () {}
     // MARK: - Public Methods
     
     // MARK: - Private Methods
@@ -127,7 +129,4 @@ final class TrackerCollectionCell: UICollectionViewCell {
             countButtem.widthAnchor.constraint(equalToConstant: 34),
         ])
     }
-    
-    @objc
-    private func pressCounterButton () {}
 }

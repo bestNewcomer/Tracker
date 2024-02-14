@@ -18,12 +18,19 @@ final class ChoiceTrackerViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
-        creating()
+        settingsView()
     }
     
-    //MARK:  - Private Methods
+    // MARK: - Actions
+    @objc
+    private func tabCreatingButton(){
+    }
     
-    private func creating () {
+    @objc
+    private func tabIrregularButton(){
+    }
+    //MARK:  - Private Methods
+    private func settingsView () {
         let headerLabel: UILabel = {
             let label = UILabel()
             label.text = "Создание трекера"
@@ -76,15 +83,5 @@ final class ChoiceTrackerViewController: UIViewController {
             irregularButton.heightAnchor.constraint(equalToConstant: 60),
         ])
     }
-    @objc
-    private func tabCreatingButton(){
-      
-        
-    }
-    
-    @objc
-    private func tabIrregularButton(){
-      
-        
-    }
+   
 }

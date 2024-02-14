@@ -45,6 +45,23 @@ final class TrackerViewController: UIViewController {
         
     }
     
+    // MARK: - Actions
+    @objc
+    private func pressAddSkillButton () {
+        let jump = CreatingTrackerViewController()
+        jump.modalPresentationStyle = .pageSheet
+        present(jump, animated: true)
+    }
+    
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
+        let formattedDate = dateFormatter.string(from: selectedDate)
+        print("Выбранная дата: \(formattedDate)")
+    }
+    
+    
     //MARK:  - Private Methods
     private func navBarTracker () {
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -58,6 +75,7 @@ final class TrackerViewController: UIViewController {
             action: #selector(pressAddSkillButton))
         
         let datePicker = UIDatePicker()
+        datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
         datePicker.widthAnchor.constraint(equalToConstant: 120).isActive = true
         datePicker.locale = Locale(identifier: "ru_RU")
@@ -136,20 +154,7 @@ final class TrackerViewController: UIViewController {
         //cell?.titleLabel.font = UIFont.italicSystemFont(ofSize: 17)
     }
     
-    @objc
-    private func pressAddSkillButton () {
-        let jump = CreatingTrackerViewController()
-        jump.modalPresentationStyle = .pageSheet
-        present(jump, animated: true)
-    }
     
-    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-        let selectedDate = sender.date
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
-        let formattedDate = dateFormatter.string(from: selectedDate)
-        print("Выбранная дата: \(formattedDate)")
-    }
     
 }
 
