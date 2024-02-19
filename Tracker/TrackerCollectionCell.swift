@@ -14,6 +14,10 @@ final class TrackerCollectionCell: UICollectionViewCell {
     static let cellID = "TrackersCell"
     
     // MARK: - Private Properties
+    private var index = 0
+    private var previousImage = UIImage(named: "imageCheckMark")!
+    private let buttonImage = UIImage(named: "addSkillButton")!
+    
     private var colorTopCell: UIView = {
         let view = UIView()
         view.backgroundColor = .colorSelection18
@@ -49,15 +53,15 @@ final class TrackerCollectionCell: UICollectionViewCell {
     private var counterLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.text = "1 день"
+        label.text = "0 день"
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackDay
         return label
     }()
     
-    private var countButtem: UIButton = {
+    private lazy var countButtom: UIButton = {
         let button = UIButton.systemButton(
-            with: UIImage(named: "addSkillButton")!,
+            with: buttonImage,
             target: TrackerCollectionCell?.self,
             action: #selector(Self.pressCounterButton))
         button.layer.cornerRadius = 16
@@ -82,7 +86,15 @@ final class TrackerCollectionCell: UICollectionViewCell {
     
     // MARK: - Actions
     @objc
-    private func pressCounterButton () {}
+    private func pressCounterButton () {
+        if counterLabel.text == "0 день" {
+            countButtom.setImage(previousImage, for: .normal)
+            counterLabel.text = "1 день"
+        }else if counterLabel.text == "1 день" {
+            countButtom.setImage(buttonImage, for: .normal)
+            counterLabel.text = "0 день"
+        }
+    }
     // MARK: - Public Methods
     
     // MARK: - Private Methods
@@ -91,7 +103,7 @@ final class TrackerCollectionCell: UICollectionViewCell {
         colorTopCell.addSubview(smileyLabel)
         colorTopCell.addSubview(titleLabel)
         contentView.addSubview(counterLabel)
-        contentView.addSubview(countButtem)
+        contentView.addSubview(countButtom)
         
     }
     
@@ -100,7 +112,7 @@ final class TrackerCollectionCell: UICollectionViewCell {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         smileyLabel.translatesAutoresizingMaskIntoConstraints = false
         counterLabel.translatesAutoresizingMaskIntoConstraints = false
-        countButtem.translatesAutoresizingMaskIntoConstraints = false
+        countButtom.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             colorTopCell.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -123,10 +135,10 @@ final class TrackerCollectionCell: UICollectionViewCell {
             counterLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant:  -27),
             counterLabel.heightAnchor.constraint(equalToConstant: 18),
             
-            countButtem.topAnchor.constraint(equalTo: colorTopCell.bottomAnchor, constant:  8),
-            countButtem.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant:  -12),
-            countButtem.heightAnchor.constraint(equalToConstant: 34),
-            countButtem.widthAnchor.constraint(equalToConstant: 34),
+            countButtom.topAnchor.constraint(equalTo: colorTopCell.bottomAnchor, constant:  8),
+            countButtom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant:  -12),
+            countButtom.heightAnchor.constraint(equalToConstant: 34),
+            countButtom.widthAnchor.constraint(equalToConstant: 34),
         ])
     }
 }

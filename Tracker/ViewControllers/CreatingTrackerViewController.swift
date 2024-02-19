@@ -62,7 +62,9 @@ final class CreatingTrackerViewController: UIViewController {
     private lazy var ViewSchedule: SpecialView = {
         let specialView = SpecialView()
         specialView.customizeView(nameView: "Расписание", surnameView: nil) // добавить вместо nil входные данные
-        specialView.didTap(transitionAddress: ScheduleViewController())
+        specialView.conditionTap()
+        specialView.jump = ScheduleViewController()
+       
         return specialView
     }()
     

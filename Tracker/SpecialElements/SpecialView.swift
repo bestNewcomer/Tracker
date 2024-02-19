@@ -9,6 +9,7 @@ import UIKit
 
 final class SpecialView: UIViewController {
     // MARK: - Public Properties
+    
     var labelSecondary: UILabel = {
         let label = UILabel()
         label.textColor = .ypGray
@@ -32,7 +33,7 @@ final class SpecialView: UIViewController {
     private lazy var labelBasic: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlackDay
-        label.text = "Категория"
+        label.text = ""
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return label
     }()
@@ -56,26 +57,26 @@ final class SpecialView: UIViewController {
     }
     
     // MARK: - Actions
-    func didTap(transitionAddress: UIViewController){
-        jump = transitionAddress
-        view.isUserInteractionEnabled = true
-        view.addGestureRecognizer(UITapGestureRecognizer(target: view.self, action: #selector(didTapView)))
-    }
-    @objc func didTapView(){
+    @objc func didTapView(_ sender: UITapGestureRecognizer){
         jump.modalPresentationStyle = .pageSheet
         present(jump, animated: true)
     }
     
     // MARK: - Public Methods
-    
     func customizeView(nameView: String, surnameView: String? ) {
         labelBasic.text = nameView
         labelSecondary.text = surnameView
     }
     
+    func conditionTap () {
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapView(_:))))
+    }
     // MARK: - Private Methods
     private func settingsView() {
         view.addSubview(stackView)
+        
+        
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
         

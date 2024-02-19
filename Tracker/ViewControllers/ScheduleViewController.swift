@@ -47,13 +47,11 @@ final class ScheduleViewController: UIViewController {
     }
     
     // MARK: - Actions
-    @objc
-    private func tabReadyButton(){
+    @objc private func tabReadyButton(){
         dismiss(animated: true, completion: nil)
     }
     
     //MARK:  - Private Methods
-    
     private func createStackView() {
         var x = 0
         lazy var stackView: UIStackView = {
