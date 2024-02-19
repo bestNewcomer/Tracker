@@ -11,18 +11,22 @@ final class TrackerViewController: UIViewController {
     
     // MARK: - Public Properties
     var categories: [TrackerCategory] = []
+    var visibleCategories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = []
-    
-    
-    
-    
-    
     
     //MARK:  - Private Properties
     private var trackersCollectionView: UICollectionView!
     
-    
-    
+    private lazy var datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
+        datePicker.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.calendar.locale = Locale(identifier: "ru_RU")
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        return datePicker
+    }()
     // MARK: - Initializers
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -31,6 +35,7 @@ final class TrackerViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     //MARK:  - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,13 +47,11 @@ final class TrackerViewController: UIViewController {
         settingsCollectionView()
         trackersCollectionView.register(TrackerCollectionCell.self, forCellWithReuseIdentifier: TrackerCollectionCell.cellID)
         trackersCollectionView.register(TrackerSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSupplementaryView.headerID)
-        
     }
     
     // MARK: - Actions
-    @objc
-    private func pressAddSkillButton () {
-        let jump = ChoiceTrackerViewController()
+    @objc private func pressAddSkillButton () {
+        let jump = ScheduleViewController()
         jump.modalPresentationStyle = .pageSheet
         present(jump, animated: true)
     }
@@ -56,11 +59,10 @@ final class TrackerViewController: UIViewController {
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
+        dateFormatter.dateFormat = "dd.MM.yyyy"
         let formattedDate = dateFormatter.string(from: selectedDate)
         print("Выбранная дата: \(formattedDate)")
     }
-    
     
     //MARK:  - Private Methods
     private func navBarTracker () {
@@ -74,39 +76,29 @@ final class TrackerViewController: UIViewController {
             target: self,
             action: #selector(pressAddSkillButton))
         
-        let datePicker = UIDatePicker()
-        datePicker.preferredDatePickerStyle = .compact
-        datePicker.datePickerMode = .date
-        datePicker.widthAnchor.constraint(equalToConstant: 120).isActive = true
-        datePicker.locale = Locale(identifier: "ru_RU")
-        datePicker.calendar.locale = Locale(identifier: "ru_RU")
-        
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         
         let searchController = UISearchController(searchResultsController: nil)
         navigationItem.searchController = searchController
         searchController.searchBar.placeholder = "Поиск"
-        
-    }
-    // добавить условие отображения заглушки или коллекции
-    private func displayCondition() {
-        
     }
     
     private func settingsCollectionView() {
         trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        
         trackersCollectionView.dataSource = self
         trackersCollectionView.delegate = self
+        
         trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        
         view.addSubview(trackersCollectionView)
+        
         NSLayoutConstraint.activate([
             trackersCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
             trackersCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
-        
     }
     
     private func trackerStub () {
@@ -193,7 +185,7 @@ extension TrackerViewController: UICollectionViewDelegate {
             fatalError("Unexpected element kind")
         }
     }
-    // контекстное меню ячейки 
+    // контекстное меню ячейки
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         guard indexPaths.count > 0 else {
             return nil

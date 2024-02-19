@@ -11,20 +11,18 @@ final class StatisticsViewController: UIViewController {
     
     //MARK:  - Private Properties
   
-    
     //MARK:  - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        navBarStatistics() // Не видно надписи Статистика - разобраться
+        navBarStatistics()
         statisticsStub()
     }
     
     //MARK:  - Private Methods
     private func navBarStatistics () {
         navigationController?.navigationBar.prefersLargeTitles = true
-        
         navigationItem.title = "Статистика"
     }
     
@@ -57,5 +55,4 @@ final class StatisticsViewController: UIViewController {
             stubLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
-    
 }

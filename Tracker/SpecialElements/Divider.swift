@@ -7,7 +7,7 @@
 
 import UIKit
 
-class Divider: UIView {
+final class Divider: UIView {
     // MARK: - Private Properties
     private var divider: UIView = {
         let view = UIView()

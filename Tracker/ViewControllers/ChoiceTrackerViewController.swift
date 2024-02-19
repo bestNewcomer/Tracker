@@ -35,11 +35,9 @@ final class ChoiceTrackerViewController: UIViewController {
     }
     //MARK:  - Private Methods
     private func settingsView () {
-        let headerLabel: UILabel = {
-            let label = UILabel()
-            label.text = "Создание трекера"
-            label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-            label.textColor = .ypBlackDay
+        let headerLabel: SpecialHeader = {
+            let label = SpecialHeader()
+            label.customizeHeader(nameHeader: "Создание трекера")
             return label
         }()
 
@@ -74,9 +72,8 @@ final class ChoiceTrackerViewController: UIViewController {
         irregularButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            headerLabel.heightAnchor.constraint(equalToConstant: 22),
+            headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             habitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             habitButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 344),
             habitButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),

@@ -18,11 +18,9 @@ final class CreatingTrackerViewController: UIViewController {
         return scrollView
     }()
     
-    private lazy var labeltitle: UILabel = {
-        let label = UILabel()
-        label.text = "Новая привычка"
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        label.textColor = .ypBlackDay
+    private let labelTitle: SpecialHeader = {
+        let label = SpecialHeader()
+        label.customizeHeader(nameHeader: "Новая привычка")
         return label
     }()
     private lazy var textField: UITextField = {
@@ -36,6 +34,14 @@ final class CreatingTrackerViewController: UIViewController {
         textField.delegate = self
         textField.resignFirstResponder()
         return textField
+    }()
+    
+    private let labelRestrictions: UILabel = {
+        let label = UILabel()
+        label.text = "Ограничение 38 символов"
+        label.textColor = .ypRed
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        return label
     }()
     
     private lazy var stackView: UIStackView = {
@@ -56,6 +62,7 @@ final class CreatingTrackerViewController: UIViewController {
     private lazy var ViewSchedule: SpecialView = {
         let specialView = SpecialView()
         specialView.customizeView(nameView: "Расписание", surnameView: nil) // добавить вместо nil входные данные
+        specialView.didTap(transitionAddress: ScheduleViewController())
         return specialView
     }()
     
@@ -79,7 +86,7 @@ final class CreatingTrackerViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderColor = UIColor.ypRed.cgColor
         button.layer.borderWidth = 1
-        button.addTarget(self, action: #selector(Self.tabСancelButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(Self.tapСancelButton), for: .touchUpInside)
         return button
     }()
     
@@ -94,17 +101,6 @@ final class CreatingTrackerViewController: UIViewController {
         return button
     }()
     
-    
-    
-    
-    // MARK: - Initializers
-    //    init() {
-    //        super.init(nibName: nil, bundle: nil)
-    //    }
-    //
-    //    required init?(coder: NSCoder) {
-    //        fatalError("init(coder:) has not been implemented")
-    //    }
     //MARK:  - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,31 +111,30 @@ final class CreatingTrackerViewController: UIViewController {
     
     // MARK: - Actions
     @objc
-    private func tabСancelButton(){
+    private func tapСancelButton(){
         dismiss(animated: true, completion: nil)
     }
     
     @objc
     private func tabСreateButton(){
         print("Кнопка создания работает")
-        
     }
-    
+   
     //MARK:  - Private Methods
     private func settingsConstraints() {
         view.addSubview(scrollView)
-        scrollView.addSubview(labeltitle)
+        scrollView.addSubview(labelTitle)
         scrollView.addSubview(textField)
         scrollView.addSubview(stackView)
         scrollView.addSubview(lowerStackView)
-        stackView.addArrangedSubview(ViewCategories)
+        stackView.addArrangedSubview(ViewCategories.view)
         stackView.addArrangedSubview(divider)
-        stackView.addArrangedSubview(ViewSchedule)
+        stackView.addArrangedSubview(ViewSchedule.view)
         lowerStackView.addArrangedSubview(cancelButton)
         lowerStackView.addArrangedSubview(createButton)
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        labeltitle.translatesAutoresizingMaskIntoConstraints = false
+        labelTitle.translatesAutoresizingMaskIntoConstraints = false
         textField.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         lowerStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -150,11 +145,11 @@ final class CreatingTrackerViewController: UIViewController {
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
             
-            labeltitle.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            labeltitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            labeltitle.heightAnchor.constraint(equalToConstant: 22),
+            labelTitle.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            labelTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            labelTitle.heightAnchor.constraint(equalToConstant: 22),
             
-            textField.topAnchor.constraint(equalTo: labeltitle.bottomAnchor, constant: 43),
+            textField.topAnchor.constraint(equalTo: labelTitle.bottomAnchor, constant: 43),
             textField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             textField.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             textField.heightAnchor.constraint(equalToConstant: 75),
@@ -170,8 +165,23 @@ final class CreatingTrackerViewController: UIViewController {
             lowerStackView.heightAnchor.constraint(equalToConstant: 60),
         ])
     }
+    
+    private func settingsRestrictions() {
+        
+        scrollView.addSubview(labelRestrictions)
+        
+        labelRestrictions.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            labelRestrictions.topAnchor.constraint(equalTo: textField.topAnchor, constant: 83),
+            labelRestrictions.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            labelRestrictions.heightAnchor.constraint(equalToConstant: 22),
+            
+            stackView.topAnchor.constraint(equalTo: labelRestrictions.bottomAnchor, constant: 24),
+        ])
+    }
+    
 }
-
 
 // MARK: - UITextFieldDelegate
 extension CreatingTrackerViewController: UITextFieldDelegate {
@@ -179,6 +189,7 @@ extension CreatingTrackerViewController: UITextFieldDelegate {
         if textField == self.textField {
             let currentLength = textField.text?.count ?? 0
             if currentLength + string.count > 38 {
+                //settingsRestrictions() поправить констрейнты и включить уведомление о превышении 38 символов
                 return false
             }
         }
