@@ -10,11 +10,21 @@ import UIKit
 final class CreatingTrackerViewController: UIViewController {
     
     // MARK: - Public Properties
+    let emojis  = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
+    let colors: [UIColor] = [.colorSelection1,.colorSelection2,.colorSelection3,.colorSelection4,.colorSelection5,.colorSelection6,.colorSelection7,.colorSelection8,.colorSelection9,.colorSelection10,.colorSelection11,.colorSelection12,.colorSelection13,.colorSelection14,.colorSelection15,.colorSelection16,.colorSelection17,.colorSelection18]
+    let collectionHeader = ["Emoji","Цвет"]
     
     //MARK:  - Private Properties
+    private var emojisCollectionView: UICollectionView!
+    
+    
+    private let params: GeometricParams
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = .ypWhiteDay
+        scrollView.backgroundColor = .green
+        scrollView.alwaysBounceVertical = true
+        scrollView.contentInsetAdjustmentBehavior = .never
         return scrollView
     }()
     
@@ -64,7 +74,7 @@ final class CreatingTrackerViewController: UIViewController {
         specialView.customizeView(nameView: "Расписание", surnameView: nil) // добавить вместо nil входные данные
         specialView.conditionTap()
         specialView.jump = ScheduleViewController()
-       
+        
         return specialView
     }()
     
@@ -103,12 +113,27 @@ final class CreatingTrackerViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Initialization
+    
+    init() {
+        self.params = GeometricParams(cellCount: 6, leftInset: 6, rightInset: 6, cellSpacing: 17)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     //MARK:  - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
-        settingsConstraints()
+        
+        subSettingsCollectionsView()
+        settings()
+        emojisCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)
+        emojisCollectionView.register(TrackerSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSupplementaryView.headerID)
     }
     
     // MARK: - Actions
@@ -121,13 +146,21 @@ final class CreatingTrackerViewController: UIViewController {
     private func tabСreateButton(){
         print("Кнопка создания работает")
     }
-   
+    
     //MARK:  - Private Methods
-    private func settingsConstraints() {
+    private func subSettingsCollectionsView() {
+        emojisCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        emojisCollectionView.dataSource = self
+        emojisCollectionView.delegate = self
+        emojisCollectionView.backgroundColor = .red
+        emojisCollectionView.isScrollEnabled = false
+    }
+    private func settings() {
         view.addSubview(scrollView)
         scrollView.addSubview(labelTitle)
         scrollView.addSubview(textField)
         scrollView.addSubview(stackView)
+        view.addSubview(emojisCollectionView)
         scrollView.addSubview(lowerStackView)
         stackView.addArrangedSubview(ViewCategories.view)
         stackView.addArrangedSubview(divider)
@@ -139,13 +172,14 @@ final class CreatingTrackerViewController: UIViewController {
         labelTitle.translatesAutoresizingMaskIntoConstraints = false
         textField.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        emojisCollectionView.translatesAutoresizingMaskIntoConstraints = false
         lowerStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
+            scrollView.heightAnchor.constraint(equalToConstant: 937),
             
             labelTitle.topAnchor.constraint(equalTo: scrollView.topAnchor),
             labelTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -161,7 +195,12 @@ final class CreatingTrackerViewController: UIViewController {
             stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 150),
             
-            lowerStackView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 348),
+            emojisCollectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 32),
+            emojisCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 2),
+            emojisCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -2),
+            emojisCollectionView.heightAnchor.constraint(equalToConstant: 460),
+            
+            lowerStackView.topAnchor.constraint(equalTo: emojisCollectionView.bottomAnchor, constant: 16),
             lowerStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             lowerStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             lowerStackView.heightAnchor.constraint(equalToConstant: 60),
@@ -179,7 +218,7 @@ final class CreatingTrackerViewController: UIViewController {
             labelRestrictions.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             labelRestrictions.heightAnchor.constraint(equalToConstant: 22),
             
-            stackView.topAnchor.constraint(equalTo: labelRestrictions.bottomAnchor, constant: 24),
+            //stackView.topAnchor.constraint(equalTo: labelRestrictions.bottomAnchor, constant: 24),
         ])
     }
     
@@ -197,4 +236,74 @@ extension CreatingTrackerViewController: UITextFieldDelegate {
         }
         return true
     }
+}
+
+// MARK: - UICollectionViewDataSource
+extension CreatingTrackerViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return emojis.count
+    }
+    
+    func numberOfSections(in: UICollectionView) -> Int {
+        return collectionHeader.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiAndColorCell.cellID, for: indexPath) as? EmojiAndColorCell else { fatalError("Failed to cast UICollectionViewCell to TrackersCell") }
+        if indexPath.section == 0 {
+            cell.customizeCell(emojiCell: emojis[indexPath.row], colorCell: nil)
+        } else {
+            cell.customizeCell(emojiCell: "", colorCell: colors[indexPath.row])
+        }
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+extension CreatingTrackerViewController: UICollectionViewDelegate {
+    //настройка "Заголовка"
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            guard let header = emojisCollectionView.dequeueReusableSupplementaryView(ofKind: kind,withReuseIdentifier: TrackerSupplementaryView.headerID,for: indexPath) as? TrackerSupplementaryView
+            else { fatalError("Failed to cast UICollectionReusableView to TrackersHeader") }
+            
+            header.titleLabel.text = collectionHeader[indexPath.section]
+            header.frame.origin.x = CGFloat(-20)
+            return header
+        default:
+            fatalError("Unexpected element kind")
+        }
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {
+    //отступы от края коллекции
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 24, left: params.leftInset, bottom: 24, right: params.rightInset)
+    }
+    // размеры ячейки
+    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let availableWidth = emojisCollectionView.frame.width - params.paddingWidth
+        let cellWidth =  availableWidth / CGFloat(params.cellCount)
+        return CGSize(width: cellWidth, height: cellWidth)
+    }
+    // расстояние между ячейками по вертикали
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return CGFloat(12)
+    }
+    // расстояние между ячейками по горизонтали
+    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return CGFloat(params.cellSpacing)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        let indexPath = IndexPath(row: 2, section: section)
+        let headerView = self.collectionView(emojisCollectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        
+        return headerView.systemLayoutSizeFitting(CGSize(width: emojisCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
+    }
+    
 }
