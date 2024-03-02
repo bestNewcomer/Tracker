@@ -72,8 +72,10 @@ final class ChoiceTrackerViewController: UIViewController {
         irregularButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
+            //headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            headerLabel.topAnchor.constraint(equalTo: view.topAnchor),
+            headerLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            headerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             habitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             habitButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 344),
             habitButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),

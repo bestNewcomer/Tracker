@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class TrackerSupplementaryView: UICollectionReusableView {
+final class SpecialSectionHeader: UICollectionReusableView {
     // MARK: - Public Properties
     static let headerID = "TrackersHeader"
     let titleLabel = UILabel()
