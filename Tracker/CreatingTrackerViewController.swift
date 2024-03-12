@@ -16,8 +16,8 @@ final class CreatingTrackerViewController: UIViewController {
     
     //MARK:  - Private Properties
     private var emojisAndColorsCollectionView: UICollectionView!
-
     private let params: GeometricParams
+    private var selectedSchedule: Schedule?
     
     private let labelTitle: SpecialHeader = {
         let label = SpecialHeader()
@@ -29,8 +29,6 @@ final class CreatingTrackerViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.frame = self.view.bounds
         scrollView.contentSize = contentSize
-//        scrollView.alwaysBounceVertical = true
-//        scrollView.contentInsetAdjustmentBehavior = .never
         return scrollView
     }()
     
@@ -41,7 +39,7 @@ final class CreatingTrackerViewController: UIViewController {
     }()
     
     private var contentSize: CGSize {
-        CGSize(width: view.frame.width, height: view.frame.height + 126)
+        CGSize(width: view.frame.width, height: view.frame.height + 164) //+38
     }
     
     private lazy var textField: UITextField = {
@@ -74,18 +72,19 @@ final class CreatingTrackerViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var ViewCategories: SpecialView = {
+    private lazy var viewCategories: SpecialView = {
         let specialView = SpecialView()
-        specialView.customizeView(nameView: "Категория", surnameView: nil) // добавить вместо nil входные данные
+        specialView.renamingLabelBasic(nameView: "Категория")
         return specialView
     }()
     
-    private lazy var ViewSchedule: SpecialView = {
+    private lazy var viewSchedule: SpecialView = {
         let specialView = SpecialView()
-        specialView.customizeView(nameView: "Расписание", surnameView: nil) // добавить вместо nil входные данные
-        specialView.conditionTap()
-        specialView.jump = ScheduleViewController()
-        
+        specialView.renamingLabelBasic(nameView: "Расписание")
+        //specialView.conditionTap()
+        specialView.jump = { [weak self] in
+            self?.updateCreatingTrackerViewController()
+        }
         return specialView
     }()
     
@@ -109,7 +108,7 @@ final class CreatingTrackerViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderColor = UIColor.ypRed.cgColor
         button.layer.borderWidth = 1
-        button.addTarget(self, action: #selector(Self.tapСancelButton), for: .touchUpInside)
+        button.addTarget(CreatingTrackerViewController.self, action: #selector(Self.tapСancelButton), for: .touchUpInside)
         return button
     }()
     
@@ -120,12 +119,11 @@ final class CreatingTrackerViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.backgroundColor = .ypGray
-        button.addTarget(self, action: #selector(Self.tabСreateButton), for: .touchUpInside)
+        button.addTarget(CreatingTrackerViewController.self, action: #selector(Self.tabСreateButton), for: .touchUpInside)
         return button
     }()
     
     // MARK: - Initialization
-    
     init() {
         self.params = GeometricParams(cellCount: 6, leftInset: 6, rightInset: 6, cellSpacing: 17)
         super.init(nibName: nil, bundle: nil)
@@ -158,6 +156,21 @@ final class CreatingTrackerViewController: UIViewController {
         print("Кнопка создания работает")
     }
     
+    //MARK:  - Public Methods
+    func updateCreatingTrackerViewController() {
+        let schedule = ScheduleViewController()
+        schedule.onScheduleUpdated = { [weak self] updatedSchedule in
+            self?.selectedSchedule = updatedSchedule
+            let formattedSchedule = updatedSchedule.scheduleText
+            self?.viewSchedule.renamingLabelBasic(nameView: "Расписание")
+            self?.viewSchedule.renamingLabelSecondary(surnameView: formattedSchedule)
+        }
+
+        schedule.modalPresentationStyle = .pageSheet
+        present(schedule, animated: true)
+    }
+    
+    
     //MARK:  - Private Methods
     private func subSettingsCollectionsView() {
         emojisAndColorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -173,9 +186,9 @@ final class CreatingTrackerViewController: UIViewController {
         contentView.addSubview(stackView)
         view.addSubview(emojisAndColorsCollectionView)
         contentView.addSubview(lowerStackView)
-        stackView.addArrangedSubview(ViewCategories.view)
+        stackView.addArrangedSubview(viewCategories.view)
         stackView.addArrangedSubview(divider)
-        stackView.addArrangedSubview(ViewSchedule.view)
+        stackView.addArrangedSubview(viewSchedule.view)
         lowerStackView.addArrangedSubview(cancelButton)
         lowerStackView.addArrangedSubview(createButton)
         
@@ -213,20 +226,32 @@ final class CreatingTrackerViewController: UIViewController {
     }
     
     private func settingsRestrictions() {
-        
         scrollView.addSubview(labelRestrictions)
         
         labelRestrictions.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            labelRestrictions.topAnchor.constraint(equalTo: textField.topAnchor, constant: 83),
+            labelRestrictions.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 8),
             labelRestrictions.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             labelRestrictions.heightAnchor.constraint(equalToConstant: 22),
             
-            //stackView.topAnchor.constraint(equalTo: labelRestrictions.bottomAnchor, constant: 24),
+            stackView.topAnchor.constraint(equalTo: labelRestrictions.bottomAnchor, constant: 32),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+            stackView.heightAnchor.constraint(equalToConstant: 150),
         ])
     }
     
+    func deleteLabelRestrictions() {
+        labelRestrictions.removeFromSuperview()
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+            stackView.heightAnchor.constraint(equalToConstant: 150),
+        ])
+    }
 }
 
 // MARK: - UITextFieldDelegate
@@ -235,8 +260,10 @@ extension CreatingTrackerViewController: UITextFieldDelegate {
         if textField == self.textField {
             let currentLength = textField.text?.count ?? 0
             if currentLength + string.count > 38 {
-                //settingsRestrictions() поправить констрейнты и включить уведомление о превышении 38 символов
+                settingsRestrictions()
                 return false
+            } else {
+                deleteLabelRestrictions()
             }
         }
         return true

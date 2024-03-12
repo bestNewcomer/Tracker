@@ -18,7 +18,7 @@ final class EmojiAndColorCell: UICollectionViewCell {
         let button = UIButton()
         button.titleLabel?.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         button.layer.cornerRadius = 8
-        button.addTarget(self, action: #selector(Self.tabСreateButton), for: .touchUpInside)
+        button.addTarget(EmojiAndColorCell.self, action: #selector(Self.tabСell), for: .touchUpInside)
         return button
     }()
     
@@ -36,7 +36,7 @@ final class EmojiAndColorCell: UICollectionViewCell {
     
     // MARK: - Actions
     @objc
-    private func tabСreateButton(){
+    private func tabСell(){
         print("Кнопка создания работает")
     }
    

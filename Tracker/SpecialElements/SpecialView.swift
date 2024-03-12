@@ -8,9 +8,18 @@
 import UIKit
 
 final class SpecialView: UIViewController {
+    
     // MARK: - Public Properties
     
-    var labelSecondary: UILabel = {
+    lazy var labelBasic: UILabel = {
+        let label = UILabel()
+        label.textColor = .ypBlackDay
+        label.text = ""
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        return label
+    }()
+    
+    lazy var labelSecondary: UILabel = {
         let label = UILabel()
         label.textColor = .ypGray
         label.text = ""
@@ -18,8 +27,7 @@ final class SpecialView: UIViewController {
         return label
     }()
     
-    var selectSwitch = 0
-    var jump = UIViewController()
+    var jump: (() -> Void)?
     
     // MARK: - Private Properties
     private lazy var stackView: UIStackView = {
@@ -30,23 +38,11 @@ final class SpecialView: UIViewController {
         return stackView
     }()
     
-    private lazy var labelBasic: UILabel = {
-        let label = UILabel()
-        label.textColor = .ypBlackDay
-        label.text = ""
-        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        return label
-    }()
     
     private lazy var imageArrow: UIImageView = {
         let imVi = UIImageView(image: UIImage(named: "imageArrow"))
         imVi.contentMode = .scaleAspectFit
         return imVi
-    }()
-    
-    private lazy var swithDay: UISwitch = {
-        let swith = UISwitch()
-        return swith
     }()
     
     //MARK:  - Lifecycle
@@ -58,13 +54,16 @@ final class SpecialView: UIViewController {
     
     // MARK: - Actions
     @objc func didTapView(_ sender: UITapGestureRecognizer){
-        jump.modalPresentationStyle = .pageSheet
-        present(jump, animated: true)
+        jump?()
     }
     
+    
     // MARK: - Public Methods
-    func customizeView(nameView: String, surnameView: String? ) {
+    func renamingLabelBasic(nameView: String) {
         labelBasic.text = nameView
+    }
+    
+    func renamingLabelSecondary(surnameView: String) {
         labelSecondary.text = surnameView
     }
     
@@ -75,50 +74,27 @@ final class SpecialView: UIViewController {
     // MARK: - Private Methods
     private func settingsView() {
         view.addSubview(stackView)
-        
-        
+        view.addSubview(imageArrow)
+        stackView.addArrangedSubview(labelBasic)
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        imageArrow.translatesAutoresizingMaskIntoConstraints = false
         
-        if selectSwitch == 1 {
-            
-            view.addSubview(swithDay)
-            
-            swithDay.translatesAutoresizingMaskIntoConstraints = false
-            
-            NSLayoutConstraint.activate([
-                swithDay.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                swithDay.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant:  -24),
-            ])
-        } else {
-            view.addSubview(imageArrow)
-            
-            imageArrow.translatesAutoresizingMaskIntoConstraints = false
-            
-            NSLayoutConstraint.activate([
-                imageArrow.topAnchor.constraint(equalTo: view.topAnchor),
-                imageArrow.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant:  -24),
-                imageArrow.heightAnchor.constraint(equalTo: view.heightAnchor),
-            ])
-        }
+        NSLayoutConstraint.activate([
+            imageArrow.topAnchor.constraint(equalTo: view.topAnchor),
+            imageArrow.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant:  -24),
+            imageArrow.heightAnchor.constraint(equalTo: view.heightAnchor),
+        ])
         
-        
-        stackView.addArrangedSubview(labelBasic)
         if labelSecondary.text != nil {
             stackView.addArrangedSubview(labelSecondary)
-            
-            NSLayoutConstraint.activate([
-                stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
-                stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -14)
-            ])
-        } else {
-            NSLayoutConstraint.activate([
-                stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                stackView.heightAnchor.constraint(equalTo: view.heightAnchor),
-            ])
         }
+        NSLayoutConstraint.activate([
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+        ])
+        
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapView(_:))))
     }
 }
-
