@@ -15,9 +15,10 @@ final class CreatingTrackerViewController: UIViewController {
     let collectionHeader = ["Emoji","Цвет"]
     
     //MARK:  - Private Properties
-    private var emojisAndColorsCollectionView: UICollectionView!
+    private var EmojisAndColorsCollectionView: UICollectionView!
     private let params: GeometricParams
     private var selectedSchedule: Schedule?
+    private var selectedCategories: TrackerCategory?
     
     private let labelTitle: SpecialHeader = {
         let label = SpecialHeader()
@@ -75,6 +76,9 @@ final class CreatingTrackerViewController: UIViewController {
     private lazy var viewCategories: SpecialView = {
         let specialView = SpecialView()
         specialView.renamingLabelBasic(nameView: "Категория")
+        specialView.jump = { [weak self] in
+            self?.updateButtonCategories()
+        }
         return specialView
     }()
     
@@ -83,7 +87,7 @@ final class CreatingTrackerViewController: UIViewController {
         specialView.renamingLabelBasic(nameView: "Расписание")
         //specialView.conditionTap()
         specialView.jump = { [weak self] in
-            self?.updateCreatingTrackerViewController()
+            self?.updateButtonSchedule()
         }
         return specialView
     }()
@@ -100,7 +104,7 @@ final class CreatingTrackerViewController: UIViewController {
         return stackView
     }()
     
-    private let cancelButton: UIButton = {
+    private lazy var cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle("Отменить", for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
@@ -108,7 +112,7 @@ final class CreatingTrackerViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderColor = UIColor.ypRed.cgColor
         button.layer.borderWidth = 1
-        button.addTarget(CreatingTrackerViewController.self, action: #selector(Self.tapСancelButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(Self.tapСancelButton), for: .touchUpInside)
         return button
     }()
     
@@ -141,8 +145,8 @@ final class CreatingTrackerViewController: UIViewController {
         
         subSettingsCollectionsView()
         settings()
-        emojisAndColorsCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)
-        emojisAndColorsCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
+        EmojisAndColorsCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)
+        EmojisAndColorsCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
     }
     
     // MARK: - Actions
@@ -157,7 +161,7 @@ final class CreatingTrackerViewController: UIViewController {
     }
     
     //MARK:  - Public Methods
-    func updateCreatingTrackerViewController() {
+    func updateButtonSchedule() {
         let schedule = ScheduleViewController()
         schedule.onScheduleUpdated = { [weak self] updatedSchedule in
             self?.selectedSchedule = updatedSchedule
@@ -170,13 +174,24 @@ final class CreatingTrackerViewController: UIViewController {
         present(schedule, animated: true)
     }
     
+    func updateButtonCategories() {
+        let сategories = CategoriesViewController()
+        сategories.onCategoriesUpdated = { [weak self] updatedСategories in
+            let formattedCategories = updatedСategories
+            self?.viewSchedule.renamingLabelBasic(nameView: "Категория")
+            self?.viewSchedule.renamingLabelSecondary(surnameView: "\(formattedCategories)")
+        }
+
+        сategories.modalPresentationStyle = .pageSheet
+        present(сategories, animated: true)
+    }
     
     //MARK:  - Private Methods
     private func subSettingsCollectionsView() {
-        emojisAndColorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        emojisAndColorsCollectionView.dataSource = self
-        emojisAndColorsCollectionView.delegate = self
-        emojisAndColorsCollectionView.isScrollEnabled = false
+        EmojisAndColorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        EmojisAndColorsCollectionView.dataSource = self
+        EmojisAndColorsCollectionView.delegate = self
+        EmojisAndColorsCollectionView.isScrollEnabled = false
     }
     private func settings() {
         view.addSubview(scrollView)
@@ -184,7 +199,7 @@ final class CreatingTrackerViewController: UIViewController {
         scrollView.addSubview(contentView)
         contentView.addSubview(textField)
         contentView.addSubview(stackView)
-        view.addSubview(emojisAndColorsCollectionView)
+        view.addSubview(EmojisAndColorsCollectionView)
         contentView.addSubview(lowerStackView)
         stackView.addArrangedSubview(viewCategories.view)
         stackView.addArrangedSubview(divider)
@@ -195,7 +210,7 @@ final class CreatingTrackerViewController: UIViewController {
         labelTitle.translatesAutoresizingMaskIntoConstraints = false
         textField.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        emojisAndColorsCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        EmojisAndColorsCollectionView.translatesAutoresizingMaskIntoConstraints = false
         lowerStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -213,12 +228,12 @@ final class CreatingTrackerViewController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
             stackView.heightAnchor.constraint(equalToConstant: 150),
             
-            emojisAndColorsCollectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 32),
-            emojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
-            emojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
-            emojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
+            EmojisAndColorsCollectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 32),
+            EmojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
+            EmojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
+            EmojisAndColorsCollectionView.heightAnchor.constraint(equalToConstant: 460),
             
-            lowerStackView.topAnchor.constraint(equalTo: emojisAndColorsCollectionView.bottomAnchor, constant: 16),
+            lowerStackView.topAnchor.constraint(equalTo: EmojisAndColorsCollectionView.bottomAnchor, constant: 16),
             lowerStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             lowerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             lowerStackView.heightAnchor.constraint(equalToConstant: 60),
@@ -242,7 +257,7 @@ final class CreatingTrackerViewController: UIViewController {
         ])
     }
     
-    func deleteLabelRestrictions() {
+    private func deleteLabelRestrictions() {
         labelRestrictions.removeFromSuperview()
         
         NSLayoutConstraint.activate([
@@ -297,7 +312,7 @@ extension CreatingTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            guard let header = emojisAndColorsCollectionView.dequeueReusableSupplementaryView(ofKind: kind,withReuseIdentifier: SpecialSectionHeader.headerID,for: indexPath) as? SpecialSectionHeader
+            guard let header = EmojisAndColorsCollectionView.dequeueReusableSupplementaryView(ofKind: kind,withReuseIdentifier: SpecialSectionHeader.headerID,for: indexPath) as? SpecialSectionHeader
             else { fatalError("Failed to cast UICollectionReusableView to TrackersHeader") }
             
             header.titleLabel.text = collectionHeader[indexPath.section]
@@ -317,7 +332,7 @@ extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = emojisAndColorsCollectionView.frame.width - params.paddingWidth
+        let availableWidth = EmojisAndColorsCollectionView.frame.width - params.paddingWidth
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
         return CGSize(width: cellWidth, height: cellWidth)
     }
@@ -333,9 +348,9 @@ extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
         let indexPath = IndexPath(row: 2, section: section)
-        let headerView = self.collectionView(emojisAndColorsCollectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        let headerView = self.collectionView(EmojisAndColorsCollectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         
-        return headerView.systemLayoutSizeFitting(CGSize(width: emojisAndColorsCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
+        return headerView.systemLayoutSizeFitting(CGSize(width: EmojisAndColorsCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
     }
     
 }

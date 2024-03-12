@@ -15,7 +15,7 @@ final class TrackerViewController: UIViewController {
     var completedTrackers: [TrackerRecord] = []
     
     //MARK:  - Private Properties
-    private var trackersCollectionView: UICollectionView!
+    private var TrackersCollectionView: UICollectionView!
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -45,8 +45,8 @@ final class TrackerViewController: UIViewController {
         navBarTracker()
         trackerStub()
         settingsCollectionView()
-        trackersCollectionView.register(TrackerCollectionCell.self, forCellWithReuseIdentifier: TrackerCollectionCell.cellID)
-        trackersCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
+        TrackersCollectionView.register(TrackerCollectionCell.self, forCellWithReuseIdentifier: TrackerCollectionCell.cellID)
+        TrackersCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
     }
     
     // MARK: - Actions
@@ -84,20 +84,20 @@ final class TrackerViewController: UIViewController {
     }
     
     private func settingsCollectionView() {
-        trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        TrackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         
-        trackersCollectionView.dataSource = self
-        trackersCollectionView.delegate = self
+        TrackersCollectionView.dataSource = self
+        TrackersCollectionView.delegate = self
         
-        trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        TrackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(trackersCollectionView)
+        view.addSubview(TrackersCollectionView)
         
         NSLayoutConstraint.activate([
-            trackersCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            trackersCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            TrackersCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            TrackersCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            TrackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            TrackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
     
@@ -176,7 +176,7 @@ extension TrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            guard let header = trackersCollectionView.dequeueReusableSupplementaryView(ofKind: kind,withReuseIdentifier: SpecialSectionHeader.headerID,for: indexPath) as? SpecialSectionHeader
+            guard let header = TrackersCollectionView.dequeueReusableSupplementaryView(ofKind: kind,withReuseIdentifier: SpecialSectionHeader.headerID,for: indexPath) as? SpecialSectionHeader
             else { fatalError("Failed to cast UICollectionReusableView to TrackersHeader") }
             
             header.titleLabel.text = "Домашний уют" //categories[indexPath.section].title
@@ -229,9 +229,9 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
         let indexPath = IndexPath(row: 2, section: section)
-        let headerView = self.collectionView(trackersCollectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        let headerView = self.collectionView(TrackersCollectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         
-        return headerView.systemLayoutSizeFitting(CGSize(width: trackersCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
+        return headerView.systemLayoutSizeFitting(CGSize(width: TrackersCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
     }
     
 }

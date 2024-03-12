@@ -24,13 +24,13 @@ final class ScheduleViewController: UIViewController {
         return scrollView
     }()
     
-    private let labeltitle: SpecialHeader = {
+    private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
         label.customizeHeader(nameHeader: "Расписание")
         return label
     }()
     
-    private let readyButton: UIButton = {
+    private lazy var readyButton: UIButton = {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
@@ -117,7 +117,7 @@ extension ScheduleViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScheduleCell.cellID, for: indexPath) as? ScheduleCell else { fatalError("Failed to cast UICollectionViewCell to TrackersCell") }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScheduleCell.cellID, for: indexPath) as? ScheduleCell else { fatalError("Failed to cast UICollectionViewCell to ScheduleCell") }
         cell.renamingLabelBasic(nameView: daysOfWeek[indexPath.row].translation, isOn: daysWeek.markedDays.contains(daysOfWeek[indexPath.row]))
         if indexPath.row == 0 {
             cell.divider.backgroundColor = .backgroundDay

@@ -14,11 +14,11 @@ final class EmojiAndColorCell: UICollectionViewCell {
     static let cellID = "EmojiAndColorCell"
     
     // MARK: - Private Properties
-    private let mainButtom: UIButton = {
+    private lazy var mainButtom: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         button.layer.cornerRadius = 8
-        button.addTarget(EmojiAndColorCell.self, action: #selector(Self.tabСell), for: .touchUpInside)
+        button.addTarget(self, action: #selector(Self.tabСell), for: .touchUpInside)
         return button
     }()
     

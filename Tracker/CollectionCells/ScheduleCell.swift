@@ -12,9 +12,10 @@ final class ScheduleCell: UICollectionViewCell {
     
     // MARK: - Public Properties
     static let cellID = "ScheduleCell"
-    var onSwitchChanged: ((Bool) -> Void)?
     
     let daySwitch = DaySwitch()
+    var onSwitchChanged: ((Bool) -> Void)?
+    var selectSwitch = 0
     
     lazy var labelBasic: UILabel = {
         let label = UILabel()
@@ -24,21 +25,18 @@ final class ScheduleCell: UICollectionViewCell {
         return label
     }()
     
-    var selectSwitch = 0
+    lazy var divider: UIView = {
+        let view = UIView()
+        view.backgroundColor = .ypGray
+        return view
+    }()
     
-    // MARK: - Private Properties
     lazy var switchDay: DaySwitch = {
         let switchDay = DaySwitch()
         switchDay.addTarget(self, action: #selector(self.didTapSwitch), for: .valueChanged)
         return switchDay
     }()
     
-    var divider: UIView = {
-        let view = UIView()
-        view.backgroundColor = .ypGray
-        return view
-    }()
-
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)

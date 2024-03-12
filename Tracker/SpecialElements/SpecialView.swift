@@ -67,10 +67,10 @@ final class SpecialView: UIViewController {
         labelSecondary.text = surnameView
     }
     
-    func conditionTap () {
-        view.isUserInteractionEnabled = true
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapView(_:))))
-    }
+//    func conditionTap () {
+//        view.isUserInteractionEnabled = true
+//        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapView(_:))))
+//    }
     // MARK: - Private Methods
     private func settingsView() {
         view.addSubview(stackView)
