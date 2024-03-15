@@ -7,12 +7,19 @@
 
 import UIKit
 
+
+protocol NewtrackerCreationDelegate: AnyObject {
+    func trackerCreated(_ tracker: Tracker)
+}
+
 final class CreatingTrackerViewController: UIViewController {
     
     // MARK: - Public Properties
     let emojis  = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
     let colors: [UIColor] = [.colorSelection1,.colorSelection2,.colorSelection3,.colorSelection4,.colorSelection5,.colorSelection6,.colorSelection7,.colorSelection8,.colorSelection9,.colorSelection10,.colorSelection11,.colorSelection12,.colorSelection13,.colorSelection14,.colorSelection15,.colorSelection16,.colorSelection17,.colorSelection18]
     let collectionHeader = ["Emoji","Цвет"]
+    weak var delegate: NewtrackerCreationDelegate?
+    var onCompletion: (() -> Void)?
     
     //MARK:  - Private Properties
     private var EmojisAndColorsCollectionView: UICollectionView!
@@ -116,14 +123,14 @@ final class CreatingTrackerViewController: UIViewController {
         return button
     }()
     
-    private let createButton: UIButton = {
+    private lazy var  createButton: UIButton = {
         let button = UIButton()
         button.setTitle("Создать", for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.backgroundColor = .ypGray
-        button.addTarget(CreatingTrackerViewController.self, action: #selector(Self.tabСreateButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(Self.tapСreateButton), for: .touchUpInside)
         return button
     }()
     
@@ -156,8 +163,18 @@ final class CreatingTrackerViewController: UIViewController {
     }
     
     @objc
-    private func tabСreateButton(){
-        print("Кнопка создания работает")
+    private func tapСreateButton(){
+        let trackerName = textField.text ?? ""
+        let tracker = Tracker(
+            id: UUID(),
+            name: trackerName,
+            color: .colorSelection1,
+            emoji: "🦖",
+            timetable: selectedSchedule
+        )
+        delegate?.trackerCreated(tracker)
+        onCompletion?()
+        dismiss(animated: false, completion: nil)
     }
     
     //MARK:  - Public Methods
@@ -177,9 +194,10 @@ final class CreatingTrackerViewController: UIViewController {
     func updateButtonCategories() {
         let сategories = CategoriesViewController()
         сategories.onCategoriesUpdated = { [weak self] updatedСategories in
+            self?.selectedCategories = updatedСategories
             let formattedCategories = updatedСategories
-            self?.viewSchedule.renamingLabelBasic(nameView: "Категория")
-            self?.viewSchedule.renamingLabelSecondary(surnameView: "\(formattedCategories)")
+            self?.viewCategories.renamingLabelBasic(nameView: "Категория")
+            self?.viewCategories.renamingLabelSecondary(surnameView: "\(formattedCategories)")
         }
 
         сategories.modalPresentationStyle = .pageSheet
@@ -192,6 +210,7 @@ final class CreatingTrackerViewController: UIViewController {
         EmojisAndColorsCollectionView.dataSource = self
         EmojisAndColorsCollectionView.delegate = self
         EmojisAndColorsCollectionView.isScrollEnabled = false
+        EmojisAndColorsCollectionView.allowsMultipleSelection = false
     }
     private func settings() {
         view.addSubview(scrollView)
@@ -322,7 +341,19 @@ extension CreatingTrackerViewController: UICollectionViewDelegate {
             fatalError("Unexpected element kind")
         }
     }
-}
+    
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//           let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
+//        print ("OK")
+//        print("\(String(describing: cell?.mainButtom.backgroundColor))")
+//        print(cell?.mainButtom.titleLabel as Any)
+       }
+    
+//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+//        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
+//        cell?.selectCategory(image: "")
+//    }
+//}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {

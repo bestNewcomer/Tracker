@@ -8,10 +8,16 @@
 import Foundation
 import UIKit
 
-final class TrackerCollectionCell: UICollectionViewCell {
+final class TrackerCell: UICollectionViewCell {
     
     // MARK: - Public Properties
     static let cellID = "TrackersCell"
+    var onToggleCompleted: (() -> Void)?
+    var isCompleted: Bool = false {
+        didSet {
+            let _: Void = isCompleted ? countButtom.setImage(previousImage, for: .normal) : countButtom.setImage(buttonImage, for: .normal)
+        }
+    }
     
     // MARK: - Private Properties
     private var index = 0
@@ -20,7 +26,6 @@ final class TrackerCollectionCell: UICollectionViewCell {
     
     private var colorTopCell: UIView = {
         let view = UIView()
-        view.backgroundColor = .colorSelection18
         view.layer.cornerRadius = 16
         return view
         
@@ -33,7 +38,6 @@ final class TrackerCollectionCell: UICollectionViewCell {
         label.textAlignment = .center
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
-        label.text = "❤️"
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         label.backgroundColor = .ypTransparentWhite
         return label
@@ -44,7 +48,6 @@ final class TrackerCollectionCell: UICollectionViewCell {
         label.textAlignment = .left
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
-        label.text = "Поливать растения"
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypWhiteDay
         return label
@@ -62,10 +65,9 @@ final class TrackerCollectionCell: UICollectionViewCell {
     private lazy var countButtom: UIButton = {
         let button = UIButton.systemButton(
             with: buttonImage,
-            target: TrackerCollectionCell?.self,
-            action: #selector(Self.pressCounterButton))
+            target: TrackerCell?.self,
+            action: #selector(Self.tapCounterButton))
         button.layer.cornerRadius = 16
-        button.backgroundColor = .colorSelection18
         button.tintColor = .ypWhiteDay
         return button
     }()
@@ -86,16 +88,17 @@ final class TrackerCollectionCell: UICollectionViewCell {
     
     // MARK: - Actions
     @objc
-    private func pressCounterButton () {
-        if counterLabel.text == "0 день" {
-            countButtom.setImage(previousImage, for: .normal)
-            counterLabel.text = "1 день"
-        }else if counterLabel.text == "1 день" {
-            countButtom.setImage(buttonImage, for: .normal)
-            counterLabel.text = "0 день"
-        }
+    private func tapCounterButton () {
+        onToggleCompleted?()
     }
     // MARK: - Public Methods
+    func customizeCell(name: String, color: UIColor?, emoji: String, completedDays: Int) {
+        smileyLabel.text = emoji
+        titleLabel.text = name
+        colorTopCell.backgroundColor = color
+        countButtom.backgroundColor = color
+        counterLabel.text = "\(completedDays) дней"
+    }
     
     // MARK: - Private Methods
     private func addSubView(){

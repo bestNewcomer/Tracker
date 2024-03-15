@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class NewCategory: UIViewController {
+final class NewCategoryViewController: UIViewController {
     
     // MARK: - Public Properties
     
@@ -47,7 +47,7 @@ final class NewCategory: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.backgroundColor = .ypBlackDay
-        button.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
+        button.addTarget(self, action: #selector(tapAddCategory), for: .touchUpInside)
         return button
     }()
     
@@ -63,7 +63,7 @@ final class NewCategory: UIViewController {
     }
     
     // MARK: - Actions
-    @objc private func addCategory(){
+    @objc private func tapAddCategory(){
         
     }
     
@@ -108,7 +108,7 @@ final class NewCategory: UIViewController {
 }
 
 // MARK: - UITextFieldDelegate
-extension NewCategory: UITextFieldDelegate {
+extension NewCategoryViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == self.textField {
             let currentLength = textField.text?.count ?? 0

@@ -9,6 +9,10 @@ import UIKit
 
 final class ChoiceTrackerViewController: UIViewController {
     
+    //MARK:  - Public Properties
+    weak var delegate: NewtrackerCreationDelegate?
+    var onTrackerCreated: (() -> Void)?
+    
     //MARK:  - Private Properties
    
     // MARK: - Initializers
@@ -23,14 +27,14 @@ final class ChoiceTrackerViewController: UIViewController {
     
     // MARK: - Actions
     @objc
-    private func tabCreatingButton(){
+    private func tapCreatingButton(){
         let jump = CreatingTrackerViewController()
         jump.modalPresentationStyle = .pageSheet
         present(jump, animated: true)
     }
     
     @objc
-    private func tabIrregularButton(){
+    private func tapIrregularButton(){
         print("Переход на экран создания нерегулярного событие")
     }
     //MARK:  - Private Methods
@@ -48,7 +52,7 @@ final class ChoiceTrackerViewController: UIViewController {
             button.setTitle("Привычка", for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
             button.tintColor = .ypWhiteDay
-            button.addTarget(self, action: #selector(Self.tabCreatingButton), for: .touchUpInside)
+            button.addTarget(self, action: #selector(Self.tapCreatingButton), for: .touchUpInside)
             return button
         }()
         
@@ -59,7 +63,7 @@ final class ChoiceTrackerViewController: UIViewController {
             button.setTitle("Нерегулярное событие", for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
             button.tintColor = .ypWhiteDay
-            button.addTarget(self, action: #selector(Self.tabIrregularButton), for: .touchUpInside)
+            button.addTarget(self, action: #selector(Self.tapIrregularButton), for: .touchUpInside)
             return button
         }()
         

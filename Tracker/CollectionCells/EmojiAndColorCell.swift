@@ -14,11 +14,11 @@ final class EmojiAndColorCell: UICollectionViewCell {
     static let cellID = "EmojiAndColorCell"
     
     // MARK: - Private Properties
-    private lazy var mainButtom: UIButton = {
+    lazy var mainButtom: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         button.layer.cornerRadius = 8
-        button.addTarget(self, action: #selector(Self.tabСell), for: .touchUpInside)
+        button.addTarget(self, action: #selector(Self.tapСell), for: .touchUpInside)
         return button
     }()
     
@@ -36,7 +36,7 @@ final class EmojiAndColorCell: UICollectionViewCell {
     
     // MARK: - Actions
     @objc
-    private func tabСell(){
+    private func tapСell(){
         print("Кнопка создания работает")
     }
    

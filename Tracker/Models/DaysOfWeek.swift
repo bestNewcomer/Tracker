@@ -14,6 +14,10 @@ struct Schedule {
         let daysText = markedDays.map { $0.reductions }
         return daysText.joined(separator: ", ")
     }
+    
+    func isReccuringOn(_ day: DaysOfWeek) -> Bool {
+        return markedDays.contains(day)
+    }
 }
 
 enum DaysOfWeek: Int {
@@ -48,6 +52,31 @@ extension DaysOfWeek {
             return "Сб"
         case .sunday:
             return "Вс"
+        }
+    }
+}
+
+extension Date {
+    func toWeekday() -> DaysOfWeek {
+        let calendar = Calendar.current
+        let dayNumber = calendar.component(.weekday, from: self)
+        switch dayNumber {
+        case 1:
+            return .sunday
+        case 2:
+            return .monday
+        case 3:
+            return .tuesday
+        case 4:
+            return .wednesday
+        case 5:
+            return .thursday
+        case 6:
+            return .friday
+        case 7:
+            return .saturday
+        default:
+            fatalError("Invalid day number")
         }
     }
 }

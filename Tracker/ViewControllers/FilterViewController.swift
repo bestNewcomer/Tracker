@@ -1,21 +1,19 @@
 //
-//  CategoriesViewController.swift
+//  FilterViewController.swift
 //  Tracker
 //
-//  Created by Ринат Шарафутдинов on 12.03.2024.
+//  Created by Ринат Шарафутдинов on 15.03.2024.
 //
 
 import Foundation
 import UIKit
 
-final class CategoriesViewController: UIViewController {
+final class FilterViewController: UIViewController {
     
     // MARK: - Public Properties
-    var onCategoriesUpdated: ((TrackerCategory) -> Void)?
-    var trackerViewController = TrackerViewController()
-    
+    private let filterList = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Не завершенные"]
     //MARK:  - Private Properties
-    private var СategoriesCollectionView: UICollectionView!
+    private var FilterCollectionView: UICollectionView!
     private let params: GeometricParams
     
     private lazy var scrollView: UIScrollView = {
@@ -26,19 +24,8 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
-        label.customizeHeader(nameHeader: "Категория")
+        label.customizeHeader(nameHeader: "Фильтры")
         return label
-    }()
-    
-    private lazy var addCategory: UIButton = {
-        let button = UIButton()
-        button.setTitle("Добавить категорию", for: .normal)
-        button.setTitleColor(.ypWhiteDay, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.layer.cornerRadius = 16
-        button.backgroundColor = .ypBlackDay
-        button.addTarget(self, action: #selector(tapAddCategory), for: .touchUpInside)
-        return button
     }()
     
     // MARK: - Initialization
@@ -56,39 +43,29 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
-        trackerViewController.categories = TestData.shared.getDummyTrackers()
         subSettingsCollectionsView()
         settingsConstraints()
         
-        СategoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
-    }
-    
-    // MARK: - Actions
-    @objc private func tapAddCategory(){
-        let jump = NewCategoryViewController()
-        jump.modalPresentationStyle = .pageSheet
-        present(jump, animated: true)
+        FilterCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
     }
     
     //MARK:  - Private Methods
     private func subSettingsCollectionsView() {
-        СategoriesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        СategoriesCollectionView.dataSource = self
-        СategoriesCollectionView.delegate = self
-        СategoriesCollectionView.layer.cornerRadius = 16
-        СategoriesCollectionView.allowsMultipleSelection = false
+        FilterCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        FilterCollectionView.dataSource = self
+        FilterCollectionView.delegate = self
+        FilterCollectionView.layer.cornerRadius = 16
+        FilterCollectionView.allowsMultipleSelection = false
     }
     
     private func settingsConstraints() {
         view.addSubview(scrollView)
         scrollView.addSubview(labeltitle)
-        scrollView.addSubview(СategoriesCollectionView)
-        scrollView.addSubview(addCategory)
+        scrollView.addSubview(FilterCollectionView)
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         labeltitle.translatesAutoresizingMaskIntoConstraints = false
-        СategoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        addCategory.translatesAutoresizingMaskIntoConstraints = false
+        FilterCollectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -100,28 +77,24 @@ final class CategoriesViewController: UIViewController {
             labeltitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             labeltitle.heightAnchor.constraint(equalToConstant: 22),
             
-            СategoriesCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
-            СategoriesCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            СategoriesCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            СategoriesCollectionView.heightAnchor.constraint(equalToConstant: 150), //Пока так, потом придеться проставить зависимость от напонения
+            FilterCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
+            FilterCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            FilterCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            FilterCollectionView.heightAnchor.constraint(equalToConstant: 300), 
             
-            addCategory.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-            addCategory.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            addCategory.widthAnchor.constraint(equalToConstant: 335),
-            addCategory.heightAnchor.constraint(equalToConstant: 60),
         ])
     }
 }
 
 // MARK: - UICollectionViewDataSource
-extension CategoriesViewController: UICollectionViewDataSource {
+extension FilterViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return trackerViewController.categories.count
+        return filterList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCell.cellID, for: indexPath) as? CategoryCell else { fatalError("Failed to cast UICollectionViewCell to CategoriesCell") }
-        cell.renamingLabelBasic(nameView: "\(trackerViewController.categories[indexPath.row].title)")
+        cell.renamingLabelBasic(nameView: "\(filterList[indexPath.row])")
         if indexPath.row == 0 {
             cell.divider.backgroundColor = .backgroundDay
         }
@@ -131,8 +104,8 @@ extension CategoriesViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 
-//простая но несколько кривая реализация, так как приходится  "выделять" ячейку , а не просто тапать по ней, потом поменять метод 
-extension CategoriesViewController: UICollectionViewDelegate {
+//простая но несколько кривая реализация, так как приходится  "выделять" ячейку , а не просто тапать по ней, потом поменять метод
+extension FilterViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
            let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
         cell?.selectCategory(image: "imageCheckMark")
@@ -145,17 +118,17 @@ extension CategoriesViewController: UICollectionViewDelegate {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
+extension FilterViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: params.leftInset, bottom: 0, right: params.rightInset)
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = СategoriesCollectionView.frame.width - params.paddingWidth
-        let availableHeight = СategoriesCollectionView.frame.height
+        let availableWidth = FilterCollectionView.frame.width - params.paddingWidth
+        let availableHeight = FilterCollectionView.frame.height
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
-        let cellHeight = availableHeight / CGFloat(trackerViewController.categories.count)
+        let cellHeight = availableHeight / CGFloat(filterList.count)
         return CGSize(width: cellWidth, height: cellHeight)
     }
     // расстояние между ячейками по вертикали

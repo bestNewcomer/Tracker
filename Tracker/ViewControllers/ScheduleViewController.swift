@@ -37,7 +37,7 @@ final class ScheduleViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.backgroundColor = .ypBlackDay
-        button.addTarget(self, action: #selector(tabReadyButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(tapReadyButton), for: .touchUpInside)
         return button
     }()
     
@@ -63,7 +63,7 @@ final class ScheduleViewController: UIViewController {
     }
     
     // MARK: - Actions
-    @objc private func tabReadyButton(){
+    @objc private func tapReadyButton(){
         onScheduleUpdated?(daysWeek)
         dismiss(animated: true, completion: nil)
     }
@@ -102,7 +102,7 @@ final class ScheduleViewController: UIViewController {
             ScheduleCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             ScheduleCollectionView.heightAnchor.constraint(equalToConstant: 525),
             
-            readyButton.topAnchor.constraint(equalTo: labeltitle.bottomAnchor, constant: 651),
+            readyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             readyButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             readyButton.widthAnchor.constraint(equalToConstant: 335),
             readyButton.heightAnchor.constraint(equalToConstant: 60),
