@@ -8,7 +8,7 @@
 import UIKit
 
 
-protocol NewtrackerCreationDelegate: AnyObject {
+protocol NewTrackerCreationDelegate: AnyObject {
     func trackerCreated(_ tracker: Tracker)
 }
 
@@ -18,7 +18,7 @@ final class CreatingTrackerViewController: UIViewController {
     let emojis  = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
     let colors: [UIColor] = [.colorSelection1,.colorSelection2,.colorSelection3,.colorSelection4,.colorSelection5,.colorSelection6,.colorSelection7,.colorSelection8,.colorSelection9,.colorSelection10,.colorSelection11,.colorSelection12,.colorSelection13,.colorSelection14,.colorSelection15,.colorSelection16,.colorSelection17,.colorSelection18]
     let collectionHeader = ["Emoji","Цвет"]
-    weak var delegate: NewtrackerCreationDelegate?
+    weak var delegate: NewTrackerCreationDelegate?
     var onCompletion: (() -> Void)?
     
     //MARK:  - Private Properties
@@ -50,7 +50,7 @@ final class CreatingTrackerViewController: UIViewController {
         CGSize(width: view.frame.width, height: view.frame.height + 164) //+38
     }
     
-    private lazy var textField: UITextField = {
+    private lazy var nameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название трекера"
         textField.layer.cornerRadius = 16
@@ -58,7 +58,6 @@ final class CreatingTrackerViewController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
         textField.leftViewMode = .always
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textField.delegate = self
         textField.resignFirstResponder()
         return textField
     }()
@@ -92,7 +91,6 @@ final class CreatingTrackerViewController: UIViewController {
     private lazy var viewSchedule: SpecialView = {
         let specialView = SpecialView()
         specialView.renamingLabelBasic(nameView: "Расписание")
-        //specialView.conditionTap()
         specialView.jump = { [weak self] in
             self?.updateButtonSchedule()
         }
@@ -119,7 +117,7 @@ final class CreatingTrackerViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderColor = UIColor.ypRed.cgColor
         button.layer.borderWidth = 1
-        button.addTarget(self, action: #selector(Self.tapСancelButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(tapСancelButton), for: .touchUpInside)
         return button
     }()
     
@@ -130,7 +128,7 @@ final class CreatingTrackerViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.backgroundColor = .ypGray
-        button.addTarget(self, action: #selector(Self.tapСreateButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(tapСreateButton), for: .touchUpInside)
         return button
     }()
     
@@ -154,6 +152,7 @@ final class CreatingTrackerViewController: UIViewController {
         settings()
         EmojisAndColorsCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)
         EmojisAndColorsCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
+        nameTextField.delegate = self
     }
     
     // MARK: - Actions
@@ -164,11 +163,11 @@ final class CreatingTrackerViewController: UIViewController {
     
     @objc
     private func tapСreateButton(){
-        let trackerName = textField.text ?? ""
+        let trackerName = nameTextField.text ?? ""
         let tracker = Tracker(
             id: UUID(),
             name: trackerName,
-            color: .colorSelection1,
+            color: UIColor.colorSelection1,
             emoji: "🦖",
             timetable: selectedSchedule
         )
@@ -186,7 +185,6 @@ final class CreatingTrackerViewController: UIViewController {
             self?.viewSchedule.renamingLabelBasic(nameView: "Расписание")
             self?.viewSchedule.renamingLabelSecondary(surnameView: formattedSchedule)
         }
-
         schedule.modalPresentationStyle = .pageSheet
         present(schedule, animated: true)
     }
@@ -216,7 +214,7 @@ final class CreatingTrackerViewController: UIViewController {
         view.addSubview(scrollView)
         view.addSubview(labelTitle)
         scrollView.addSubview(contentView)
-        contentView.addSubview(textField)
+        contentView.addSubview(nameTextField)
         contentView.addSubview(stackView)
         view.addSubview(EmojisAndColorsCollectionView)
         contentView.addSubview(lowerStackView)
@@ -227,7 +225,7 @@ final class CreatingTrackerViewController: UIViewController {
         lowerStackView.addArrangedSubview(createButton)
         
         labelTitle.translatesAutoresizingMaskIntoConstraints = false
-        textField.translatesAutoresizingMaskIntoConstraints = false
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         EmojisAndColorsCollectionView.translatesAutoresizingMaskIntoConstraints = false
         lowerStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -237,12 +235,12 @@ final class CreatingTrackerViewController: UIViewController {
             labelTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             labelTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            textField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 87),
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
-            textField.heightAnchor.constraint(equalToConstant: 75),
+            nameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 87),
+            nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+            nameTextField.heightAnchor.constraint(equalToConstant: 75),
             
-            stackView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
+            stackView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
             stackView.heightAnchor.constraint(equalToConstant: 150),
@@ -265,7 +263,7 @@ final class CreatingTrackerViewController: UIViewController {
         labelRestrictions.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            labelRestrictions.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 8),
+            labelRestrictions.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 8),
             labelRestrictions.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             labelRestrictions.heightAnchor.constraint(equalToConstant: 22),
             
@@ -280,7 +278,7 @@ final class CreatingTrackerViewController: UIViewController {
         labelRestrictions.removeFromSuperview()
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
+            stackView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
             stackView.heightAnchor.constraint(equalToConstant: 150),
@@ -291,7 +289,7 @@ final class CreatingTrackerViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 extension CreatingTrackerViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if textField == self.textField {
+        if textField == self.nameTextField {
             let currentLength = textField.text?.count ?? 0
             if currentLength + string.count > 38 {
                 settingsRestrictions()

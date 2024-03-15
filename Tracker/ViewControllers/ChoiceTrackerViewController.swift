@@ -10,7 +10,7 @@ import UIKit
 final class ChoiceTrackerViewController: UIViewController {
     
     //MARK:  - Public Properties
-    weak var delegate: NewtrackerCreationDelegate?
+    weak var delegate: NewTrackerCreationDelegate?
     var onTrackerCreated: (() -> Void)?
     
     //MARK:  - Private Properties
@@ -28,9 +28,13 @@ final class ChoiceTrackerViewController: UIViewController {
     // MARK: - Actions
     @objc
     private func tapCreatingButton(){
-        let jump = CreatingTrackerViewController()
-        jump.modalPresentationStyle = .pageSheet
-        present(jump, animated: true)
+        let createTracker = CreatingTrackerViewController()
+        createTracker.delegate = delegate
+        createTracker.modalPresentationStyle = .pageSheet
+        createTracker.onCompletion = { [weak self] in
+            self?.dismiss(animated: false, completion: self?.onTrackerCreated)
+        }
+        present(createTracker, animated: true)
     }
     
     @objc

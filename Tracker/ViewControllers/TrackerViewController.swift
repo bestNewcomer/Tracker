@@ -72,7 +72,7 @@ final class TrackerViewController: UIViewController {
     // MARK: - Actions
     @objc private func pressAddSkillButton () {
         let jump = ChoiceTrackerViewController()
-        //jump.delegate = self
+        jump.delegate = self
         jump.modalPresentationStyle = .pageSheet
         jump.onTrackerCreated = { [weak self] in
             self?.dismiss(animated: false, completion: nil)
@@ -344,8 +344,8 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
-// MARK: - NewtrackerCreationDelegate
-extension TrackerViewController: NewtrackerCreationDelegate {
+// MARK: - NewTrackerCreationDelegate
+extension TrackerViewController: NewTrackerCreationDelegate {
     func trackerCreated(_ tracker: Tracker) {
         var newTrackers = categories[0].trackersArray
         newTrackers.append(tracker)
@@ -353,7 +353,7 @@ extension TrackerViewController: NewtrackerCreationDelegate {
         let updateCategory = TrackerCategory(title: categories[0].title, trackersArray: newTrackers)
         
         categories[0] = updateCategory
-        
+        print(tracker)
         filterTrackersForSelectedDate()
         TrackersCollectionView.reloadData()
     }
