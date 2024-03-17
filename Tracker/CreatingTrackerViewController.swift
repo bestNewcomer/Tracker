@@ -412,18 +412,18 @@ extension CreatingTrackerViewController: UICollectionViewDelegate {
         }
     }
     
-    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //           let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
-    //        print ("OK")
-    //        print("\(String(describing: cell?.mainButtom.backgroundColor))")
-    //        print(cell?.mainButtom.titleLabel as Any)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
+        
+        print("\(cell?.mainButtom.backgroundColor)")
+        print("\(cell?.mainButtom.titleLabel?.text)" as Any)
+    }
     
+//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+//        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
+//        cell?.selectCategory(image: "")
+//    }
     
-    //    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-    //        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
-    //        cell?.selectCategory(image: "")
-    //    }
-    //}
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout

@@ -344,25 +344,15 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - NewTrackerCreationDelegate
 extension TrackerViewController: NewTrackerCreationDelegate {
     func trackerCreated(_ tracker: Tracker, _ category: String) {
-        var newTrackers = categories[1].trackersArray
-        newTrackers.append(tracker)
-        
-        let updateCategory = TrackerCategory(title: categories[1].title, trackersArray: newTrackers)
-        
-        categories[1] = updateCategory
+        guard let categoryIndex = categories.firstIndex(where: { $0.title == category }) else { return }
+        let newCardForCategory = TrackerCategory(
+            title: category,
+            trackersArray: categories[categoryIndex].trackersArray + [tracker]
+        )
+        categories[categoryIndex] = newCardForCategory
         filterTrackersForSelectedDate()
         TrackersCollectionView.reloadData()
     }
-    
-//    func categoryCreated(_ category: TrackerCategory) {
-//        var newCategory = categories
-//        
-//        newCategory.append(category)
-//        categories = newCategory
-//        filterTrackersForSelectedDate()
-//        TrackersCollectionView.reloadData()
-//    
-//    }
 }
 
 // MARK: - TrackerCreationDelegate
@@ -407,5 +397,6 @@ extension TrackerViewController: UISearchBarDelegate, UISearchControllerDelegate
         searchBar.setShowsCancelButton(false, animated: true)
         self.searchText = ""
         TrackersCollectionView.reloadData()
+        
     }
 }
