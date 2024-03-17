@@ -12,7 +12,6 @@
 		0E5257672B9885D200CA92F5 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257662B9885D200CA92F5 /* ScheduleViewController.swift */; };
 		0E5257692B9F576700CA92F5 /* DaySwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257682B9F576700CA92F5 /* DaySwitch.swift */; };
 		0E52576B2B9F681300CA92F5 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E52576A2B9F681300CA92F5 /* ScheduleCell.swift */; };
-		0E52576F2B9F88E200CA92F5 /* Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E52576E2B9F88E200CA92F5 /* Preview.swift */; };
 		0E5257712BA061BC00CA92F5 /* CategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257702BA061BB00CA92F5 /* CategoriesViewController.swift */; };
 		0E5257752BA0682100CA92F5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257742BA0682000CA92F5 /* CategoryCell.swift */; };
 		0E5257772BA10C2B00CA92F5 /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257762BA10C2B00CA92F5 /* NewCategoryViewController.swift */; };
@@ -44,7 +43,6 @@
 		0E5257662B9885D200CA92F5 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		0E5257682B9F576700CA92F5 /* DaySwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaySwitch.swift; sourceTree = "<group>"; };
 		0E52576A2B9F681300CA92F5 /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
-		0E52576E2B9F88E200CA92F5 /* Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preview.swift; sourceTree = "<group>"; };
 		0E5257702BA061BB00CA92F5 /* CategoriesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewController.swift; sourceTree = "<group>"; };
 		0E5257742BA0682000CA92F5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		0E5257762BA10C2B00CA92F5 /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
@@ -125,7 +123,6 @@
 			children = (
 				0E8F6F8F2B91031D0098DF38 /* GeometricParams.swift */,
 				0E5257682B9F576700CA92F5 /* DaySwitch.swift */,
-				0E52576E2B9F88E200CA92F5 /* Preview.swift */,
 				0E0BEF1B2BA488410074E0AC /* TestData.swift */,
 			);
 			path = Assistans;
@@ -258,7 +255,6 @@
 				0EE466812B4C9446002D8D37 /* StatisticsViewController.swift in Sources */,
 				0E8479222B02877A00FDEE72 /* AppDelegate.swift in Sources */,
 				0E5257772BA10C2B00CA92F5 /* NewCategoryViewController.swift in Sources */,
-				0E52576F2B9F88E200CA92F5 /* Preview.swift in Sources */,
 				0EE4667F2B4C93C7002D8D37 /* MainTabBarController.swift in Sources */,
 				0E5257712BA061BC00CA92F5 /* CategoriesViewController.swift in Sources */,
 				0E8479242B02877A00FDEE72 /* SceneDelegate.swift in Sources */,

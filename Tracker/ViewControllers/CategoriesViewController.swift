@@ -13,7 +13,7 @@ final class CategoriesViewController: UIViewController {
     // MARK: - Public Properties
     var onCategoriesUpdated: ((TrackerCategory) -> Void)?
     var trackerViewController = TrackerViewController()
-    
+    var checkButtonValidation: (() -> Void)?
     //MARK:  - Private Properties
     private var СategoriesCollectionView: UICollectionView!
     private let params: GeometricParams
@@ -125,6 +125,12 @@ extension CategoriesViewController: UICollectionViewDataSource {
         if indexPath.row == 0 {
             cell.divider.backgroundColor = .backgroundDay
         }
+        cell.jump = { [self] in
+            self.updateCategories(categoryIndex: indexPath.row)
+            onCategoriesUpdated?(trackerViewController.categories[indexPath.row])
+            checkButtonValidation?()
+            dismiss(animated: true, completion: nil)
+        }
         return cell
     }
 }
@@ -132,23 +138,26 @@ extension CategoriesViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 //простая но несколько кривая реализация, так как приходится  "выделять" ячейку , а не просто тапать по ней, потом поменять метод 
-extension CategoriesViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-           let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
-        cell?.selectCategory(image: "imageCheckMark")
-       }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
-        cell?.selectCategory(image: "")
-    }
-}
+//extension CategoriesViewController: UICollectionViewDelegate {
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//           let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
+//        cell?.selectCategory(image: "imageCheckMark")
+//       }
+//    
+//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+//        let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
+//        cell?.selectCategory(image: "")
+//    }
+//}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: params.leftInset, bottom: 0, right: params.rightInset)
+        return UIEdgeInsets(top: 0, 
+                            left: params.leftInset,
+                            bottom: 0,
+                            right: params.rightInset)
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -165,5 +174,13 @@ extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
     // расстояние между ячейками по горизонтали
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return CGFloat(params.cellSpacing)
+    }
+}
+
+extension CategoriesViewController {
+    func updateCategories(categoryIndex: Int) {
+        let category = trackerViewController.categories[categoryIndex].title
+        
+        СategoriesCollectionView.reloadItems(at: [IndexPath(row: categoryIndex, section: 0)])
     }
 }

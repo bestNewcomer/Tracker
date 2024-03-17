@@ -13,10 +13,6 @@ final class ChoiceTrackerViewController: UIViewController {
     weak var delegate: NewTrackerCreationDelegate?
     var onTrackerCreated: (() -> Void)?
     
-    //MARK:  - Private Properties
-   
-    // MARK: - Initializers
-
     //MARK:  - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,13 +30,22 @@ final class ChoiceTrackerViewController: UIViewController {
         createTracker.onCompletion = { [weak self] in
             self?.dismiss(animated: false, completion: self?.onTrackerCreated)
         }
+        createTracker.habitIndicator = true
         present(createTracker, animated: true)
     }
     
     @objc
     private func tapIrregularButton(){
-        print("Переход на экран создания нерегулярного событие")
+        let createTracker = CreatingTrackerViewController()
+        createTracker.delegate = delegate
+        createTracker.modalPresentationStyle = .pageSheet
+        createTracker.onCompletion = { [weak self] in
+            self?.dismiss(animated: false, completion: self?.onTrackerCreated)
+        }
+        createTracker.habitIndicator = false
+        present(createTracker, animated: true)
     }
+    
     //MARK:  - Private Methods
     private func settingsView () {
         let headerLabel: SpecialHeader = {
@@ -48,7 +53,7 @@ final class ChoiceTrackerViewController: UIViewController {
             label.customizeHeader(nameHeader: "Создание трекера")
             return label
         }()
-
+        
         let habitButton: UIButton = {
             let button = UIButton()
             button.layer.cornerRadius = 16
@@ -94,5 +99,4 @@ final class ChoiceTrackerViewController: UIViewController {
             irregularButton.heightAnchor.constraint(equalToConstant: 60),
         ])
     }
-   
 }

@@ -13,7 +13,7 @@ final class ScheduleViewController: UIViewController {
     let daysOfWeek: [DaysOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
     var daysWeek = Schedule(markedDays: [])
     var onScheduleUpdated: ((Schedule) -> Void)?
-    
+    var checkButtonValidation: (() -> Void)?
     //MARK:  - Private Properties
     private var ScheduleCollectionView: UICollectionView!
     private let params: GeometricParams
@@ -65,6 +65,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Actions
     @objc private func tapReadyButton(){
         onScheduleUpdated?(daysWeek)
+        checkButtonValidation?()
         dismiss(animated: true, completion: nil)
     }
     
@@ -131,14 +132,16 @@ extension ScheduleViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension ScheduleViewController: UICollectionViewDelegate {
-    
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension ScheduleViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: params.leftInset, bottom: 0, right: params.rightInset)
+        return UIEdgeInsets(top: 0, 
+                            left: params.leftInset,
+                            bottom: 0,
+                            right: params.rightInset)
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -174,9 +177,4 @@ extension ScheduleViewController {
     }
 }
 
-// MARK: - Prevertent
-//struct ViewControllerProvider: PreviewProvider {
-//    static var previews: some View {
-//        ScheduleViewController().showPreview()
-//    }
-//}
+

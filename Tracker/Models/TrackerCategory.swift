@@ -11,3 +11,10 @@ struct TrackerCategory {
     let title: String
     let trackersArray: [Tracker]
 }
+
+extension TrackerCategory {
+    static let defaultValue: [TrackerCategory] =
+    [
+        TrackerCategory(title: "Важное", trackersArray: [])
+    ]
+}

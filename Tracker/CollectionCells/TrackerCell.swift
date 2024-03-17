@@ -28,7 +28,6 @@ final class TrackerCell: UICollectionViewCell {
         let view = UIView()
         view.layer.cornerRadius = 16
         return view
-        
     }()
     
     private var smileyLabel: UILabel = {
@@ -72,14 +71,11 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
-    
-    
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubView()
         cellElementSettings()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -91,6 +87,7 @@ final class TrackerCell: UICollectionViewCell {
     private func tapCounterButton () {
         onToggleCompleted?()
     }
+    
     // MARK: - Public Methods
     func customizeCell(name: String, color: UIColor?, emoji: String, completedDays: Int) {
         smileyLabel.text = emoji
@@ -107,7 +104,6 @@ final class TrackerCell: UICollectionViewCell {
         colorTopCell.addSubview(titleLabel)
         contentView.addSubview(counterLabel)
         contentView.addSubview(countButtom)
-        
     }
     
     private func cellElementSettings(){

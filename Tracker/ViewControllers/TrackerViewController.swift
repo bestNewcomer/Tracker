@@ -94,7 +94,6 @@ final class TrackerViewController: UIViewController {
     
     
     //MARK:  - Private Methods
-    
     private func creatingFilter() {
         let filterButton: UIButton = {
             let button = UIButton()
@@ -165,7 +164,7 @@ final class TrackerViewController: UIViewController {
         
         stubLabel.translatesAutoresizingMaskIntoConstraints = false
         stabImage.translatesAutoresizingMaskIntoConstraints = false
-       
+        
         NSLayoutConstraint.activate([
             stabImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stabImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
@@ -216,7 +215,7 @@ final class TrackerViewController: UIViewController {
         stabImage.isHidden = hasTrackersToShow
         stubLabel.isHidden = hasTrackersToShow
         TrackersCollectionView.isHidden = !hasTrackersToShow
-       
+        
         stubLabel.text = isSearching ? "Ничего не найдено" : "Что будем отслеживать?"
     }
     
@@ -266,13 +265,9 @@ extension TrackerViewController: UICollectionViewDataSource {
             cell.isCompleted.toggle()
             self.toggleTrackerCompleted(trackerId: tracker.id, at: indexPath)
         }
-   
         return cell
     }
 }
-
-
-
 
 // MARK: - UICollectionViewDelegate
 extension TrackerViewController: UICollectionViewDelegate {
@@ -315,13 +310,16 @@ extension TrackerViewController: UICollectionViewDelegate {
 extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 12, left: params.leftInset, bottom: 16, right: params.rightInset)
+        return UIEdgeInsets(top: 12, 
+                            left: params.leftInset,
+                            bottom: 16,
+                            right: params.rightInset)
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
         let avaliableWidth = TrackersCollectionView.bounds.width - params.paddingWidth
         let widthPerItem = avaliableWidth / CGFloat(params.cellCount)
-        let heightPerItem = widthPerItem * (148 / 167)
+        let heightPerItem = widthPerItem * (148 / 176)
         return CGSize(width: widthPerItem, height: heightPerItem)
     }
     // расстояние между ячейками по вертикали
@@ -341,22 +339,30 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
         
         return headerView.systemLayoutSizeFitting(CGSize(width: TrackersCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
     }
-    
 }
 
 // MARK: - NewTrackerCreationDelegate
 extension TrackerViewController: NewTrackerCreationDelegate {
-    func trackerCreated(_ tracker: Tracker) {
-        var newTrackers = categories[0].trackersArray
+    func trackerCreated(_ tracker: Tracker, _ category: String) {
+        var newTrackers = categories[1].trackersArray
         newTrackers.append(tracker)
         
-        let updateCategory = TrackerCategory(title: categories[0].title, trackersArray: newTrackers)
+        let updateCategory = TrackerCategory(title: categories[1].title, trackersArray: newTrackers)
         
-        categories[0] = updateCategory
-        print(tracker)
+        categories[1] = updateCategory
         filterTrackersForSelectedDate()
         TrackersCollectionView.reloadData()
     }
+    
+//    func categoryCreated(_ category: TrackerCategory) {
+//        var newCategory = categories
+//        
+//        newCategory.append(category)
+//        categories = newCategory
+//        filterTrackersForSelectedDate()
+//        TrackersCollectionView.reloadData()
+//    
+//    }
 }
 
 // MARK: - TrackerCreationDelegate

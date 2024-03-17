@@ -36,6 +36,7 @@ extension DaysOfWeek {
         case .sunday: return "Воскресенье"
         }
     }
+    
     var reductions: String {
         switch self {
         case .monday:

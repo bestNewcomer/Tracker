@@ -10,8 +10,6 @@ import UIKit
 
 final class NewCategoryViewController: UIViewController {
     
-    // MARK: - Public Properties
-    
     //MARK:  - Private Properties
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
@@ -50,8 +48,6 @@ final class NewCategoryViewController: UIViewController {
         button.addTarget(self, action: #selector(tapAddCategory), for: .touchUpInside)
         return button
     }()
-    
-    // MARK: - Initialization
     
     //MARK:  - Lifecycle
     override func viewDidLoad() {

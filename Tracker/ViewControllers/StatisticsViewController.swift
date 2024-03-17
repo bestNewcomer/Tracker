@@ -9,8 +9,6 @@ import UIKit
 
 final class StatisticsViewController: UIViewController {
     
-    //MARK:  - Private Properties
-  
     //MARK:  - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()

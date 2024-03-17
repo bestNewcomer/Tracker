@@ -19,9 +19,9 @@ final class EmojiAndColorCell: UICollectionViewCell {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(Self.tapСell), for: .touchUpInside)
+        button.isEnabled = false
         return button
     }()
-    
     
     // MARK: - Initializers
     override init(frame: CGRect) {

@@ -10,7 +10,6 @@ import UIKit
 final class SpecialView: UIViewController {
     
     // MARK: - Public Properties
-    
     lazy var labelBasic: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlackDay
@@ -67,10 +66,6 @@ final class SpecialView: UIViewController {
         labelSecondary.text = surnameView
     }
     
-//    func conditionTap () {
-//        view.isUserInteractionEnabled = true
-//        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapView(_:))))
-//    }
     // MARK: - Private Methods
     private func settingsView() {
         view.addSubview(stackView)

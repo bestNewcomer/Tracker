@@ -9,7 +9,7 @@ import UIKit
 
 
 protocol NewTrackerCreationDelegate: AnyObject {
-    func trackerCreated(_ tracker: Tracker)
+    func trackerCreated(_ tracker: Tracker, _ category: String)
 }
 
 final class CreatingTrackerViewController: UIViewController {
@@ -20,16 +20,26 @@ final class CreatingTrackerViewController: UIViewController {
     let collectionHeader = ["Emoji","Цвет"]
     weak var delegate: NewTrackerCreationDelegate?
     var onCompletion: (() -> Void)?
+    var habitIndicator = true
     
     //MARK:  - Private Properties
     private var EmojisAndColorsCollectionView: UICollectionView!
     private let params: GeometricParams
     private var selectedSchedule: Schedule?
     private var selectedCategories: TrackerCategory?
+    private var formattedSchedule: String = "" {
+        didSet {
+            checkButtonValidation()
+        }
+    }
+    private var formattedCategories: String = "" {
+        didSet {
+            checkButtonValidation()
+        }
+    }
     
     private let labelTitle: SpecialHeader = {
         let label = SpecialHeader()
-        label.customizeHeader(nameHeader: "Новая привычка")
         return label
     }()
     
@@ -148,11 +158,13 @@ final class CreatingTrackerViewController: UIViewController {
         
         view.backgroundColor = .ypWhiteDay
         
+        hubitOrIrregular()
         subSettingsCollectionsView()
         settings()
         EmojisAndColorsCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)
         EmojisAndColorsCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
         nameTextField.delegate = self
+        checkButtonValidation()
     }
     
     // MARK: - Actions
@@ -164,6 +176,7 @@ final class CreatingTrackerViewController: UIViewController {
     @objc
     private func tapСreateButton(){
         let trackerName = nameTextField.text ?? ""
+        let categoryName = formattedCategories
         let tracker = Tracker(
             id: UUID(),
             name: trackerName,
@@ -171,19 +184,27 @@ final class CreatingTrackerViewController: UIViewController {
             emoji: "🦖",
             timetable: selectedSchedule
         )
-        delegate?.trackerCreated(tracker)
+        delegate?.trackerCreated(tracker, categoryName)
         onCompletion?()
         dismiss(animated: false, completion: nil)
     }
     
     //MARK:  - Public Methods
+    func hubitOrIrregular() {
+        if habitIndicator == true {
+            labelTitle.customizeHeader(nameHeader: "Новая привычка")
+        } else {
+            labelTitle.customizeHeader(nameHeader: "Новое нерегулярное событие")
+        }
+    }
+    
     func updateButtonSchedule() {
         let schedule = ScheduleViewController()
         schedule.onScheduleUpdated = { [weak self] updatedSchedule in
             self?.selectedSchedule = updatedSchedule
-            let formattedSchedule = updatedSchedule.scheduleText
+            self?.formattedSchedule = updatedSchedule.scheduleText
             self?.viewSchedule.renamingLabelBasic(nameView: "Расписание")
-            self?.viewSchedule.renamingLabelSecondary(surnameView: formattedSchedule)
+            self?.viewSchedule.renamingLabelSecondary(surnameView: self?.formattedSchedule ?? "расписание не работает")
         }
         schedule.modalPresentationStyle = .pageSheet
         present(schedule, animated: true)
@@ -193,11 +214,11 @@ final class CreatingTrackerViewController: UIViewController {
         let сategories = CategoriesViewController()
         сategories.onCategoriesUpdated = { [weak self] updatedСategories in
             self?.selectedCategories = updatedСategories
-            let formattedCategories = updatedСategories
+            self?.formattedCategories =  updatedСategories.title
             self?.viewCategories.renamingLabelBasic(nameView: "Категория")
-            self?.viewCategories.renamingLabelSecondary(surnameView: "\(formattedCategories)")
+            self?.viewCategories.renamingLabelSecondary(surnameView: self?.formattedCategories ?? "категории не работают")
+            
         }
-
         сategories.modalPresentationStyle = .pageSheet
         present(сategories, animated: true)
     }
@@ -208,19 +229,18 @@ final class CreatingTrackerViewController: UIViewController {
         EmojisAndColorsCollectionView.dataSource = self
         EmojisAndColorsCollectionView.delegate = self
         EmojisAndColorsCollectionView.isScrollEnabled = false
-        EmojisAndColorsCollectionView.allowsMultipleSelection = false
+        //EmojisAndColorsCollectionView.allowsMultipleSelection = false
     }
+    
     private func settings() {
         view.addSubview(scrollView)
         view.addSubview(labelTitle)
         scrollView.addSubview(contentView)
         contentView.addSubview(nameTextField)
         contentView.addSubview(stackView)
-        view.addSubview(EmojisAndColorsCollectionView)
+        scrollView.addSubview(EmojisAndColorsCollectionView)
         contentView.addSubview(lowerStackView)
-        stackView.addArrangedSubview(viewCategories.view)
-        stackView.addArrangedSubview(divider)
-        stackView.addArrangedSubview(viewSchedule.view)
+        
         lowerStackView.addArrangedSubview(cancelButton)
         lowerStackView.addArrangedSubview(createButton)
         
@@ -240,11 +260,6 @@ final class CreatingTrackerViewController: UIViewController {
             nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
             nameTextField.heightAnchor.constraint(equalToConstant: 75),
             
-            stackView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
-            stackView.heightAnchor.constraint(equalToConstant: 150),
-            
             EmojisAndColorsCollectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 32),
             EmojisAndColorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
             EmojisAndColorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
@@ -255,6 +270,28 @@ final class CreatingTrackerViewController: UIViewController {
             lowerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             lowerStackView.heightAnchor.constraint(equalToConstant: 60),
         ])
+        
+        if habitIndicator == true {
+            stackView.addArrangedSubview(viewCategories.view)
+            stackView.addArrangedSubview(divider)
+            stackView.addArrangedSubview(viewSchedule.view)
+            
+            NSLayoutConstraint.activate([
+                stackView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
+                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+                stackView.heightAnchor.constraint(equalToConstant: 150),
+            ])
+        } else {
+            stackView.addArrangedSubview(viewCategories.view)
+            
+            NSLayoutConstraint.activate([
+                stackView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
+                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+                stackView.heightAnchor.constraint(equalToConstant: 75),
+            ])
+        }
     }
     
     private func settingsRestrictions() {
@@ -284,6 +321,40 @@ final class CreatingTrackerViewController: UIViewController {
             stackView.heightAnchor.constraint(equalToConstant: 150),
         ])
     }
+    
+    private func checkButtonValidation() {
+        if nameTextField.text?.count == 0 {
+            buttonIsEnable = false
+            return
+        }
+        print (formattedCategories)
+        if formattedCategories == "" {
+            buttonIsEnable = false
+            return
+        }
+        if habitIndicator == true {
+            print (formattedSchedule)
+            if formattedSchedule == "" {
+                buttonIsEnable = false
+                return
+            }
+        }
+        buttonIsEnable = true
+    }
+    
+    private var buttonIsEnable = false {
+        willSet {
+            if newValue {
+                createButton.backgroundColor = .ypBlackDay
+                createButton.setTitleColor(.ypWhiteDay, for: .normal)
+                createButton.isEnabled = true
+            } else {
+                createButton.backgroundColor = .ypGray
+                createButton.setTitleColor(.ypWhiteDay, for: .normal)
+                createButton.isEnabled = false
+            }
+        }
+    }
 }
 
 // MARK: - UITextFieldDelegate
@@ -291,6 +362,7 @@ extension CreatingTrackerViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == self.nameTextField {
             let currentLength = textField.text?.count ?? 0
+            checkButtonValidation()
             if currentLength + string.count > 38 {
                 settingsRestrictions()
                 return false
@@ -340,24 +412,28 @@ extension CreatingTrackerViewController: UICollectionViewDelegate {
         }
     }
     
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//           let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
-//        print ("OK")
-//        print("\(String(describing: cell?.mainButtom.backgroundColor))")
-//        print(cell?.mainButtom.titleLabel as Any)
-       }
+    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    //           let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
+    //        print ("OK")
+    //        print("\(String(describing: cell?.mainButtom.backgroundColor))")
+    //        print(cell?.mainButtom.titleLabel as Any)
     
-//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
-//        cell?.selectCategory(image: "")
-//    }
-//}
+    
+    //    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    //        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
+    //        cell?.selectCategory(image: "")
+    //    }
+    //}
+}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 24, left: params.leftInset, bottom: 24, right: params.rightInset)
+        return UIEdgeInsets(top: 24,
+                            left: params.leftInset,
+                            bottom: 24,
+                            right: params.rightInset)
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -381,5 +457,4 @@ extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {
         
         return headerView.systemLayoutSizeFitting(CGSize(width: EmojisAndColorsCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
     }
-    
 }

@@ -12,6 +12,7 @@ final class FilterViewController: UIViewController {
     
     // MARK: - Public Properties
     private let filterList = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Не завершенные"]
+    
     //MARK:  - Private Properties
     private var FilterCollectionView: UICollectionView!
     private let params: GeometricParams
@@ -121,7 +122,10 @@ extension FilterViewController: UICollectionViewDelegate {
 extension FilterViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: params.leftInset, bottom: 0, right: params.rightInset)
+        return UIEdgeInsets(top: 0, 
+                            left: params.leftInset,
+                            bottom: 0,
+                            right: params.rightInset)
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
