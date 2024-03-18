@@ -13,24 +13,35 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhiteDay
         generateTabBar()
+        borderTabBar()
+       
+   
     }
     
     //MARK:  - Private Methods
     private func generateTabBar() {
         viewControllers = [
-            generateVC(
+            UINavigationController(rootViewController: generateVC(
                 viewController: TrackerViewController(),
                 title: "Трекеры",
-                image: UIImage(named: "imageTracker")
+                image: UIImage(named: "imageTracker"))
             ),
-            generateVC(
+            UINavigationController(rootViewController: generateVC(
                 viewController: StatisticsViewController(),
                 title: "Статистика",
-                image: UIImage(named: "imageStatistics")
+                image: UIImage(named: "imageStatistics"))
             )
         ]
+        
+    }
+    
+    private func borderTabBar () {
+        tabBar.layer.borderColor = UIColor.gray.cgColor
+        tabBar.layer.borderWidth = 1.0
+        tabBar.clipsToBounds = true
+        tabBar.backgroundColor = .ypWhiteDay
     }
     
     private func generateVC(viewController: UIViewController, title: String, image: UIImage?) -> UIViewController {
