@@ -14,12 +14,3 @@ struct Tracker {
     let emoji: String
     let timetable: Schedule?
 }
-
-extension Tracker {
-    struct Track {
-        var name: String = ""
-        var color: UIColor? = nil
-        var emoji: String? = nil
-        var timetable: [DaysOfWeek]? = nil
-    }
-}
