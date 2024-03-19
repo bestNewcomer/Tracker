@@ -179,7 +179,7 @@ extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
 
 extension CategoriesViewController {
     func updateCategories(categoryIndex: Int) {
-        let category = trackerViewController.categories[categoryIndex].title
+//        let category = trackerViewController.categories[categoryIndex].title
         
         СategoriesCollectionView.reloadItems(at: [IndexPath(row: categoryIndex, section: 0)])
     }

@@ -66,8 +66,8 @@ final class EmojiAndColorCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             mainButtom.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mainButtom.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            mainButtom.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7),
-            mainButtom.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.7)
+            mainButtom.widthAnchor.constraint(equalToConstant: 40),
+            mainButtom.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
 }
