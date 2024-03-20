@@ -20,7 +20,7 @@ struct Schedule {
     }
 }
 
-enum DaysOfWeek: Int, CaseIterable {
+enum DaysOfWeek: String, CaseIterable {
     case monday, tuesday, wednesday, thursday, friday, saturday, sunday
     
     static func < (lhs: DaysOfWeek, rhs: DaysOfWeek) -> Bool {
@@ -29,6 +29,7 @@ enum DaysOfWeek: Int, CaseIterable {
 }
 
 extension DaysOfWeek {
+    
     var translation: String {
         switch self {
         case .monday: return "Понедельник"

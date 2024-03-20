@@ -26,19 +26,14 @@ final class CreatingTrackerViewController: UIViewController {
     private var EmojisCollectionView: UICollectionView!
     private var ColorsCollectionView: UICollectionView!
     private let params: GeometricParams
-    private var selectedSchedule: Schedule?
-    private let trackerCategoryStore = TrackerCategoryStore()
+    private var selectedSchedule: [DaysOfWeek] = []
+    private var selectedCategories: TrackerCategory?
     private var formattedSchedule: String = "" {
         didSet {
             checkButtonValidation()
         }
     }
     private var formattedCategories: String = "" {
-        didSet {
-            checkButtonValidation()
-        }
-    }
-    private lazy var selectedCategories: TrackerCategory? = trackerCategoryStore.category.randomElement() {
         didSet {
             checkButtonValidation()
         }
@@ -198,8 +193,7 @@ final class CreatingTrackerViewController: UIViewController {
             name: trackerName,
             color: selectedColor ?? .colorSelection1,
             emoji: selectedEmoji,
-            timetable: selectedSchedule,
-            daysCount: 0
+            timetable: selectedSchedule
         )
         delegate?.trackerCreated(tracker, categoryName)
         onCompletion?()
@@ -219,7 +213,7 @@ final class CreatingTrackerViewController: UIViewController {
         let schedule = ScheduleViewController()
         schedule.onScheduleUpdated = { [weak self] updatedSchedule in
             self?.selectedSchedule = updatedSchedule
-            self?.formattedSchedule = updatedSchedule.scheduleText
+            self?.formattedSchedule = Schedule(markedDays: updatedSchedule).scheduleText
             self?.viewSchedule.renamingLabelBasic(nameView: "Расписание")
             self?.viewSchedule.renamingLabelSecondary(surnameView: self?.formattedSchedule ?? "расписание не работает")
         }

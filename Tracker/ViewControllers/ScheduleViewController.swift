@@ -10,9 +10,9 @@ import SwiftUI
 
 final class ScheduleViewController: UIViewController {
     // MARK: - Public Properties
-    let daysOfWeek: [DaysOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-    var daysWeek = Schedule(markedDays: [])
-    var onScheduleUpdated: ((Schedule) -> Void)?
+   
+    var daysWeek: Set<DaysOfWeek> = []
+    var onScheduleUpdated: (([DaysOfWeek]) -> Void)?
     var checkButtonValidation: (() -> Void)?
     //MARK:  - Private Properties
     private var ScheduleCollectionView: UICollectionView!
@@ -64,7 +64,8 @@ final class ScheduleViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func tapReadyButton(){
-        onScheduleUpdated?(daysWeek)
+        let weekDays = Array(daysWeek)
+        onScheduleUpdated?(weekDays)
         checkButtonValidation?()
         dismiss(animated: true, completion: nil)
     }
@@ -114,15 +115,17 @@ final class ScheduleViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension ScheduleViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return daysOfWeek.count
+        return 7
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScheduleCell.cellID, for: indexPath) as? ScheduleCell else { fatalError("Failed to cast UICollectionViewCell to ScheduleCell") }
-        cell.renamingLabelBasic(nameView: daysOfWeek[indexPath.row].translation, isOn: daysWeek.markedDays.contains(daysOfWeek[indexPath.row]))
+        cell.renamingLabelBasic(nameView: DaysOfWeek.allCases[indexPath.row].translation, isOn: daysWeek.contains(DaysOfWeek.allCases[indexPath.row]))
+        
         if indexPath.row == 0 {
             cell.divider.backgroundColor = .backgroundDay
         }
+        
         cell.onSwitchChanged = { [weak self] isOn in
             self?.updateSchedule(forDay: indexPath.row, isOn: isOn)
         }
@@ -138,7 +141,7 @@ extension ScheduleViewController: UICollectionViewDelegate {
 extension ScheduleViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, 
+        return UIEdgeInsets(top: 0,
                             left: params.leftInset,
                             bottom: 0,
                             right: params.rightInset)
@@ -148,7 +151,7 @@ extension ScheduleViewController: UICollectionViewDelegateFlowLayout {
         let availableWidth = ScheduleCollectionView.frame.width - params.paddingWidth
         let availableHeight = ScheduleCollectionView.frame.height
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
-        let cellHeight = availableHeight / CGFloat(daysOfWeek.count)
+        let cellHeight = availableHeight / CGFloat(7)
         return CGSize(width: cellWidth, height: cellHeight)
     }
     // расстояние между ячейками по вертикали
@@ -163,15 +166,20 @@ extension ScheduleViewController: UICollectionViewDelegateFlowLayout {
 
 extension ScheduleViewController {
     func updateSchedule(forDay dayIndex: Int, isOn: Bool) {
-        let day = daysOfWeek[dayIndex]
+        let day = DaysOfWeek.allCases[dayIndex]
         
         if isOn {
-            if !daysWeek.markedDays.contains(day) {
-                daysWeek.markedDays.append(day)
-                daysWeek.markedDays.sort(by: { $0.rawValue < $1.rawValue })
+            if !daysWeek.contains(day) {
+                daysWeek.insert(day)
+                daysWeek.sorted(by: { $0.rawValue < $1.rawValue })
             }
         } else {
-            daysWeek.markedDays.removeAll { $0 == day }
+            for day in daysWeek {
+                if day == day {
+                    daysWeek.remove(day)
+                    break
+                }
+            }
         }
         ScheduleCollectionView.reloadItems(at: [IndexPath(row: dayIndex, section: 0)])
     }

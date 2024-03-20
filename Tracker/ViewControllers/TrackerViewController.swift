@@ -9,7 +9,7 @@ import UIKit
 
 final class TrackerViewController: UIViewController {
     //MARK:  - Public Properties
-    var categories: [TrackerCategory] = [TrackerCategory(id: UUID(), title: "По умолчанию", trackersArray: [])]
+    var categories: [TrackerCategory] = [TrackerCategory(title: "По умолчанию", trackersArray: [])]
     var visibleCategories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = []
     
@@ -19,14 +19,7 @@ final class TrackerViewController: UIViewController {
     private var currentDate: Date = Date()
     private var completedTrackerIds = Set<UUID>()
     private var isSearching = false
-    private let trackerStore = TrackerStore()
-    private let trackerCategoryStore = TrackerCategoryStore()
-    private let trackerRecordStore = TrackerRecordStore()
-    private var searchText = "" {
-        didSet {
-            try? trackerStore.currentlyTrackers(date: currentDate, searchString: searchText)
-        }
-    }
+    private var searchText = ""
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -72,8 +65,6 @@ final class TrackerViewController: UIViewController {
         settingsCollectionView()
         navBarTracker()
         filterTrackersForSelectedDate()
-        try? trackerStore.currentlyTrackers(date: currentDate, searchString: searchText)
-        try? trackerRecordStore.takeCompletedTrackers(with: currentDate)
         creatingFilter()
     }
     
@@ -91,12 +82,6 @@ final class TrackerViewController: UIViewController {
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         currentDate = sender.date
         filterTrackersForSelectedDate()
-        do {
-            try trackerStore.currentlyTrackers(date: currentDate, searchString: searchText)
-            try trackerRecordStore.takeCompletedTrackers(with: currentDate)
-        } catch {
-            print(TrackerError.decodeError)
-        }
         TrackersCollectionView.reloadData()
     }
     
@@ -216,9 +201,10 @@ final class TrackerViewController: UIViewController {
         visibleCategories = categories.map { category in
             let filteredTrackers = category.trackersArray.filter { tracker in
                 guard let schedule = tracker.timetable else { return true }
-                return schedule.isReccuringOn(dayOfWeek)
+                return Schedule(markedDays: schedule).isReccuringOn(dayOfWeek)
             }
-            return TrackerCategory(id: UUID(), title: category.title, trackersArray: filteredTrackers)
+            
+            return TrackerCategory(title: category.title, trackersArray: filteredTrackers)
         }.filter { !$0.trackersArray.isEmpty }
         
         updateView()
@@ -245,7 +231,7 @@ final class TrackerViewController: UIViewController {
             completedTrackers.removeAll {$0.idRecord == trackerId && Calendar.current.isDate($0.dateRecord, inSameDayAs: currentDate)}
         } else {
             completedTrackerIds.insert(trackerId)
-            let newRecord = TrackerRecord(idRecord: trackerId, dateRecord: currentDate, trackerId: UUID())
+            let newRecord = TrackerRecord(dateRecord: currentDate, idRecord: trackerId)
             completedTrackers.append(newRecord)
         }
         UIView.performWithoutAnimation {
@@ -324,7 +310,7 @@ extension TrackerViewController: UICollectionViewDelegate {
 extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 12, 
+        return UIEdgeInsets(top: 12,
                             left: params.leftInset,
                             bottom: 16,
                             right: params.rightInset)
@@ -360,7 +346,6 @@ extension TrackerViewController: NewTrackerCreationDelegate {
     func trackerCreated(_ tracker: Tracker, _ category: String) {
         guard let categoryIndex = categories.firstIndex(where: { $0.title == category }) else { return }
         let newCardForCategory = TrackerCategory(
-            id: UUID(),
             title: category,
             trackersArray: categories[categoryIndex].trackersArray + [tracker]
         )
@@ -381,7 +366,7 @@ extension TrackerViewController: UISearchBarDelegate, UISearchControllerDelegate
                 let filteredTrackers = category.trackersArray.filter { tracker in
                     return tracker.name.localizedCaseInsensitiveContains(searchText)
                 }
-                return TrackerCategory(id: UUID(), title: category.title, trackersArray: filteredTrackers)
+                return TrackerCategory(title: category.title, trackersArray: filteredTrackers)
             }.filter { !$0.trackersArray.isEmpty }
         }
         TrackersCollectionView.reloadData()
