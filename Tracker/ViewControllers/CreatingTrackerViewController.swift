@@ -27,13 +27,18 @@ final class CreatingTrackerViewController: UIViewController {
     private var ColorsCollectionView: UICollectionView!
     private let params: GeometricParams
     private var selectedSchedule: Schedule?
-    private var selectedCategories: TrackerCategory?
+    private let trackerCategoryStore = TrackerCategoryStore()
     private var formattedSchedule: String = "" {
         didSet {
             checkButtonValidation()
         }
     }
     private var formattedCategories: String = "" {
+        didSet {
+            checkButtonValidation()
+        }
+    }
+    private lazy var selectedCategories: TrackerCategory? = trackerCategoryStore.category.randomElement() {
         didSet {
             checkButtonValidation()
         }
@@ -193,7 +198,8 @@ final class CreatingTrackerViewController: UIViewController {
             name: trackerName,
             color: selectedColor ?? .colorSelection1,
             emoji: selectedEmoji,
-            timetable: selectedSchedule
+            timetable: selectedSchedule,
+            daysCount: 0
         )
         delegate?.trackerCreated(tracker, categoryName)
         onCompletion?()
@@ -354,7 +360,7 @@ final class CreatingTrackerViewController: UIViewController {
             buttonIsEnable = false
             return
         }
-        if formattedCategories == "" {
+        if selectedCategories == nil {
             buttonIsEnable = false
             return
         }

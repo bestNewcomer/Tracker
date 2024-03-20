@@ -14,6 +14,7 @@ final class CategoriesViewController: UIViewController {
     var onCategoriesUpdated: ((TrackerCategory) -> Void)?
     var trackerViewController = TrackerViewController()
     var checkButtonValidation: (() -> Void)?
+    
     //MARK:  - Private Properties
     private var СategoriesCollectionView: UICollectionView!
     private let params: GeometricParams
@@ -56,11 +57,8 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
-        trackerViewController.categories = TestData.shared.getDummyTrackers()
         subSettingsCollectionsView()
         settingsConstraints()
-        
-        СategoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
     }
     
     // MARK: - Actions
@@ -73,6 +71,7 @@ final class CategoriesViewController: UIViewController {
     //MARK:  - Private Methods
     private func subSettingsCollectionsView() {
         СategoriesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        СategoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
         СategoriesCollectionView.dataSource = self
         СategoriesCollectionView.delegate = self
         СategoriesCollectionView.layer.cornerRadius = 16

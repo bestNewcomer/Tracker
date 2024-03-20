@@ -7,7 +7,14 @@
 
 import Foundation
 
-struct TrackerRecord {
+struct TrackerRecord: Hashable {
     let idRecord: UUID
     let dateRecord: Date
+    let trackerId: UUID
+    
+    init(idRecord: UUID = UUID(), dateRecord: Date, trackerId: UUID) {
+        self.idRecord = idRecord
+        self.dateRecord = dateRecord
+        self.trackerId = trackerId
+    }
 }
