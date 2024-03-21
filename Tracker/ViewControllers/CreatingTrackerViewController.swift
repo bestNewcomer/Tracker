@@ -188,6 +188,7 @@ final class CreatingTrackerViewController: UIViewController {
         guard let categoryName = selectedCategories?.title else {
             return
         }
+        
         let tracker = Tracker(
             id: UUID(),
             name: trackerName,

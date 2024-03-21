@@ -8,10 +8,15 @@
 import Foundation
 import UIKit
 
+protocol TrackerCellDelegate: AnyObject {
+    func trackerCompleted(id: UUID, at indexPath: IndexPath)
+}
+
 final class TrackerCell: UICollectionViewCell {
     
     // MARK: - Public Properties
     static let cellID = "TrackersCell"
+    weak var delegate: TrackerCellDelegate?
     var onToggleCompleted: (() -> Void)?
     var isCompleted: Bool = false {
         didSet {

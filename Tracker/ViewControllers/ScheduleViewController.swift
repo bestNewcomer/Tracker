@@ -171,7 +171,7 @@ extension ScheduleViewController {
         if isOn {
             if !daysWeek.contains(day) {
                 daysWeek.insert(day)
-                daysWeek.sorted(by: { $0.rawValue < $1.rawValue })
+//                daysWeek.sorted(by: { $0.rawValue < $1.rawValue })
             }
         } else {
             for day in daysWeek {

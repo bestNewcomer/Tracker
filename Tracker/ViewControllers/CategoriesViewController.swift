@@ -18,7 +18,7 @@ final class CategoriesViewController: UIViewController {
     //MARK:  - Private Properties
     private var СategoriesCollectionView: UICollectionView!
     private let params: GeometricParams
-    
+    private let trackerCategoryStore = TrackerCategoryStore.shared
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .ypWhiteDay
@@ -133,21 +133,6 @@ extension CategoriesViewController: UICollectionViewDataSource {
         return cell
     }
 }
-
-// MARK: - UICollectionViewDelegate
-
-//простая но несколько кривая реализация, так как приходится  "выделять" ячейку , а не просто тапать по ней, потом поменять метод 
-//extension CategoriesViewController: UICollectionViewDelegate {
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//           let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
-//        cell?.selectCategory(image: "imageCheckMark")
-//       }
-//    
-//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
-//        cell?.selectCategory(image: "")
-//    }
-//}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
