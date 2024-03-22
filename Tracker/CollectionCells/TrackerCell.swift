@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol TrackerCellDelegate: AnyObject {
-    func trackerCompleted(id: UUID, at indexPath: IndexPath)
+    func trackerCompleted(id: UUID)
 }
 
 final class TrackerCell: UICollectionViewCell {
@@ -17,15 +17,10 @@ final class TrackerCell: UICollectionViewCell {
     // MARK: - Public Properties
     static let cellID = "TrackersCell"
     weak var delegate: TrackerCellDelegate?
-    var onToggleCompleted: (() -> Void)?
-    var isCompleted: Bool = false {
-        didSet {
-            let _: Void = isCompleted ? countButtom.setImage(previousImage, for: .normal) : countButtom.setImage(buttonImage, for: .normal)
-        }
-    }
+    var isCompleted: Bool = false
     
     // MARK: - Private Properties
-    private var index = 0
+    private var trackerId: UUID?
     private var previousImage = UIImage(named: "imageCheckMark")!
     private let buttonImage = UIImage(named: "addSkillButton")!
     
@@ -90,16 +85,27 @@ final class TrackerCell: UICollectionViewCell {
     // MARK: - Actions
     @objc
     private func tapCounterButton () {
-        onToggleCompleted?()
+                guard let trackerId = trackerId else {
+                    assertionFailure("No trackerId")
+                    return
+                }
+                delegate?.trackerCompleted(id: trackerId)
     }
     
     // MARK: - Public Methods
-    func customizeCell(name: String, color: UIColor?, emoji: String, completedDays: Int) {
-        smileyLabel.text = emoji
+    func customizeCell(_ id: UUID,
+                       name: String,
+                       color: UIColor?,
+                       emoji: String,
+                       completedDays: Int,    
+                       isCompleted: Bool) {
+        trackerId = id
         titleLabel.text = name
         colorTopCell.backgroundColor = color
         countButtom.backgroundColor = color
+        smileyLabel.text = emoji
         counterLabel.text = "\(completedDays) дней"
+        isCompleted ? countButtom.setImage(previousImage, for: .normal) : countButtom.setImage(buttonImage, for: .normal)
     }
     
     // MARK: - Private Methods

@@ -110,4 +110,8 @@ extension Date {
             fatalError("Invalid day number")
         }
     }
+    
+    var yearMonthDayComponents: DateComponents {
+        Calendar.current.dateComponents([.year, .month, .day], from: self)
+    }
 }

@@ -34,6 +34,7 @@ final class Divider: UIView {
         NSLayoutConstraint.activate([
             divider.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9),
             divider.centerXAnchor.constraint(equalTo: centerXAnchor),
+            divider.centerYAnchor.constraint(equalTo: centerYAnchor),
             divider.heightAnchor.constraint(equalToConstant: 0.5),
         ])
     }

@@ -74,6 +74,12 @@ final class TrackerCategoryStore: NSObject {
     }
     
     //MARK:  - Public Methods
+    func category(_ categoryTitle: String) -> TrackerCategoryCoreData? {
+        return fetchedResultsController.fetchedObjects?.first {
+            $0.title == categoryTitle
+        }
+    }
+    
     func trackerCategory(from trackerCategoryCoreData: TrackerCategoryCoreData) throws -> TrackerCategory {
         guard let category = trackerCategoryCoreData.title else {
             throw TrackerError.decodeError
@@ -101,6 +107,36 @@ final class TrackerCategoryStore: NSObject {
             title: category,
             trackersArray: trackers
         )
+    }
+    
+    func category(forTracker tracker: Tracker) -> TrackerCategory? {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "ANY trackers.id == %@", tracker.id.uuidString)
+        guard let trackerCategoriesCoreData = try? context.fetch(request) else { return nil }
+        guard let categories = try? trackerCategoriesCoreData.map({ try self.trackerCategory(from: $0)})
+        else { return nil }
+        return categories.first
+    }
+    
+    func updateCategoryTitle(_ newCategoryTitle: String, _ categoryToEdit: TrackerCategory) throws {
+        let category = fetchedResultsController.fetchedObjects?.first {
+            $0.title == categoryToEdit.title
+        }
+        category?.title = newCategoryTitle
+        try context.save()
+    }
+    
+    func deleteCategory(
+        _ categoryToDelete: TrackerCategory)
+    throws {
+        let category = fetchedResultsController.fetchedObjects?.first {
+            $0.title == categoryToDelete.title
+        }
+        if let category = category {
+            context.delete(category)
+            try context.save()
+        }
     }
     
     func addNewTrackerCategory(_ trackerCategory: TrackerCategory) throws {
@@ -150,6 +186,7 @@ final class TrackerCategoryStore: NSObject {
     }
 }
 
+// MARK: - NSFetchedResultsControllerDelegate
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         insertedIndexes = IndexSet()

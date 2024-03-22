@@ -52,8 +52,8 @@ final class EmojiAndColorCell: UICollectionViewCell {
             contentView.backgroundColor = allocationColor
         } else {
             contentView.layer.cornerRadius = 16
-            contentView.layer.borderColor = allocationColor.cgColor
-            contentView.layer.borderWidth = 6
+            contentView.layer.borderColor = allocationColor.withAlphaComponent(0.5).cgColor
+            contentView.layer.borderWidth = 3
         }
     }
     
