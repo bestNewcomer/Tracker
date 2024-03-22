@@ -14,10 +14,11 @@ final class CategoriesViewController: UIViewController {
     var onCategoriesUpdated: ((TrackerCategory) -> Void)?
     var trackerViewController = TrackerViewController()
     var checkButtonValidation: (() -> Void)?
-    //MARK:  - Private Properties
-    private var СategoriesCollectionView: UICollectionView!
-    private let params: GeometricParams
     
+    //MARK:  - Private Properties
+    private var categoriesCollectionView: UICollectionView!
+    private let params: GeometricParams
+    private let trackerCategoryStore = TrackerCategoryStore.shared
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .ypWhiteDay
@@ -56,11 +57,8 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
-        trackerViewController.categories = TestData.shared.getDummyTrackers()
         subSettingsCollectionsView()
         settingsConstraints()
-        
-        СategoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
     }
     
     // MARK: - Actions
@@ -72,22 +70,23 @@ final class CategoriesViewController: UIViewController {
     
     //MARK:  - Private Methods
     private func subSettingsCollectionsView() {
-        СategoriesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        СategoriesCollectionView.dataSource = self
-        СategoriesCollectionView.delegate = self
-        СategoriesCollectionView.layer.cornerRadius = 16
-        СategoriesCollectionView.allowsMultipleSelection = false
+        categoriesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        categoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
+        categoriesCollectionView.dataSource = self
+        categoriesCollectionView.delegate = self
+        categoriesCollectionView.layer.cornerRadius = 16
+        categoriesCollectionView.allowsMultipleSelection = false
     }
     
     private func settingsConstraints() {
         view.addSubview(scrollView)
         scrollView.addSubview(labeltitle)
-        scrollView.addSubview(СategoriesCollectionView)
+        scrollView.addSubview(categoriesCollectionView)
         scrollView.addSubview(addCategory)
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         labeltitle.translatesAutoresizingMaskIntoConstraints = false
-        СategoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
         addCategory.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -100,10 +99,10 @@ final class CategoriesViewController: UIViewController {
             labeltitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             labeltitle.heightAnchor.constraint(equalToConstant: 22),
             
-            СategoriesCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
-            СategoriesCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            СategoriesCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            СategoriesCollectionView.heightAnchor.constraint(equalToConstant: 150), //Пока так, потом придеться проставить зависимость от напонения
+            categoriesCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
+            categoriesCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            categoriesCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            categoriesCollectionView.heightAnchor.constraint(equalToConstant: 150), //Пока так, потом придеться проставить зависимость от напонения
             
             addCategory.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategory.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
@@ -135,21 +134,6 @@ extension CategoriesViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegate
-
-//простая но несколько кривая реализация, так как приходится  "выделять" ячейку , а не просто тапать по ней, потом поменять метод 
-//extension CategoriesViewController: UICollectionViewDelegate {
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//           let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
-//        cell?.selectCategory(image: "imageCheckMark")
-//       }
-//    
-//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
-//        cell?.selectCategory(image: "")
-//    }
-//}
-
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
@@ -161,8 +145,8 @@ extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = СategoriesCollectionView.frame.width - params.paddingWidth
-        let availableHeight = СategoriesCollectionView.frame.height
+        let availableWidth = categoriesCollectionView.frame.width - params.paddingWidth
+        let availableHeight = categoriesCollectionView.frame.height
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
         let cellHeight = availableHeight / CGFloat(trackerViewController.categories.count)
         return CGSize(width: cellWidth, height: cellHeight)
@@ -179,8 +163,8 @@ extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
 
 extension CategoriesViewController {
     func updateCategories(categoryIndex: Int) {
-        let category = trackerViewController.categories[categoryIndex].title
+//        let category = trackerViewController.categories[categoryIndex].title
         
-        СategoriesCollectionView.reloadItems(at: [IndexPath(row: categoryIndex, section: 0)])
+        categoriesCollectionView.reloadItems(at: [IndexPath(row: categoryIndex, section: 0)])
     }
 }

@@ -20,11 +20,16 @@ struct Schedule {
     }
 }
 
-enum DaysOfWeek: Int {
+enum DaysOfWeek: String, CaseIterable {
     case monday, tuesday, wednesday, thursday, friday, saturday, sunday
+    
+    static func < (lhs: DaysOfWeek, rhs: DaysOfWeek) -> Bool {
+        return lhs.rawValue < rhs.rawValue
+    }
 }
 
 extension DaysOfWeek {
+    
     var translation: String {
         switch self {
         case .monday: return "Понедельник"
@@ -55,6 +60,31 @@ extension DaysOfWeek {
             return "Вс"
         }
     }
+    
+    static func transformedSked(value: [DaysOfWeek]?) -> String? {
+        guard let value = value else { return nil }
+        let index = value.map { self.allCases.firstIndex(of: $0) }
+        var result = ""
+        for i in 0..<7 {
+            if index.contains(i) {
+                result += "1"
+            } else {
+                result += "0"
+            }
+        }
+        return result
+    }
+    
+    static func reversTransformedSked(value: String?) -> [DaysOfWeek]? {
+        guard let value = value else { return nil }
+        var weekdays = [DaysOfWeek]()
+        for (index,char) in value.enumerated() {
+            guard char == "1" else { continue }
+            let weekday = self.allCases[index]
+            weekdays.append(weekday)
+        }
+        return weekdays
+    }
 }
 
 extension Date {
@@ -79,5 +109,9 @@ extension Date {
         default:
             fatalError("Invalid day number")
         }
+    }
+    
+    var yearMonthDayComponents: DateComponents {
+        Calendar.current.dateComponents([.year, .month, .day], from: self)
     }
 }

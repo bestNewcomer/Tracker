@@ -14,7 +14,7 @@ final class FilterViewController: UIViewController {
     private let filterList = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Не завершенные"]
     
     //MARK:  - Private Properties
-    private var FilterCollectionView: UICollectionView!
+    private var filterCollectionView: UICollectionView!
     private let params: GeometricParams
     
     private lazy var scrollView: UIScrollView = {
@@ -47,26 +47,26 @@ final class FilterViewController: UIViewController {
         subSettingsCollectionsView()
         settingsConstraints()
         
-        FilterCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
+        filterCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
     }
     
     //MARK:  - Private Methods
     private func subSettingsCollectionsView() {
-        FilterCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        FilterCollectionView.dataSource = self
-        FilterCollectionView.delegate = self
-        FilterCollectionView.layer.cornerRadius = 16
-        FilterCollectionView.allowsMultipleSelection = false
+        filterCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        filterCollectionView.dataSource = self
+        filterCollectionView.delegate = self
+        filterCollectionView.layer.cornerRadius = 16
+        filterCollectionView.allowsMultipleSelection = false
     }
     
     private func settingsConstraints() {
         view.addSubview(scrollView)
         scrollView.addSubview(labeltitle)
-        scrollView.addSubview(FilterCollectionView)
+        scrollView.addSubview(filterCollectionView)
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         labeltitle.translatesAutoresizingMaskIntoConstraints = false
-        FilterCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        filterCollectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -78,10 +78,10 @@ final class FilterViewController: UIViewController {
             labeltitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             labeltitle.heightAnchor.constraint(equalToConstant: 22),
             
-            FilterCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
-            FilterCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            FilterCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            FilterCollectionView.heightAnchor.constraint(equalToConstant: 300), 
+            filterCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
+            filterCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            filterCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            filterCollectionView.heightAnchor.constraint(equalToConstant: 300), 
             
         ])
     }
@@ -129,8 +129,8 @@ extension FilterViewController: UICollectionViewDelegateFlowLayout {
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = FilterCollectionView.frame.width - params.paddingWidth
-        let availableHeight = FilterCollectionView.frame.height
+        let availableWidth = filterCollectionView.frame.width - params.paddingWidth
+        let availableHeight = filterCollectionView.frame.height
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
         let cellHeight = availableHeight / CGFloat(filterList.count)
         return CGSize(width: cellWidth, height: cellHeight)

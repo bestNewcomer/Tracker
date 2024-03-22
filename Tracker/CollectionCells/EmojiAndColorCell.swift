@@ -46,6 +46,17 @@ final class EmojiAndColorCell: UICollectionViewCell {
         mainButtom.backgroundColor = colorCell
     }
     
+    func allocationCell(emojiCell: Bool, allocationColor: UIColor) {
+        if emojiCell == true {
+            contentView.layer.cornerRadius = 16
+            contentView.backgroundColor = allocationColor
+        } else {
+            contentView.layer.cornerRadius = 16
+            contentView.layer.borderColor = allocationColor.withAlphaComponent(0.5).cgColor
+            contentView.layer.borderWidth = 3
+        }
+    }
+    
     // MARK: - Private Methods
     private func cellElementSettings(){
         contentView.addSubview(mainButtom)
@@ -53,10 +64,10 @@ final class EmojiAndColorCell: UICollectionViewCell {
         mainButtom.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            mainButtom.topAnchor.constraint(equalTo: contentView.topAnchor),
-            mainButtom.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            mainButtom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            mainButtom.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            mainButtom.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            mainButtom.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            mainButtom.widthAnchor.constraint(equalToConstant: 40),
+            mainButtom.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
 }

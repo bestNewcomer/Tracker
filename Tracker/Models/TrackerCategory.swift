@@ -10,11 +10,13 @@ import Foundation
 struct TrackerCategory {
     let title: String
     let trackersArray: [Tracker]
-}
-
-extension TrackerCategory {
-    static let defaultValue: [TrackerCategory] =
-    [
-        TrackerCategory(title: "Важное", trackersArray: [])
-    ]
+    
+    func visibleTrackers(filterString: String) -> [Tracker] {
+        if filterString.isEmpty {
+            return trackersArray
+        } else {
+            return trackersArray.filter {
+                $0.name.lowercased().contains(filterString.lowercased()) }
+        }
+    }
 }

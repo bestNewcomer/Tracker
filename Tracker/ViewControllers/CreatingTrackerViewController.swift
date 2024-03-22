@@ -1,309 +1,523 @@
-////
-////  CreatingTrackerViewController.swift
-////  Tracker
-////
-////  Created by Ринат Шарафутдинов on 10.02.2024.
-////
 //
-//import UIKit
+//  CreatingTrackerViewController.swift
+//  Tracker
 //
-//final class CreatingTrackerViewController: UIViewController {
-//    
-//    // MARK: - Public Properties
-//    let emojis  = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
-//    let colors: [UIColor] = [.colorSelection1,.colorSelection2,.colorSelection3,.colorSelection4,.colorSelection5,.colorSelection6,.colorSelection7,.colorSelection8,.colorSelection9,.colorSelection10,.colorSelection11,.colorSelection12,.colorSelection13,.colorSelection14,.colorSelection15,.colorSelection16,.colorSelection17,.colorSelection18]
-//    let collectionHeader = ["Emoji","Цвет"]
-//    
-//    //MARK:  - Private Properties
-//    private var emojisCollectionView: UICollectionView!
-//    
-//    
-//    private let params: GeometricParams
-//    
-//    private lazy var scrollView: UIScrollView = {
-//        let scrollView = UIScrollView()
-//        scrollView.backgroundColor = .green
-//        scrollView.alwaysBounceVertical = true
-//        scrollView.contentInsetAdjustmentBehavior = .never
-//        return scrollView
-//    }()
-//    
-//    private let labelTitle: SpecialHeader = {
-//        let label = SpecialHeader()
-//        label.customizeHeader(nameHeader: "Новая привычка")
-//        return label
-//    }()
-//    private lazy var textField: UITextField = {
-//        let textField = UITextField()
-//        textField.placeholder = "Введите название трекера"
-//        textField.layer.cornerRadius = 16
-//        textField.backgroundColor = .backgroundDay
-//        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
-//        textField.leftViewMode = .always
-//        textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-//        textField.delegate = self
-//        textField.resignFirstResponder()
-//        return textField
-//    }()
-//    
-//    private let labelRestrictions: UILabel = {
-//        let label = UILabel()
-//        label.text = "Ограничение 38 символов"
-//        label.textColor = .ypRed
-//        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-//        return label
-//    }()
-//    
-//    private lazy var stackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.axis = .vertical
-//        stackView.distribution = .fillProportionally
-//        stackView.backgroundColor = .backgroundDay
-//        stackView.layer.cornerRadius = 16
-//        return stackView
-//    }()
-//    
-//    private lazy var ViewCategories: SpecialView = {
-//        let specialView = SpecialView()
-//        specialView.customizeView(nameView: "Категория", surnameView: nil) // добавить вместо nil входные данные
-//        return specialView
-//    }()
-//    
-//    private lazy var ViewSchedule: SpecialView = {
-//        let specialView = SpecialView()
-//        specialView.customizeView(nameView: "Расписание", surnameView: nil) // добавить вместо nil входные данные
-//        specialView.conditionTap()
-//        specialView.jump = ScheduleViewController()
-//        
-//        return specialView
-//    }()
-//    
-//    private lazy var divider: Divider = {
-//        let view = Divider()
-//        return view
-//    }()
-//    
-//    private lazy var lowerStackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.distribution = .fillProportionally
-//        stackView.spacing = 8
-//        return stackView
-//    }()
-//    
-//    private let cancelButton: UIButton = {
-//        let button = UIButton()
-//        button.setTitle("Отменить", for: .normal)
-//        button.setTitleColor(.ypRed, for: .normal)
-//        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-//        button.layer.cornerRadius = 16
-//        button.layer.borderColor = UIColor.ypRed.cgColor
-//        button.layer.borderWidth = 1
-//        button.addTarget(self, action: #selector(Self.tapСancelButton), for: .touchUpInside)
-//        return button
-//    }()
-//    
-//    private let createButton: UIButton = {
-//        let button = UIButton()
-//        button.setTitle("Создать", for: .normal)
-//        button.setTitleColor(.ypWhiteDay, for: .normal)
-//        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-//        button.layer.cornerRadius = 16
-//        button.backgroundColor = .ypGray
-//        button.addTarget(self, action: #selector(Self.tabСreateButton), for: .touchUpInside)
-//        return button
-//    }()
-//    
-//    // MARK: - Initialization
-//    
-//    init() {
-//        self.params = GeometricParams(cellCount: 6, leftInset: 6, rightInset: 6, cellSpacing: 17)
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//    
-//    //MARK:  - Lifecycle
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        
-//        view.backgroundColor = .ypWhiteDay
-//        
-//        subSettingsCollectionsView()
-//        settings()
-//        emojisCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)
-//        emojisCollectionView.register(TrackerSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSupplementaryView.headerID)
-//    }
-//    
-//    // MARK: - Actions
-//    @objc
-//    private func tapСancelButton(){
-//        dismiss(animated: true, completion: nil)
-//    }
-//    
-//    @objc
-//    private func tabСreateButton(){
-//        print("Кнопка создания работает")
-//    }
-//    
-//    //MARK:  - Private Methods
-//    private func subSettingsCollectionsView() {
-//        emojisCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-//        emojisCollectionView.dataSource = self
-//        emojisCollectionView.delegate = self
-//        emojisCollectionView.backgroundColor = .red
-//        emojisCollectionView.isScrollEnabled = false
-//    }
-//    private func settings() {
-//        view.addSubview(scrollView)
-//        scrollView.addSubview(labelTitle)
-//        scrollView.addSubview(textField)
-//        scrollView.addSubview(stackView)
-//        view.addSubview(emojisCollectionView)
-//        scrollView.addSubview(lowerStackView)
-//        stackView.addArrangedSubview(ViewCategories.view)
-//        stackView.addArrangedSubview(divider)
-//        stackView.addArrangedSubview(ViewSchedule.view)
-//        lowerStackView.addArrangedSubview(cancelButton)
-//        lowerStackView.addArrangedSubview(createButton)
-//        
-//        scrollView.translatesAutoresizingMaskIntoConstraints = false
-//        labelTitle.translatesAutoresizingMaskIntoConstraints = false
-//        textField.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        emojisCollectionView.translatesAutoresizingMaskIntoConstraints = false
-//        lowerStackView.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        NSLayoutConstraint.activate([
-//            scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-//            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-//            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            scrollView.heightAnchor.constraint(equalToConstant: 937),
-//            
-//            labelTitle.topAnchor.constraint(equalTo: scrollView.topAnchor),
-//            labelTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            labelTitle.heightAnchor.constraint(equalToConstant: 22),
-//            
-//            textField.topAnchor.constraint(equalTo: labelTitle.bottomAnchor, constant: 43),
-//            textField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-//            textField.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-//            textField.heightAnchor.constraint(equalToConstant: 75),
-//            
-//            stackView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
-//            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-//            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-//            stackView.heightAnchor.constraint(equalToConstant: 150),
-//            
-//            emojisCollectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 32),
-//            emojisCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 2),
-//            emojisCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -2),
-//            emojisCollectionView.heightAnchor.constraint(equalToConstant: 460),
-//            
-//            lowerStackView.topAnchor.constraint(equalTo: emojisCollectionView.bottomAnchor, constant: 16),
-//            lowerStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-//            lowerStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-//            lowerStackView.heightAnchor.constraint(equalToConstant: 60),
-//        ])
-//    }
-//    
-//    private func settingsRestrictions() {
-//        
-//        scrollView.addSubview(labelRestrictions)
-//        
-//        labelRestrictions.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        NSLayoutConstraint.activate([
-//            labelRestrictions.topAnchor.constraint(equalTo: textField.topAnchor, constant: 83),
-//            labelRestrictions.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-//            labelRestrictions.heightAnchor.constraint(equalToConstant: 22),
-//            
-//            //stackView.topAnchor.constraint(equalTo: labelRestrictions.bottomAnchor, constant: 24),
-//        ])
-//    }
-//    
-//}
+//  Created by Ринат Шарафутдинов on 10.02.2024.
 //
-//// MARK: - UITextFieldDelegate
-//extension CreatingTrackerViewController: UITextFieldDelegate {
-//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//        if textField == self.textField {
-//            let currentLength = textField.text?.count ?? 0
-//            if currentLength + string.count > 38 {
-//                //settingsRestrictions() поправить констрейнты и включить уведомление о превышении 38 символов
-//                return false
-//            }
-//        }
-//        return true
-//    }
-//}
-//
-//// MARK: - UICollectionViewDataSource
-//extension CreatingTrackerViewController: UICollectionViewDataSource {
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return emojis.count
-//    }
-//    
-//    func numberOfSections(in: UICollectionView) -> Int {
-//        return collectionHeader.count
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiAndColorCell.cellID, for: indexPath) as? EmojiAndColorCell else { fatalError("Failed to cast UICollectionViewCell to TrackersCell") }
-//        if indexPath.section == 0 {
-//            cell.customizeCell(emojiCell: emojis[indexPath.row], colorCell: nil)
-//        } else {
-//            cell.customizeCell(emojiCell: "", colorCell: colors[indexPath.row])
-//        }
-//        return cell
-//    }
-//}
-//
-//// MARK: - UICollectionViewDelegate
-//extension CreatingTrackerViewController: UICollectionViewDelegate {
-//    //настройка "Заголовка"
-//    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-//        switch kind {
-//        case UICollectionView.elementKindSectionHeader:
-//            guard let header = emojisCollectionView.dequeueReusableSupplementaryView(ofKind: kind,withReuseIdentifier: TrackerSupplementaryView.headerID,for: indexPath) as? TrackerSupplementaryView
-//            else { fatalError("Failed to cast UICollectionReusableView to TrackersHeader") }
-//            
-//            header.titleLabel.text = collectionHeader[indexPath.section]
-//            header.frame.origin.x = CGFloat(-20)
-//            return header
-//        default:
-//            fatalError("Unexpected element kind")
-//        }
-//    }
-//}
-//
-//// MARK: - UICollectionViewDelegateFlowLayout
-//extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {
-//    //отступы от края коллекции
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-//        return UIEdgeInsets(top: 24, left: params.leftInset, bottom: 24, right: params.rightInset)
-//    }
-//    // размеры ячейки
-//    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let availableWidth = emojisCollectionView.frame.width - params.paddingWidth
-//        let cellWidth =  availableWidth / CGFloat(params.cellCount)
-//        return CGSize(width: cellWidth, height: cellWidth)
-//    }
-//    // расстояние между ячейками по вертикали
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-//        return CGFloat(12)
-//    }
-//    // расстояние между ячейками по горизонтали
-//    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//        return CGFloat(params.cellSpacing)
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//        
-//        let indexPath = IndexPath(row: 2, section: section)
-//        let headerView = self.collectionView(emojisCollectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-//        
-//        return headerView.systemLayoutSizeFitting(CGSize(width: emojisCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
-//    }
-//    
-//}
+
+import UIKit
+
+
+protocol NewTrackerCreationDelegate: AnyObject {
+    func trackerCreated(_ tracker: Tracker, _ category: String)
+    
+}
+
+final class CreatingTrackerViewController: UIViewController {
+    
+    // MARK: - Public Properties
+    let emojis  = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
+    let colors: [UIColor] = [.colorSelection1,.colorSelection2,.colorSelection3,.colorSelection4,.colorSelection5,.colorSelection6,.colorSelection7,.colorSelection8,.colorSelection9,.colorSelection10,.colorSelection11,.colorSelection12,.colorSelection13,.colorSelection14,.colorSelection15,.colorSelection16,.colorSelection17,.colorSelection18]
+    weak var delegate: NewTrackerCreationDelegate?
+    var onCompletion: (() -> Void)?
+    var habitIndicator = true
+    
+    //MARK:  - Private Properties
+    private var emojisCollectionView: UICollectionView!
+    private var colorsCollectionView: UICollectionView!
+    private let params: GeometricParams
+    private var selectedSchedule: [DaysOfWeek] = []
+    private var selectedCategories: TrackerCategory?
+    private var completedTracker: [TrackerRecord] = []
+    private let trackerRecordStore = TrackerRecordStore()
+    private var formattedSchedule: String = "" {
+        didSet {
+            checkButtonValidation()
+        }
+    }
+    private var formattedCategories: String = "" {
+        didSet {
+            checkButtonValidation()
+        }
+    }
+    private var selectedEmoji: String = "" {
+        didSet {
+            checkButtonValidation()
+        }
+    }
+    private var selectedColor: UIColor? = nil {
+        didSet {
+            checkButtonValidation()
+        }
+    }
+    
+    private let labelTitle: SpecialHeader = {
+        let label = SpecialHeader()
+        return label
+    }()
+    
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.frame = self.view.bounds
+        scrollView.contentSize = contentSize
+        return scrollView
+    }()
+    
+    private lazy var contentView: UIView = {
+        let contentView = UIView()
+        contentView.frame.size = contentSize
+        return contentView
+    }()
+    
+    private var contentSize: CGSize {
+        CGSize(width: view.frame.width, height: view.frame.height + 164) //+38
+    }
+    
+    private lazy var nameTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Введите название трекера"
+        textField.layer.cornerRadius = 16
+        textField.backgroundColor = .backgroundDay
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
+        textField.leftViewMode = .always
+        textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        textField.resignFirstResponder()
+        return textField
+    }()
+    
+    private let labelRestrictions: UILabel = {
+        let label = UILabel()
+        label.text = "Ограничение 38 символов"
+        label.textColor = .ypRed
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        return label
+    }()
+    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillProportionally
+        stackView.backgroundColor = .backgroundDay
+        stackView.layer.cornerRadius = 16
+        return stackView
+    }()
+    
+    private lazy var viewCategories: SpecialView = {
+        let specialView = SpecialView()
+        specialView.renamingLabelBasic(nameView: "Категория")
+        specialView.jump = { [weak self] in
+            self?.updateButtonCategories()
+        }
+        return specialView
+    }()
+    
+    private lazy var viewSchedule: SpecialView = {
+        let specialView = SpecialView()
+        specialView.renamingLabelBasic(nameView: "Расписание")
+        specialView.jump = { [weak self] in
+            self?.updateButtonSchedule()
+        }
+        return specialView
+    }()
+    
+    private lazy var divider: Divider = {
+        let view = Divider()
+        return view
+    }()
+    
+    private lazy var lowerStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.distribution = .fillProportionally
+        stackView.spacing = 8
+        return stackView
+    }()
+    
+    private lazy var cancelButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Отменить", for: .normal)
+        button.setTitleColor(.ypRed, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.layer.cornerRadius = 16
+        button.layer.borderColor = UIColor.ypRed.cgColor
+        button.layer.borderWidth = 1
+        button.addTarget(self, action: #selector(tapСancelButton), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var  createButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Создать", for: .normal)
+        button.setTitleColor(.ypWhiteDay, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.layer.cornerRadius = 16
+        button.backgroundColor = .ypGray
+        button.addTarget(self, action: #selector(tapСreateButton), for: .touchUpInside)
+        return button
+    }()
+    
+    // MARK: - Initialization
+    init() {
+        self.params = GeometricParams(cellCount: 6, leftInset: 0, rightInset: 0, cellSpacing: 5)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK:  - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.backgroundColor = .ypWhiteDay
+        
+        hubitOrIrregular()
+        subSettingsCollectionsView()
+        settings()
+        nameTextField.delegate = self
+        checkButtonValidation()
+    }
+    
+    // MARK: - Actions
+    @objc
+    private func tapСancelButton(){
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc
+    private func tapСreateButton(){
+        let trackerName = nameTextField.text ?? ""
+        guard let categoryName = selectedCategories?.title else {
+            return
+        }
+
+        let tracker = Tracker(
+            id: UUID(),
+            name: trackerName,
+            color: selectedColor ?? .colorSelection1,
+            emoji: selectedEmoji,
+            timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday, ]
+        )
+
+        delegate?.trackerCreated(tracker, categoryName)
+        onCompletion?()
+        dismiss(animated: false, completion: nil)
+    }
+    
+    //MARK:  - Public Methods
+    func hubitOrIrregular() {
+        if habitIndicator == true {
+            labelTitle.customizeHeader(nameHeader: "Новая привычка")
+        } else {
+            labelTitle.customizeHeader(nameHeader: "Новое нерегулярное событие")
+        }
+    }
+    
+    func updateButtonSchedule() {
+        let schedule = ScheduleViewController()
+        schedule.onScheduleUpdated = { [weak self] updatedSchedule in
+            self?.selectedSchedule = updatedSchedule
+            self?.formattedSchedule = Schedule(markedDays: updatedSchedule).scheduleText
+            self?.viewSchedule.renamingLabelBasic(nameView: "Расписание")
+            self?.viewSchedule.renamingLabelSecondary(surnameView: self?.formattedSchedule ?? "расписание не работает")
+        }
+        schedule.modalPresentationStyle = .pageSheet
+        present(schedule, animated: true)
+    }
+    
+    func updateButtonCategories() {
+        let сategories = CategoriesViewController()
+        сategories.onCategoriesUpdated = { [weak self] updatedСategories in
+            self?.selectedCategories = updatedСategories
+            self?.formattedCategories =  updatedСategories.title
+            self?.viewCategories.renamingLabelBasic(nameView: "Категория")
+            self?.viewCategories.renamingLabelSecondary(surnameView: self?.formattedCategories ?? "категории не работают")
+            
+        }
+        сategories.modalPresentationStyle = .pageSheet
+        present(сategories, animated: true)
+    }
+    
+    //MARK:  - Private Methods
+    private func subSettingsCollectionsView() {
+        emojisCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        emojisCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)
+        emojisCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
+        emojisCollectionView.dataSource = self
+        emojisCollectionView.delegate = self
+        emojisCollectionView.isScrollEnabled = false
+        emojisCollectionView.allowsMultipleSelection = false
+        
+        colorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        colorsCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)
+        colorsCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
+        colorsCollectionView.dataSource = self
+        colorsCollectionView.delegate = self
+        colorsCollectionView.isScrollEnabled = false
+        colorsCollectionView.allowsMultipleSelection = false
+    }
+    
+    private func settings() {
+        view.addSubview(scrollView)
+        view.addSubview(labelTitle)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(nameTextField)
+        contentView.addSubview(stackView)
+        scrollView.addSubview(emojisCollectionView)
+        scrollView.addSubview(colorsCollectionView)
+        contentView.addSubview(lowerStackView)
+        lowerStackView.addArrangedSubview(cancelButton)
+        lowerStackView.addArrangedSubview(createButton)
+        
+        labelTitle.translatesAutoresizingMaskIntoConstraints = false
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        emojisCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        colorsCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        lowerStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            labelTitle.topAnchor.constraint(equalTo: view.topAnchor),
+            labelTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            labelTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            nameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 87),
+            nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+            nameTextField.heightAnchor.constraint(equalToConstant: 75),
+            
+            emojisCollectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 32),
+            emojisCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
+            emojisCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
+            emojisCollectionView.heightAnchor.constraint(equalToConstant: 222),
+            
+            colorsCollectionView.topAnchor.constraint(equalTo: emojisCollectionView.bottomAnchor, constant: 34),
+            colorsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
+            colorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
+            colorsCollectionView.heightAnchor.constraint(equalToConstant: 222),
+            
+            lowerStackView.topAnchor.constraint(equalTo: colorsCollectionView.bottomAnchor, constant: 16),
+            lowerStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            lowerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            lowerStackView.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
+        if habitIndicator == true {
+            stackView.addArrangedSubview(viewCategories.view)
+            stackView.addArrangedSubview(divider)
+            stackView.addArrangedSubview(viewSchedule.view)
+            
+            NSLayoutConstraint.activate([
+                stackView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
+                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+                stackView.heightAnchor.constraint(equalToConstant: 150),
+            ])
+        } else {
+            stackView.addArrangedSubview(viewCategories.view)
+            
+            NSLayoutConstraint.activate([
+                stackView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
+                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+                stackView.heightAnchor.constraint(equalToConstant: 75),
+            ])
+        }
+    }
+    
+    private func settingsRestrictions() {
+        scrollView.addSubview(labelRestrictions)
+        
+        labelRestrictions.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            labelRestrictions.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 8),
+            labelRestrictions.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            labelRestrictions.heightAnchor.constraint(equalToConstant: 22),
+            
+            stackView.topAnchor.constraint(equalTo: labelRestrictions.bottomAnchor, constant: 32),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+            stackView.heightAnchor.constraint(equalToConstant: 150),
+        ])
+    }
+    
+    private func deleteLabelRestrictions() {
+        labelRestrictions.removeFromSuperview()
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+            stackView.heightAnchor.constraint(equalToConstant: 150),
+        ])
+    }
+    
+    private func checkButtonValidation() {
+        if nameTextField.text?.count == 0 {
+            buttonIsEnable = false
+            return
+        }
+        if selectedCategories == nil {
+            buttonIsEnable = false
+            return
+        }
+        if habitIndicator == true {
+            if formattedSchedule == "" {
+                buttonIsEnable = false
+                return
+            }
+        }
+        if selectedEmoji == "" {
+            buttonIsEnable = false
+            return
+        }
+        if selectedColor == nil {
+            buttonIsEnable = false
+            return
+        }
+        buttonIsEnable = true
+    }
+    
+    private var buttonIsEnable = false {
+        willSet {
+            if newValue {
+                createButton.backgroundColor = .ypBlackDay
+                createButton.setTitleColor(.ypWhiteDay, for: .normal)
+                createButton.isEnabled = true
+            } else {
+                createButton.backgroundColor = .ypGray
+                createButton.setTitleColor(.ypWhiteDay, for: .normal)
+                createButton.isEnabled = false
+            }
+        }
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension CreatingTrackerViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == self.nameTextField {
+            let currentLength = textField.text?.count ?? 0
+            checkButtonValidation()
+            if currentLength + string.count > 38 {
+                settingsRestrictions()
+                return false
+            } else {
+                deleteLabelRestrictions()
+            }
+        }
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            textField.resignFirstResponder()
+            return true
+        }
+
+}
+
+// MARK: - UICollectionViewDataSource
+extension CreatingTrackerViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return emojis.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiAndColorCell.cellID, for: indexPath) as? EmojiAndColorCell else { fatalError("Failed to cast UICollectionViewCell to EmojiAndColorCell") }
+        if collectionView == emojisCollectionView {
+            cell.customizeCell(emojiCell: emojis[indexPath.row], colorCell: nil)
+            return cell
+        } else {
+            cell.customizeCell(emojiCell: "", colorCell: colors[indexPath.row])
+            return cell
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,withReuseIdentifier: SpecialSectionHeader.headerID,for: indexPath) as? SpecialSectionHeader
+            else { fatalError("Failed to cast UICollectionReusableView to SpecialSectionHeader") }
+            if collectionView == emojisCollectionView {
+                header.titleLabel.text = "Emoji"
+                header.frame.origin.x = CGFloat(-20)
+                return header
+            } else {
+                header.titleLabel.text = "Цвет"
+                header.frame.origin.x = CGFloat(-20)
+                return header
+            }
+        default:
+            fatalError("Unexpected element kind")
+        }
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+extension CreatingTrackerViewController: UICollectionViewDelegate {
+   
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
+        
+        if collectionView == emojisCollectionView {
+            selectedEmoji = emojis[indexPath.item]
+            cell?.allocationCell(emojiCell: true, allocationColor: .backgroundDay)
+        } else {
+            selectedColor = colors[indexPath.item]
+            cell?.allocationCell(emojiCell: false, allocationColor: selectedColor ?? .black)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
+        
+        if collectionView == emojisCollectionView {
+            cell?.contentView.backgroundColor = .ypWhiteDay
+        } else {
+            cell?.contentView.layer.borderColor = UIColor.ypWhiteDay.cgColor
+        }
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {
+    //отступы от края коллекции
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 24,
+                            left: params.leftInset,
+                            bottom: 24,
+                            right: params.rightInset)
+    }
+    // размеры ячейки
+    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let availableWidth = collectionView.frame.width - params.paddingWidth - 20.666
+        let cellWidth =  availableWidth / CGFloat(params.cellCount)
+        return CGSize(width: cellWidth, height: cellWidth)
+    }
+    // расстояние между ячейками по вертикали
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return CGFloat(0)
+    }
+    // расстояние между ячейками по горизонтали
+    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return CGFloat(params.cellSpacing)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        let indexPath = IndexPath(row: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        
+        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
+extension CreatingTrackerViewController: TrackerRecordStoreDelegate {
+    func store(
+        _ store: TrackerRecordStore,
+        didUpdate update: TrackerRecordStoreUpdate
+    ) {
+        completedTracker = trackerRecordStore.trackerRecords
+    }
+}

@@ -10,12 +10,12 @@ import SwiftUI
 
 final class ScheduleViewController: UIViewController {
     // MARK: - Public Properties
-    let daysOfWeek: [DaysOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-    var daysWeek = Schedule(markedDays: [])
-    var onScheduleUpdated: ((Schedule) -> Void)?
+   
+    var daysWeek: Set<DaysOfWeek> = []
+    var onScheduleUpdated: (([DaysOfWeek]) -> Void)?
     var checkButtonValidation: (() -> Void)?
     //MARK:  - Private Properties
-    private var ScheduleCollectionView: UICollectionView!
+    private var scheduleCollectionView: UICollectionView!
     private let params: GeometricParams
     
     private lazy var scrollView: UIScrollView = {
@@ -59,33 +59,34 @@ final class ScheduleViewController: UIViewController {
         subSettingsCollectionsView()
         settingsConstraints()
         
-        ScheduleCollectionView.register(ScheduleCell.self, forCellWithReuseIdentifier: ScheduleCell.cellID)
+        scheduleCollectionView.register(ScheduleCell.self, forCellWithReuseIdentifier: ScheduleCell.cellID)
     }
     
     // MARK: - Actions
     @objc private func tapReadyButton(){
-        onScheduleUpdated?(daysWeek)
+        let weekDays = Array(daysWeek)
+        onScheduleUpdated?(weekDays)
         checkButtonValidation?()
         dismiss(animated: true, completion: nil)
     }
     
     //MARK:  - Private Methods
     private func subSettingsCollectionsView() {
-        ScheduleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        ScheduleCollectionView.dataSource = self
-        ScheduleCollectionView.delegate = self
-        ScheduleCollectionView.layer.cornerRadius = 16
+        scheduleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        scheduleCollectionView.dataSource = self
+        scheduleCollectionView.delegate = self
+        scheduleCollectionView.layer.cornerRadius = 16
     }
     
     private func settingsConstraints() {
         view.addSubview(scrollView)
         scrollView.addSubview(labeltitle)
-        scrollView.addSubview(ScheduleCollectionView)
+        scrollView.addSubview(scheduleCollectionView)
         scrollView.addSubview(readyButton)
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         labeltitle.translatesAutoresizingMaskIntoConstraints = false
-        ScheduleCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        scheduleCollectionView.translatesAutoresizingMaskIntoConstraints = false
         readyButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -98,10 +99,10 @@ final class ScheduleViewController: UIViewController {
             labeltitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             labeltitle.heightAnchor.constraint(equalToConstant: 22),
             
-            ScheduleCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
-            ScheduleCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            ScheduleCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            ScheduleCollectionView.heightAnchor.constraint(equalToConstant: 525),
+            scheduleCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
+            scheduleCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            scheduleCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            scheduleCollectionView.heightAnchor.constraint(equalToConstant: 525),
             
             readyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             readyButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
@@ -114,15 +115,17 @@ final class ScheduleViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension ScheduleViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return daysOfWeek.count
+        return 7
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScheduleCell.cellID, for: indexPath) as? ScheduleCell else { fatalError("Failed to cast UICollectionViewCell to ScheduleCell") }
-        cell.renamingLabelBasic(nameView: daysOfWeek[indexPath.row].translation, isOn: daysWeek.markedDays.contains(daysOfWeek[indexPath.row]))
+        cell.renamingLabelBasic(nameView: DaysOfWeek.allCases[indexPath.row].translation, isOn: daysWeek.contains(DaysOfWeek.allCases[indexPath.row]))
+        
         if indexPath.row == 0 {
             cell.divider.backgroundColor = .backgroundDay
         }
+        
         cell.onSwitchChanged = { [weak self] isOn in
             self?.updateSchedule(forDay: indexPath.row, isOn: isOn)
         }
@@ -138,17 +141,17 @@ extension ScheduleViewController: UICollectionViewDelegate {
 extension ScheduleViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, 
+        return UIEdgeInsets(top: 0,
                             left: params.leftInset,
                             bottom: 0,
                             right: params.rightInset)
     }
     // размеры ячейки
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = ScheduleCollectionView.frame.width - params.paddingWidth
-        let availableHeight = ScheduleCollectionView.frame.height
+        let availableWidth = scheduleCollectionView.frame.width - params.paddingWidth
+        let availableHeight = scheduleCollectionView.frame.height
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
-        let cellHeight = availableHeight / CGFloat(daysOfWeek.count)
+        let cellHeight = availableHeight / CGFloat(7)
         return CGSize(width: cellWidth, height: cellHeight)
     }
     // расстояние между ячейками по вертикали
@@ -163,17 +166,22 @@ extension ScheduleViewController: UICollectionViewDelegateFlowLayout {
 
 extension ScheduleViewController {
     func updateSchedule(forDay dayIndex: Int, isOn: Bool) {
-        let day = daysOfWeek[dayIndex]
+        let day = DaysOfWeek.allCases[dayIndex]
         
         if isOn {
-            if !daysWeek.markedDays.contains(day) {
-                daysWeek.markedDays.append(day)
-                daysWeek.markedDays.sort(by: { $0.rawValue < $1.rawValue })
+            if !daysWeek.contains(day) {
+                daysWeek.insert(day)
+//                daysWeek.sorted(by: { $0.rawValue < $1.rawValue })
             }
         } else {
-            daysWeek.markedDays.removeAll { $0 == day }
+            for day in daysWeek {
+                if day == day {
+                    daysWeek.remove(day)
+                    break
+                }
+            }
         }
-        ScheduleCollectionView.reloadItems(at: [IndexPath(row: dayIndex, section: 0)])
+        scheduleCollectionView.reloadItems(at: [IndexPath(row: dayIndex, section: 0)])
     }
 }
 
