@@ -109,12 +109,12 @@ extension FilterViewController: UICollectionViewDataSource {
 extension FilterViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
            let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
-        cell?.selectCategory(image: "imageCheckMark")
+        cell?.selectImageCheck(image: "imageCheckMark")
        }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
-        cell?.selectCategory(image: "")
+        cell?.selectImageCheck(image: "")
     }
 }
 

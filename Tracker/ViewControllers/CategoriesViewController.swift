@@ -12,13 +12,13 @@ final class CategoriesViewController: UIViewController {
     
     // MARK: - Public Properties
     var onCategoriesUpdated: ((TrackerCategory) -> Void)?
-    var trackerViewController = TrackerViewController()
     var checkButtonValidation: (() -> Void)?
     
     //MARK:  - Private Properties
     private var categoriesCollectionView: UICollectionView!
     private let params: GeometricParams
-    private let trackerCategoryStore = TrackerCategoryStore.shared
+    private var viewModel: CategoriesViewModel
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .ypWhiteDay
@@ -43,8 +43,15 @@ final class CategoriesViewController: UIViewController {
     }()
     
     // MARK: - Initialization
-    init() {
+    init(
+        delegate: CategoriesViewModelDelegate?,
+        selectedCategories: TrackerCategory?
+    ) {
         self.params = GeometricParams(cellCount: 1, leftInset: 0, rightInset: 0, cellSpacing: 0)
+        viewModel = CategoriesViewModel(
+            selectedCategories: selectedCategories,
+            delegate: delegate
+        )
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -58,14 +65,26 @@ final class CategoriesViewController: UIViewController {
         
         view.backgroundColor = .ypWhiteDay
         subSettingsCollectionsView()
+        viewModel.updateClosure = { [weak self] in
+            print("Update closure called")
+            guard let self else { return }
+            self.categoriesCollectionView.reloadData()
+            self.updateNotFoundedCategories()
+        }
         settingsConstraints()
     }
     
     // MARK: - Actions
     @objc private func tapAddCategory(){
-        let jump = NewCategoryViewController()
-        jump.modalPresentationStyle = .pageSheet
-        present(jump, animated: true)
+        let newCategoryViewController = NewCategoryViewController()
+        newCategoryViewController.delegate = self
+        newCategoryViewController.modalPresentationStyle = .pageSheet
+        present(newCategoryViewController, animated: true)
+    }
+    
+    //MARK:  - Public Methods
+    func updateNotFoundedCategories()  {
+        categoriesCollectionView.isHidden = viewModel.isCollectionViewHidden
     }
     
     //MARK:  - Private Methods
@@ -83,6 +102,8 @@ final class CategoriesViewController: UIViewController {
         scrollView.addSubview(labeltitle)
         scrollView.addSubview(categoriesCollectionView)
         scrollView.addSubview(addCategory)
+        
+        
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         labeltitle.translatesAutoresizingMaskIntoConstraints = false
@@ -102,7 +123,7 @@ final class CategoriesViewController: UIViewController {
             categoriesCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
             categoriesCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             categoriesCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            categoriesCollectionView.heightAnchor.constraint(equalToConstant: 150), //Пока так, потом придеться проставить зависимость от напонения
+            categoriesCollectionView.heightAnchor.constraint(equalToConstant: 600), //Пока так, потом придеться проставить зависимость от напонения
             
             addCategory.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategory.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
@@ -115,22 +136,35 @@ final class CategoriesViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension CategoriesViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return trackerViewController.categories.count
+        updateNotFoundedCategories()
+        return viewModel.categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCell.cellID, for: indexPath) as? CategoryCell else { fatalError("Failed to cast UICollectionViewCell to CategoriesCell") }
-        cell.renamingLabelBasic(nameView: "\(trackerViewController.categories[indexPath.row].title)")
+        cell.renamingLabelBasic(nameView: "\(viewModel.categories[indexPath.row].title)")
         if indexPath.row == 0 {
             cell.divider.backgroundColor = .backgroundDay
         }
-        cell.jump = { [self] in
-            self.updateCategories(categoryIndex: indexPath.row)
-            onCategoriesUpdated?(trackerViewController.categories[indexPath.row])
-            checkButtonValidation?()
-            dismiss(animated: true, completion: nil)
-        }
         return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+extension CategoriesViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+           let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
+        cell?.selectImageCheck(image: "imageCheckMark")
+        onCategoriesUpdated?(viewModel.categories[indexPath.row])
+        checkButtonValidation?()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.dismiss(animated: true, completion: nil)
+        }
+       }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as? CategoryCell
+        cell?.selectImageCheck(image: "")
     }
 }
 
@@ -138,7 +172,7 @@ extension CategoriesViewController: UICollectionViewDataSource {
 extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
     //отступы от края коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, 
+        return UIEdgeInsets(top: 0,
                             left: params.leftInset,
                             bottom: 0,
                             right: params.rightInset)
@@ -148,7 +182,7 @@ extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
         let availableWidth = categoriesCollectionView.frame.width - params.paddingWidth
         let availableHeight = categoriesCollectionView.frame.height
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
-        let cellHeight = availableHeight / CGFloat(trackerViewController.categories.count)
+        let cellHeight = availableHeight / CGFloat(viewModel.categories.count)
         return CGSize(width: cellWidth, height: cellHeight)
     }
     // расстояние между ячейками по вертикали
@@ -160,11 +194,11 @@ extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
         return CGFloat(params.cellSpacing)
     }
 }
-
-extension CategoriesViewController {
-    func updateCategories(categoryIndex: Int) {
-//        let category = trackerViewController.categories[categoryIndex].title
-        
-        categoriesCollectionView.reloadItems(at: [IndexPath(row: categoryIndex, section: 0)])
+// MARK: - NewCategoryViewControllerDelegate
+extension CategoriesViewController: NewCategoryViewControllerDelegate {
+    func addCategory(_ category: TrackerCategory) {
+        viewModel.selectCategory(with: category.title)
+        viewModel.selectedCategories(category)
+        categoriesCollectionView.reloadData()
     }
 }

@@ -13,8 +13,6 @@ final class CategoryCell: UICollectionViewCell {
     // MARK: - Public Properties
     static let cellID = "CategoriesCell"
     
-    var jump: (() -> Void)?
-    
     lazy var labelBasic: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlackDay
@@ -48,7 +46,7 @@ final class CategoryCell: UICollectionViewCell {
     
     // MARK: - Actions
     @objc func didTapView(_ sender: UITapGestureRecognizer){
-        jump?()
+       
     }
     
     // MARK: - Public Methods
@@ -56,7 +54,13 @@ final class CategoryCell: UICollectionViewCell {
         labelBasic.text = nameView
     }
     
-    func selectCategory(image: String) {
+    func getSelectedCategoryTitle() -> String {
+        let selectedCategoryTitle = self.labelBasic.text
+
+        return selectedCategoryTitle!
+    }
+    
+    func selectImageCheck(image: String) {
         imageCheck.image = UIImage(named: image)
     }
     

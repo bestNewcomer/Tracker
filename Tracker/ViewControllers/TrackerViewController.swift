@@ -8,9 +8,7 @@
 import UIKit
 
 final class TrackerViewController: UIViewController {
-    //MARK:  - Public Properties
-    var categories: [TrackerCategory] = [TrackerCategory(title: "По умолчанию", trackersArray: [])]
-    
+  
     //MARK:  - Private Properties
     private var trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private let params: GeometricParams

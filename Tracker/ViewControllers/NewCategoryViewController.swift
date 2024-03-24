@@ -8,9 +8,18 @@
 import Foundation
 import UIKit
 
+protocol NewCategoryViewControllerDelegate: AnyObject {
+    func addCategory(_ category: TrackerCategory)
+}
+
 final class NewCategoryViewController: UIViewController {
     
+    
+    weak var delegate: NewCategoryViewControllerDelegate?
+    
     //MARK:  - Private Properties
+    private let trackerCategoryStore = TrackerCategoryStore.shared
+    
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
         label.customizeHeader(nameHeader: "Новая категория")
@@ -60,6 +69,16 @@ final class NewCategoryViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func tapAddCategory(){
+        guard let title = textField.text else { return }
+        let category = TrackerCategory(
+            title: title,
+            trackersArray: []
+        )
+        if !viewModel.categories[indexPath.row].title.contains(where: { $0.title == title }) {
+            try? trackerCategoryStore.addNewTrackerCategory(category)
+        }
+        delegate?.addCategory(category)
+        dismiss(animated: true)
         
     }
     
@@ -115,6 +134,11 @@ extension NewCategoryViewController: UITextFieldDelegate {
                 labelRestrictions.removeFromSuperview()
             }
         }
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
         return true
     }
 }

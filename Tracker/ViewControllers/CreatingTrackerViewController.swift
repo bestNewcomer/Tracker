@@ -21,6 +21,7 @@ final class CreatingTrackerViewController: UIViewController {
     weak var delegate: NewTrackerCreationDelegate?
     var onCompletion: (() -> Void)?
     var habitIndicator = true
+    var category: TrackerCategory?
     
     //MARK:  - Private Properties
     private var emojisCollectionView: UICollectionView!
@@ -190,7 +191,7 @@ final class CreatingTrackerViewController: UIViewController {
         guard let categoryName = selectedCategories?.title else {
             return
         }
-
+        
         let tracker = Tracker(
             id: UUID(),
             name: trackerName,
@@ -198,7 +199,7 @@ final class CreatingTrackerViewController: UIViewController {
             emoji: selectedEmoji,
             timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday, ]
         )
-
+        
         delegate?.trackerCreated(tracker, categoryName)
         onCompletion?()
         dismiss(animated: false, completion: nil)
@@ -226,16 +227,16 @@ final class CreatingTrackerViewController: UIViewController {
     }
     
     func updateButtonCategories() {
-        let сategories = CategoriesViewController()
-        сategories.onCategoriesUpdated = { [weak self] updatedСategories in
+        let categoriesViewController = CategoriesViewController(delegate: self, selectedCategories: category)
+        categoriesViewController.onCategoriesUpdated = { [weak self] updatedСategories in
             self?.selectedCategories = updatedСategories
             self?.formattedCategories =  updatedСategories.title
             self?.viewCategories.renamingLabelBasic(nameView: "Категория")
             self?.viewCategories.renamingLabelSecondary(surnameView: self?.formattedCategories ?? "категории не работают")
-            
         }
-        сategories.modalPresentationStyle = .pageSheet
-        present(сategories, animated: true)
+            categoriesViewController.modalPresentationStyle = .pageSheet
+            present(categoriesViewController, animated: true)
+        
     }
     
     //MARK:  - Private Methods
@@ -411,10 +412,10 @@ extension CreatingTrackerViewController: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            textField.resignFirstResponder()
-            return true
-        }
-
+        textField.resignFirstResponder()
+        return true
+    }
+    
 }
 
 // MARK: - UICollectionViewDataSource
@@ -456,7 +457,7 @@ extension CreatingTrackerViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension CreatingTrackerViewController: UICollectionViewDelegate {
-   
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
         
@@ -513,11 +514,21 @@ extension CreatingTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - TrackerRecordStoreDelegate
 extension CreatingTrackerViewController: TrackerRecordStoreDelegate {
     func store(
         _ store: TrackerRecordStore,
         didUpdate update: TrackerRecordStoreUpdate
     ) {
         completedTracker = trackerRecordStore.trackerRecords
+    }
+}
+
+// MARK: - CategoriesViewModelDelegate
+extension CreatingTrackerViewController: CategoriesViewModelDelegate {
+    func didSelectCategory(category: TrackerCategory) {
+        self.category = category
+        formattedCategories = category.title
+        self.viewCategories.renamingLabelSecondary(surnameView: self.formattedCategories)
     }
 }

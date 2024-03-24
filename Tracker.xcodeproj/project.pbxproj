@@ -17,6 +17,7 @@
 		0E2F81B22BAD54F80057FA3B /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F81B12BAD54F80057FA3B /* OnboardingViewController.swift */; };
 		0E2F81B42BAD56030057FA3B /* OnboardingSinglePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F81B32BAD56030057FA3B /* OnboardingSinglePageViewController.swift */; };
 		0E2F81B62BAD58C10057FA3B /* WindowNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F81B52BAD58C10057FA3B /* WindowNavigationViewController.swift */; };
+		0E2F81B92BADC2F40057FA3B /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F81B82BADC2F40057FA3B /* CategoriesViewModel.swift */; };
 		0E5257672B9885D200CA92F5 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257662B9885D200CA92F5 /* ScheduleViewController.swift */; };
 		0E5257692B9F576700CA92F5 /* DaySwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257682B9F576700CA92F5 /* DaySwitch.swift */; };
 		0E52576B2B9F681300CA92F5 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E52576A2B9F681300CA92F5 /* ScheduleCell.swift */; };
@@ -55,6 +56,7 @@
 		0E2F81B12BAD54F80057FA3B /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		0E2F81B32BAD56030057FA3B /* OnboardingSinglePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSinglePageViewController.swift; sourceTree = "<group>"; };
 		0E2F81B52BAD58C10057FA3B /* WindowNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowNavigationViewController.swift; sourceTree = "<group>"; };
+		0E2F81B82BADC2F40057FA3B /* CategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModel.swift; sourceTree = "<group>"; };
 		0E5257662B9885D200CA92F5 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		0E5257682B9F576700CA92F5 /* DaySwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaySwitch.swift; sourceTree = "<group>"; };
 		0E52576A2B9F681300CA92F5 /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
@@ -103,6 +105,14 @@
 				0E0BEF762BA9B3C10074E0AC /* TrackerRecordStore.swift */,
 			);
 			path = TrackerEntity;
+			sourceTree = "<group>";
+		};
+		0E2F81B72BADC2CA0057FA3B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				0E2F81B82BADC2F40057FA3B /* CategoriesViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		0E346CE92B83B811000E28C9 /* ViewControllers */ = {
@@ -184,6 +194,7 @@
 		0E8479202B02877A00FDEE72 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				0E2F81B72BADC2CA0057FA3B /* ViewModel */,
 				0E8479212B02877A00FDEE72 /* AppDelegate.swift */,
 				0E8479232B02877A00FDEE72 /* SceneDelegate.swift */,
 				0E2F81B52BAD58C10057FA3B /* WindowNavigationViewController.swift */,
@@ -298,6 +309,7 @@
 				0EFAECFB2B93887900628EDB /* DaysOfWeek.swift in Sources */,
 				0E0BEF1A2BA47AB40074E0AC /* FilterViewController.swift in Sources */,
 				0E2F81B22BAD54F80057FA3B /* OnboardingViewController.swift in Sources */,
+				0E2F81B92BADC2F40057FA3B /* CategoriesViewModel.swift in Sources */,
 				0E0BEF462BA8570B0074E0AC /* CreatingTrackerViewController.swift in Sources */,
 				0E5257672B9885D200CA92F5 /* ScheduleViewController.swift in Sources */,
 				0E0BEF772BA9B3C10074E0AC /* TrackerRecordStore.swift in Sources */,
