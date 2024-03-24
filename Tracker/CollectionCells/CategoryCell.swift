@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class CategoryCell: UICollectionViewCell {
+final class CategoryCell: UITableViewCell {
     
     // MARK: - Public Properties
     static let cellID = "CategoriesCell"
@@ -35,18 +35,19 @@ final class CategoryCell: UICollectionViewCell {
     }()
     
     // MARK: - Initializers
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(
+        style: UITableViewCell.CellStyle,
+        reuseIdentifier: String?
+    ) {
+        super.init(
+            style: style,
+            reuseIdentifier: reuseIdentifier
+        )
         settingsView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Actions
-    @objc func didTapView(_ sender: UITapGestureRecognizer){
-       
     }
     
     // MARK: - Public Methods
@@ -66,28 +67,25 @@ final class CategoryCell: UICollectionViewCell {
     
     // MARK: - Private Methods
     private func settingsView() {
-        contentView.addSubview(divider)
+//        contentView.addSubview(divider)
         contentView.addSubview(labelBasic)
         contentView.addSubview(imageCheck)
         
-        divider.translatesAutoresizingMaskIntoConstraints = false
+//        divider.translatesAutoresizingMaskIntoConstraints = false
         labelBasic.translatesAutoresizingMaskIntoConstraints = false
         imageCheck.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.backgroundColor = .backgroundDay
         
         NSLayoutConstraint.activate([
-            divider.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9),
-            divider.centerXAnchor.constraint(equalTo: centerXAnchor),
-            divider.heightAnchor.constraint(equalToConstant: 0.5),
+//            divider.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9),
+//            divider.centerXAnchor.constraint(equalTo: centerXAnchor),
+//            divider.heightAnchor.constraint(equalToConstant: 0.5),
             labelBasic.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             labelBasic.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             labelBasic.heightAnchor.constraint(equalTo: contentView.heightAnchor),
             imageCheck.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             imageCheck.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant:  -24),
         ])
-        
-        contentView.isUserInteractionEnabled = true
-        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapView(_:))))
     }
 }

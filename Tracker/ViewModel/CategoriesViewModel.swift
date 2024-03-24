@@ -20,7 +20,7 @@ final class CategoriesViewModel {
         }
     }
 
-    var isCollectionViewHidden: Bool {
+    var isTableViewHidden: Bool {
         return categories.isEmpty
     }
 

@@ -21,14 +21,14 @@ final class CreatingTrackerViewController: UIViewController {
     weak var delegate: NewTrackerCreationDelegate?
     var onCompletion: (() -> Void)?
     var habitIndicator = true
-    var category: TrackerCategory?
+//    var category: TrackerCategory?
     
     //MARK:  - Private Properties
     private var emojisCollectionView: UICollectionView!
     private var colorsCollectionView: UICollectionView!
     private let params: GeometricParams
     private var selectedSchedule: [DaysOfWeek] = []
-    private var selectedCategories: TrackerCategory?
+    private var category: TrackerCategory?
     private var completedTracker: [TrackerRecord] = []
     private let trackerRecordStore = TrackerRecordStore()
     private var formattedSchedule: String = "" {
@@ -188,7 +188,7 @@ final class CreatingTrackerViewController: UIViewController {
     @objc
     private func tapСreateButton(){
         let trackerName = nameTextField.text ?? ""
-        guard let categoryName = selectedCategories?.title else {
+        guard let categoryName = category?.title else {
             return
         }
         
@@ -228,12 +228,8 @@ final class CreatingTrackerViewController: UIViewController {
     
     func updateButtonCategories() {
         let categoriesViewController = CategoriesViewController(delegate: self, selectedCategories: category)
-        categoriesViewController.onCategoriesUpdated = { [weak self] updatedСategories in
-            self?.selectedCategories = updatedСategories
-            self?.formattedCategories =  updatedСategories.title
-            self?.viewCategories.renamingLabelBasic(nameView: "Категория")
-            self?.viewCategories.renamingLabelSecondary(surnameView: self?.formattedCategories ?? "категории не работают")
-        }
+            viewCategories.renamingLabelBasic(nameView: "Категория")
+            viewCategories.renamingLabelSecondary(surnameView: formattedCategories)
             categoriesViewController.modalPresentationStyle = .pageSheet
             present(categoriesViewController, animated: true)
         
@@ -359,7 +355,7 @@ final class CreatingTrackerViewController: UIViewController {
             buttonIsEnable = false
             return
         }
-        if selectedCategories == nil {
+        if category == nil {
             buttonIsEnable = false
             return
         }

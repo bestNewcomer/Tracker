@@ -91,9 +91,9 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func tapFilterSelection () {
-        let jump = FilterViewController()
-        jump.modalPresentationStyle = .pageSheet
-        present(jump, animated: true)
+//        let jump = FilterViewController()
+//        jump.modalPresentationStyle = .pageSheet
+//        present(jump, animated: true)
     }
     
     

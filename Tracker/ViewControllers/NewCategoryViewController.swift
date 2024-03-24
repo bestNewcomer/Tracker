@@ -74,9 +74,7 @@ final class NewCategoryViewController: UIViewController {
             title: title,
             trackersArray: []
         )
-        if !viewModel.categories[indexPath.row].title.contains(where: { $0.title == title }) {
-            try? trackerCategoryStore.addNewTrackerCategory(category)
-        }
+        try? trackerCategoryStore.addNewTrackerCategory(category)
         delegate?.addCategory(category)
         dismiss(animated: true)
         
