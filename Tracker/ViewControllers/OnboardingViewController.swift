@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import Foundation
 
 final class OnboardingViewController: UIPageViewController {
     
-    // MARK: - Elements
+    //MARK:  - Private Properties
     private lazy var pages: [UIViewController] = {
         let firstOnboardingPage = OnboardingSinglePageViewController()
         firstOnboardingPage.onboardImage.image = UIImage(named: "imageBlueOnboard")
@@ -51,7 +52,7 @@ final class OnboardingViewController: UIPageViewController {
         applyConstraint()
     }
     
-    // MARK: - Layout & Setting
+    //MARK:  - Private Methods
     private func addSubViews() {
         [button, pageControl].forEach { view.addSubview($0) }
     }
@@ -77,7 +78,6 @@ final class OnboardingViewController: UIPageViewController {
     }
 }
 
-// MARK: - Actions & Methods
 extension OnboardingViewController {
     @objc private func didTapButton() {
         let tabBarViewController = MainTabBarController()
@@ -86,7 +86,7 @@ extension OnboardingViewController {
     }
 }
 
-// MARK: - Extension DataSource
+// MARK: - UIPageViewControllerDataSource
 extension OnboardingViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let vcIndex = pages.firstIndex(of: viewController) else { return nil }
@@ -103,7 +103,7 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
     }
 }
 
-// MARK: - Extension Delegate
+// MARK: - UIPageViewControllerDelegate
 extension OnboardingViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if let currentViewController = pageViewController.viewControllers?.first,
@@ -112,4 +112,5 @@ extension OnboardingViewController: UIPageViewControllerDelegate {
         }
     }
 }
+
 

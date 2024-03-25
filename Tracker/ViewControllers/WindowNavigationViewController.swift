@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import Foundation
 
 final class WindowNavigationViewController: UIViewController {
     
     // MARK: - Properties
-//    @UserDefaultsBacked(key: "isOnboardingShown")
+    @UserDefaultsBacked(key: "isOnboardingShown")
     private var onboardingOn: Bool?
     
     // MARK: - Lifecycle
@@ -34,5 +35,21 @@ final class WindowNavigationViewController: UIViewController {
     private func showTabBarViewController() {
         let tabBarViewController = MainTabBarController()
         UIApplication.shared.windows.first?.rootViewController = tabBarViewController
+    }
+}
+
+
+@propertyWrapper
+struct UserDefaultsBacked<Value> {
+    let key: String
+    let storage: UserDefaults = .standard
+    
+    var wrappedValue: Value? {
+        get {
+            storage.value(forKey: key) as? Value
+        }
+        set {
+            storage.setValue(newValue, forKey: key)
+        }
     }
 }
