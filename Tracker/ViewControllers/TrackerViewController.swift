@@ -124,15 +124,11 @@ final class TrackerViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         
         navigationItem.title = "tracker_title".localized
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage(named: "addSkillButton")?.withRenderingMode(.alwaysOriginal),
-            style: .plain ,
-            target: self,
-            action: #selector(pressAddSkillButton))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pressAddSkillButton))
+        navigationItem.leftBarButtonItem?.tintColor = UIColor(named: "ypBlackDay")
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        
+       
         let searchController = UISearchController(searchResultsController: nil)
         navigationItem.searchController = searchController
         searchController.searchBar.placeholder = "tracker_searchBar_placeholder".localized

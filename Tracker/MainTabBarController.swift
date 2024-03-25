@@ -38,10 +38,10 @@ class MainTabBarController: UITabBarController {
     }
     
     private func borderTabBar () {
-        tabBar.layer.borderColor = UIColor.gray.cgColor
+        tabBar.layer.borderColor = UIColor(named: "backgroundDay")?.cgColor
         tabBar.layer.borderWidth = 1.0
         tabBar.clipsToBounds = true
-        tabBar.backgroundColor = .ypWhiteDay
+//        tabBar.backgroundColor = .ypWhiteDay
     }
     
     private func generateVC(viewController: UIViewController, title: String, image: UIImage?) -> UIViewController {

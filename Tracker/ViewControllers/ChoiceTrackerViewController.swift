@@ -60,7 +60,7 @@ final class ChoiceTrackerViewController: UIViewController {
             button.backgroundColor = .ypBlackDay
             button.setTitle("choiceTracker_habit_button".localized, for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-            button.tintColor = .ypWhiteDay
+            button.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
             button.addTarget(self, action: #selector(Self.tapCreatingButton), for: .touchUpInside)
             return button
         }()
@@ -71,7 +71,7 @@ final class ChoiceTrackerViewController: UIViewController {
             button.backgroundColor = .ypBlackDay
             button.setTitle("choiceTracker_irregular_button".localized, for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-            button.tintColor = .ypWhiteDay
+            button.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
             button.addTarget(self, action: #selector(Self.tapIrregularButton), for: .touchUpInside)
             return button
         }()

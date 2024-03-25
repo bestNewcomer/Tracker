@@ -51,7 +51,7 @@ final class NewCategoryViewController: UIViewController {
     private lazy var readyButton: UIButton = {
         let button = UIButton()
         button.setTitle("newCategory_ready_button".localized, for: .normal)
-        button.setTitleColor(.ypWhiteDay, for: .normal)
+        button.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.backgroundColor = .ypGray
@@ -84,10 +84,10 @@ final class NewCategoryViewController: UIViewController {
     @objc private func textFieldTapped(sender: AnyObject) {
         guard let text = textField.text else { return }
         if text.isEmpty {
-            readyButton.backgroundColor = .ypGray
+            readyButton.backgroundColor = UIColor(named: "ypGray")
             readyButton.isEnabled = false
         } else {
-            readyButton.backgroundColor = .ypBlackDay
+            readyButton.backgroundColor = UIColor(named: "ypBlackDay")
             readyButton.isEnabled = true
         }
     }

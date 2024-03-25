@@ -34,6 +34,7 @@ final class ScheduleCell: UICollectionViewCell {
     lazy var switchDay: DaySwitch = {
         let switchDay = DaySwitch()
         switchDay.addTarget(self, action: #selector(self.didTapSwitch), for: .valueChanged)
+        switchDay.onTintColor = UIColor(named: "ypBlue")
         return switchDay
     }()
     

@@ -147,10 +147,9 @@ final class CreatingTrackerViewController: UIViewController {
     private lazy var  createButton: UIButton = {
         let button = UIButton()
         button.setTitle("creatingTracker_create_button".localized, for: .normal)
-        button.setTitleColor(.ypWhiteDay, for: .normal)
+        button.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
-        button.backgroundColor = .ypGray
         button.addTarget(self, action: #selector(tapСreateButton), for: .touchUpInside)
         return button
     }()
@@ -377,12 +376,12 @@ final class CreatingTrackerViewController: UIViewController {
     private var buttonIsEnable = false {
         willSet {
             if newValue {
-                createButton.backgroundColor = .ypBlackDay
-                createButton.setTitleColor(.ypWhiteDay, for: .normal)
+                createButton.backgroundColor = UIColor(named: "ypBlackDay")
+                createButton.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
                 createButton.isEnabled = true
             } else {
-                createButton.backgroundColor = .ypGray
-                createButton.setTitleColor(.ypWhiteDay, for: .normal)
+                createButton.backgroundColor = UIColor(named: "ypGray")
+                createButton.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
                 createButton.isEnabled = false
             }
         }
@@ -456,7 +455,7 @@ extension CreatingTrackerViewController: UICollectionViewDelegate {
         
         if collectionView == emojisCollectionView {
             selectedEmoji = emojis[indexPath.item]
-            cell?.allocationCell(emojiCell: true, allocationColor: .backgroundDay)
+            cell?.allocationCell(emojiCell: true, allocationColor: .ypLightGray)
         } else {
             selectedColor = colors[indexPath.item]
             cell?.allocationCell(emojiCell: false, allocationColor: selectedColor ?? .black)
