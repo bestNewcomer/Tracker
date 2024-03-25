@@ -11,7 +11,7 @@ import UIKit
 final class CategoriesViewController: UIViewController {
     
     // MARK: - Public Properties
-//    var onCategoriesUpdated: ((TrackerCategory) -> Void)?
+    
     var checkButtonValidation: (() -> Void)?
     
     //MARK:  - Private Properties
@@ -25,7 +25,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
-        label.customizeHeader(nameHeader: "Категория")
+        label.customizeHeader(nameHeader: "category_title".localized)
         return label
     }()
     
@@ -47,7 +47,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var addCategory: UIButton = {
         let button = UIButton()
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle("category_add_button".localized, for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -147,7 +147,7 @@ extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.cellID,for: indexPath) as? CategoryCell else {fatalError("Could not cast to CategoryCell")}
         cell.renamingLabelBasic(nameView: "\(viewModel.categories[indexPath.row].title)")
-       
+        
         if indexPath.row == viewModel.categories.count - 1 {
             cell.contentView.clipsToBounds = true
             cell.contentView.layer.cornerRadius = 16
@@ -165,7 +165,7 @@ extension CategoriesViewController: UITableViewDataSource {
         } else {
             cell.contentView.layer.cornerRadius = 0
         }
-
+        
         if viewModel.categories.count == 1 {
             cell.contentView.layer.maskedCorners = [
                 .layerMaxXMinYCorner,
@@ -174,7 +174,7 @@ extension CategoriesViewController: UITableViewDataSource {
                 .layerMinXMaxYCorner
             ]
         }
-
+        
         cell.selectionStyle = .none
         return cell
     }
@@ -189,13 +189,12 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? CategoryCell  {
             cell.selectImageCheck(image: "imageCheckMark")
             let selectedCategoryTitle = cell.getSelectedCategoryTitle()
             viewModel.selectCategory(with: selectedCategoryTitle)
-//            onCategoriesUpdated?(viewModel.categories[indexPath.row])
             checkButtonValidation?()
             tableView.deselectRow(at: indexPath, animated: true)
         }
@@ -203,16 +202,14 @@ extension CategoriesViewController: UITableViewDelegate {
             self?.dismiss(animated: true, completion: nil)
         }
     }
-
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let separatorInset: CGFloat = 16
         let separatorWidth = tableView.bounds.width - separatorInset * 2
         let separatorHeight: CGFloat = 1.0
         let separatorX = separatorInset
         let separatorY = cell.frame.height - separatorHeight
-
         let isLastCell = indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1
-
         if !isLastCell {
             let separatorView = UIView(frame: CGRect(x: separatorX, y: separatorY, width: separatorWidth, height: separatorHeight))
             separatorView.backgroundColor = .ypGray

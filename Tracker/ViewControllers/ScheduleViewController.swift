@@ -26,13 +26,13 @@ final class ScheduleViewController: UIViewController {
     
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
-        label.customizeHeader(nameHeader: "Расписание")
+        label.customizeHeader(nameHeader: "schedule_title".localized)
         return label
     }()
     
     private lazy var readyButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("schedule_ready_button".localized, for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -119,7 +119,7 @@ extension ScheduleViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScheduleCell.cellID, for: indexPath) as? ScheduleCell else { fatalError("Failed to cast UICollectionViewCell to ScheduleCell") }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScheduleCell.cellID, for: indexPath) as? ScheduleCell else { fatalError("Failed to cast scheduleCollectionView to ScheduleCell") }
         cell.renamingLabelBasic(nameView: DaysOfWeek.allCases[indexPath.row].translation, isOn: daysWeek.contains(DaysOfWeek.allCases[indexPath.row]))
         
         if indexPath.row == 0 {
@@ -171,7 +171,6 @@ extension ScheduleViewController {
         if isOn {
             if !daysWeek.contains(day) {
                 daysWeek.insert(day)
-//                daysWeek.sorted(by: { $0.rawValue < $1.rawValue })
             }
         } else {
             for day in daysWeek {

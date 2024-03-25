@@ -32,32 +32,32 @@ extension DaysOfWeek {
     
     var translation: String {
         switch self {
-        case .monday: return "Понедельник"
-        case .tuesday: return "Вторник"
-        case .wednesday: return "Среда"
-        case .thursday: return "Четверг"
-        case .friday: return "Пятница"
-        case .saturday: return "Суббота"
-        case .sunday: return "Воскресенье"
+        case .monday: return "monday".localized
+        case .tuesday: return "tuesday".localized
+        case .wednesday: return "wednesday".localized
+        case .thursday: return "thursday".localized
+        case .friday: return "friday".localized
+        case .saturday: return "saturday".localized
+        case .sunday: return "sunday".localized
         }
     }
     
     var reductions: String {
         switch self {
         case .monday:
-            return "Пн"
+            return "mondayShort".localized
         case .tuesday:
-            return "Вт"
+            return "tuesdayShort".localized
         case .wednesday:
-            return "Ср"
+            return "wednesdayShort".localized
         case .thursday:
-            return "Чт"
+            return "thursdayShort".localized
         case .friday:
-            return "Пт"
+            return "fridayShort".localized
         case .saturday:
-            return "Сб"
+            return "saturdayShort".localized
         case .sunday:
-            return "Вс"
+            return "sundayShort".localized
         }
     }
     

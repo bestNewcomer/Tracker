@@ -18,7 +18,6 @@ final class SpecialSectionHeader: UICollectionReusableView {
         super.init(frame: frame)
         
         addSubview(titleLabel)
-        titleLabel.text = "Домашний уют"
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         

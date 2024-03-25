@@ -25,9 +25,8 @@ final class TrackerViewController: UIViewController {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "tracker_datepicker".localized)
         datePicker.widthAnchor.constraint(equalToConstant: 120).isActive = true
-        datePicker.locale = Locale(identifier: "ru_RU")
-        datePicker.calendar.locale = Locale(identifier: "ru_RU")
         datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         return datePicker
     }()
@@ -39,7 +38,7 @@ final class TrackerViewController: UIViewController {
     
     private lazy var  stubLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = "tracker_placeholder".localized
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackDay
         return label
@@ -103,7 +102,7 @@ final class TrackerViewController: UIViewController {
             let button = UIButton()
             button.tintColor = .white
             button.backgroundColor = .ypBlue
-            button.setTitle("Фильтры", for: .normal)
+            button.setTitle("tracker_filtre_button_title".localized, for: .normal)
             button.layer.cornerRadius = 16
             button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
             button.addTarget(self, action: #selector(Self.tapFilterSelection), for: .touchUpInside)
@@ -124,7 +123,7 @@ final class TrackerViewController: UIViewController {
     private func navBarTracker () {
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        navigationItem.title = "Трекеры"
+        navigationItem.title = "tracker_title".localized
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(named: "addSkillButton")?.withRenderingMode(.alwaysOriginal),
@@ -136,7 +135,7 @@ final class TrackerViewController: UIViewController {
         
         let searchController = UISearchController(searchResultsController: nil)
         navigationItem.searchController = searchController
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = "tracker_searchBar_placeholder".localized
         searchController.searchBar.delegate = self
         searchController.delegate = self
     }
@@ -207,7 +206,7 @@ final class TrackerViewController: UIViewController {
         stubLabel.isHidden = hasTrackersToShow
         trackersCollectionView.isHidden = !hasTrackersToShow
         
-        stubLabel.text = isSearching ? "Ничего не найдено" : "Что будем отслеживать?"
+        stubLabel.text = isSearching ? "tracker_isSearching_yes_placeholder".localized : "tracker_isSearching_no_placeholder".localized
         stubImage.image = UIImage(named: isSearching ? "imageSearchStub" : "imageTrackerStub")
     }
     
@@ -299,13 +298,13 @@ extension TrackerViewController: UICollectionViewDelegate {
         let indexPath = indexPaths[0]
         return UIContextMenuConfiguration(actionProvider: { actions in
             return UIMenu(children: [
-                UIAction(title: "Закрепить") { [weak self] _ in
+                UIAction(title: "tracker_context_menu_pin_button".localized) { [weak self] _ in
                     self?.makeSecure(indexPath: indexPath)
                 },
-                UIAction(title: "Редактировать") { [weak self] _ in
+                UIAction(title: "tracker_context_menu_edit_button".localized) { [weak self] _ in
                     self?.makeEdit(indexPath: indexPath)
                 },
-                UIAction(title: "Удалить") { [weak self] _ in
+                UIAction(title: "tracker_context_menu_delete_button".localized) { [weak self] _ in
                     self?.makeDelete(indexPath: indexPath) // добавить красный цвет
                 },
             ])

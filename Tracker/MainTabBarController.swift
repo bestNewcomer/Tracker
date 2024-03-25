@@ -25,12 +25,12 @@ class MainTabBarController: UITabBarController {
         viewControllers = [
             UINavigationController(rootViewController: generateVC(
                 viewController: TrackerViewController(),
-                title: "Трекеры",
+                title: "mainTabBarController_tracker_title".localized,
                 image: UIImage(named: "imageTracker"))
             ),
             UINavigationController(rootViewController: generateVC(
                 viewController: StatisticsViewController(),
-                title: "Статистика",
+                title: "mainTabBarController_statistics_title".localized,
                 image: UIImage(named: "imageStatistics"))
             )
         ]

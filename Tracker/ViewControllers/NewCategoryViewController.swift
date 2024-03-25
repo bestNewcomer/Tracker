@@ -13,8 +13,7 @@ protocol NewCategoryViewControllerDelegate: AnyObject {
 }
 
 final class NewCategoryViewController: UIViewController {
-    
-    
+    //MARK:  - Public Properties
     weak var delegate: NewCategoryViewControllerDelegate?
     
     //MARK:  - Private Properties
@@ -22,13 +21,13 @@ final class NewCategoryViewController: UIViewController {
     
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
-        label.customizeHeader(nameHeader: "Новая категория")
+        label.customizeHeader(nameHeader: "newCategory_title".localized)
         return label
     }()
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = "newCategory_searchBar_placeholder".localized
         textField.layer.cornerRadius = 16
         textField.backgroundColor = .backgroundDay
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
@@ -43,7 +42,7 @@ final class NewCategoryViewController: UIViewController {
     
     private let labelRestrictions: UILabel = {
         let label = UILabel()
-        label.text = "Ограничение 38 символов"
+        label.text = "newCategory_limit_text".localized
         label.textColor = .ypRed
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return label
@@ -51,7 +50,7 @@ final class NewCategoryViewController: UIViewController {
     
     private lazy var readyButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("newCategory_ready_button".localized, for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16

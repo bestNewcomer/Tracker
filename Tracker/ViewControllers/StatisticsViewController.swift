@@ -21,7 +21,7 @@ final class StatisticsViewController: UIViewController {
     //MARK:  - Private Methods
     private func navBarStatistics () {
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.title = "Статистика"
+        navigationItem.title = "statistics_title".localized
     }
     
     private func statisticsStub () {
@@ -32,7 +32,7 @@ final class StatisticsViewController: UIViewController {
         
         let stubLabel: UILabel = {
             let label = UILabel()
-            label.text = "Анализировать пока нечего"
+            label.text = "statistics_placeholder".localized
             label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
             label.textColor = .black
             return label

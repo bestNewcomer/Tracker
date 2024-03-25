@@ -55,7 +55,6 @@ final class TrackerCell: UICollectionViewCell {
     private var counterLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.text = "0 день"
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackDay
         return label
@@ -99,15 +98,21 @@ final class TrackerCell: UICollectionViewCell {
                        emoji: String,
                        completedDays: Int,    
                        isCompleted: Bool) {
+        let completedDaysText = convertCompletedDays(completedDays)
+        
         trackerId = id
         titleLabel.text = name
         colorTopCell.backgroundColor = color
         countButtom.backgroundColor = color
         smileyLabel.text = emoji
-        counterLabel.text = "\(completedDays) дней"
+        counterLabel.text = completedDaysText
         isCompleted ? countButtom.setImage(previousImage, for: .normal) : countButtom.setImage(buttonImage, for: .normal)
     }
     
+    private func convertCompletedDays(_ completedDays: Int) -> String {
+        let formatString = NSLocalizedString("numberValue", comment: "Completed days of Tracker")
+        return String.localizedStringWithFormat(formatString, completedDays)
+    }
     // MARK: - Private Methods
     private func addSubView(){
         contentView.addSubview(colorTopCell)

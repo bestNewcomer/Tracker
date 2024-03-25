@@ -21,7 +21,6 @@ final class CreatingTrackerViewController: UIViewController {
     weak var delegate: NewTrackerCreationDelegate?
     var onCompletion: (() -> Void)?
     var habitIndicator = true
-//    var category: TrackerCategory?
     
     //MARK:  - Private Properties
     private var emojisCollectionView: UICollectionView!
@@ -76,7 +75,7 @@ final class CreatingTrackerViewController: UIViewController {
     
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = "creatingTracker_textField_placeholder".localized
         textField.layer.cornerRadius = 16
         textField.backgroundColor = .backgroundDay
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
@@ -88,7 +87,7 @@ final class CreatingTrackerViewController: UIViewController {
     
     private let labelRestrictions: UILabel = {
         let label = UILabel()
-        label.text = "Ограничение 38 символов"
+        label.text = "creatingTracker_limit_text".localized
         label.textColor = .ypRed
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return label
@@ -105,7 +104,7 @@ final class CreatingTrackerViewController: UIViewController {
     
     private lazy var viewCategories: SpecialView = {
         let specialView = SpecialView()
-        specialView.renamingLabelBasic(nameView: "Категория")
+        specialView.renamingLabelBasic(nameView: "creatingTracker_category_button".localized)
         specialView.jump = { [weak self] in
             self?.updateButtonCategories()
         }
@@ -114,7 +113,7 @@ final class CreatingTrackerViewController: UIViewController {
     
     private lazy var viewSchedule: SpecialView = {
         let specialView = SpecialView()
-        specialView.renamingLabelBasic(nameView: "Расписание")
+        specialView.renamingLabelBasic(nameView: "creatingTracker_timetable_button".localized)
         specialView.jump = { [weak self] in
             self?.updateButtonSchedule()
         }
@@ -135,7 +134,7 @@ final class CreatingTrackerViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle("creatingTracker_cancel_button".localized, for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -147,7 +146,7 @@ final class CreatingTrackerViewController: UIViewController {
     
     private lazy var  createButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Создать", for: .normal)
+        button.setTitle("creatingTracker_create_button".localized, for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -199,7 +198,6 @@ final class CreatingTrackerViewController: UIViewController {
             emoji: selectedEmoji,
             timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday, ]
         )
-        
         delegate?.trackerCreated(tracker, categoryName)
         onCompletion?()
         dismiss(animated: false, completion: nil)
@@ -208,9 +206,9 @@ final class CreatingTrackerViewController: UIViewController {
     //MARK:  - Public Methods
     func hubitOrIrregular() {
         if habitIndicator == true {
-            labelTitle.customizeHeader(nameHeader: "Новая привычка")
+            labelTitle.customizeHeader(nameHeader: "creatingTracker_habit_title".localized)
         } else {
-            labelTitle.customizeHeader(nameHeader: "Новое нерегулярное событие")
+            labelTitle.customizeHeader(nameHeader: "creatingTracker_hirregular_title".localized)
         }
     }
     
@@ -219,8 +217,8 @@ final class CreatingTrackerViewController: UIViewController {
         schedule.onScheduleUpdated = { [weak self] updatedSchedule in
             self?.selectedSchedule = updatedSchedule
             self?.formattedSchedule = Schedule(markedDays: updatedSchedule).scheduleText
-            self?.viewSchedule.renamingLabelBasic(nameView: "Расписание")
-            self?.viewSchedule.renamingLabelSecondary(surnameView: self?.formattedSchedule ?? "расписание не работает")
+            self?.viewSchedule.renamingLabelBasic(nameView: "creatingTracker_timetable_button".localized)
+            self?.viewSchedule.renamingLabelSecondary(surnameView: self?.formattedSchedule ?? "Schedule not working")
         }
         schedule.modalPresentationStyle = .pageSheet
         present(schedule, animated: true)
@@ -228,7 +226,7 @@ final class CreatingTrackerViewController: UIViewController {
     
     func updateButtonCategories() {
         let categoriesViewController = CategoriesViewController(delegate: self, selectedCategories: category)
-            viewCategories.renamingLabelBasic(nameView: "Категория")
+        viewCategories.renamingLabelBasic(nameView: "creatingTracker_category_button".localized)
             viewCategories.renamingLabelSecondary(surnameView: formattedCategories)
             categoriesViewController.modalPresentationStyle = .pageSheet
             present(categoriesViewController, animated: true)
@@ -411,7 +409,6 @@ extension CreatingTrackerViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
-    
 }
 
 // MARK: - UICollectionViewDataSource
@@ -437,11 +434,11 @@ extension CreatingTrackerViewController: UICollectionViewDataSource {
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,withReuseIdentifier: SpecialSectionHeader.headerID,for: indexPath) as? SpecialSectionHeader
             else { fatalError("Failed to cast UICollectionReusableView to SpecialSectionHeader") }
             if collectionView == emojisCollectionView {
-                header.titleLabel.text = "Emoji"
+                header.titleLabel.text = "creatingTracker_collectionEmoji_header".localized
                 header.frame.origin.x = CGFloat(-20)
                 return header
             } else {
-                header.titleLabel.text = "Цвет"
+                header.titleLabel.text = "creatingTracker_collectionColor_header".localized
                 header.frame.origin.x = CGFloat(-20)
                 return header
             }

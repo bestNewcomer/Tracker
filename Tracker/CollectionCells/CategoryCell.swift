@@ -16,7 +16,6 @@ final class CategoryCell: UITableViewCell {
     lazy var labelBasic: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlackDay
-        label.text = "Важное"
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return label
     }()
@@ -67,20 +66,15 @@ final class CategoryCell: UITableViewCell {
     
     // MARK: - Private Methods
     private func settingsView() {
-//        contentView.addSubview(divider)
         contentView.addSubview(labelBasic)
         contentView.addSubview(imageCheck)
         
-//        divider.translatesAutoresizingMaskIntoConstraints = false
         labelBasic.translatesAutoresizingMaskIntoConstraints = false
         imageCheck.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.backgroundColor = .backgroundDay
         
         NSLayoutConstraint.activate([
-//            divider.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9),
-//            divider.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            divider.heightAnchor.constraint(equalToConstant: 0.5),
             labelBasic.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             labelBasic.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             labelBasic.heightAnchor.constraint(equalTo: contentView.heightAnchor),

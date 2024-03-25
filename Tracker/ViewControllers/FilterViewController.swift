@@ -11,7 +11,7 @@
 //final class FilterViewController: UIViewController {
 //    
 //    // MARK: - Public Properties
-//    private let filterList = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Не завершенные"]
+//    private let filterList = ["filter_all".localized, "filter_today".localized, "filter_finished".localized, "filter_unfinished".localized]
 //    
 //    //MARK:  - Private Properties
 //    private var filterCollectionView: UICollectionView!
@@ -25,7 +25,7 @@
 //    
 //    private lazy var labeltitle: SpecialHeader = {
 //        let label = SpecialHeader()
-//        label.customizeHeader(nameHeader: "Фильтры")
+//        label.customizeHeader(nameHeader: "filter_title".localized)
 //        return label
 //    }()
 //    
