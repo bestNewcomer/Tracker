@@ -58,7 +58,7 @@ final class TrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .ypWhiteDay
+        //view.backgroundColor = .ypWhiteDay
         
         hideKeyboard()
         trackerStub()
@@ -122,7 +122,9 @@ final class TrackerViewController: UIViewController {
     
     private func navBarTracker () {
         navigationController?.navigationBar.prefersLargeTitles = true
-        
+        navigationController?.navigationBar.backgroundColor = .ypWhiteDay
+        UINavigationBar.appearance().shadowImage = UIImage()
+
         navigationItem.title = "tracker_title".localized
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pressAddSkillButton))
         navigationItem.leftBarButtonItem?.tintColor = UIColor(named: "ypBlackDay")
@@ -141,7 +143,7 @@ final class TrackerViewController: UIViewController {
         
         trackersCollectionView.register(TrackerCell.self, forCellWithReuseIdentifier: TrackerCell.cellID)
         trackersCollectionView.register(SpecialSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SpecialSectionHeader.headerID)
-        
+        trackersCollectionView.backgroundColor = .ypWhiteDay
         trackersCollectionView.dataSource = self
         trackersCollectionView.delegate = self
         
