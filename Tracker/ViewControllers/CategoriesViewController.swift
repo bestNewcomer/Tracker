@@ -11,14 +11,12 @@ import UIKit
 final class CategoriesViewController: UIViewController {
     
     // MARK: - Public Properties
-    var onCategoriesUpdated: ((TrackerCategory) -> Void)?
-    var trackerViewController = TrackerViewController()
+//    var onCategoriesUpdated: ((TrackerCategory) -> Void)?
     var checkButtonValidation: (() -> Void)?
     
     //MARK:  - Private Properties
-    private var categoriesCollectionView: UICollectionView!
-    private let params: GeometricParams
-    private let trackerCategoryStore = TrackerCategoryStore.shared
+    private var viewModel: CategoriesViewModel
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .ypWhiteDay
@@ -29,6 +27,22 @@ final class CategoriesViewController: UIViewController {
         let label = SpecialHeader()
         label.customizeHeader(nameHeader: "Категория")
         return label
+    }()
+    
+    private lazy var categoriesTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(
+            CategoryCell.self,
+            forCellReuseIdentifier: CategoryCell.cellID
+        )
+        tableView.backgroundColor = .clear
+        tableView.layer.cornerRadius = 16
+        tableView.separatorStyle = .none
+        tableView.allowsMultipleSelection = false
+        tableView.showsVerticalScrollIndicator = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        return tableView
     }()
     
     private lazy var addCategory: UIButton = {
@@ -43,8 +57,14 @@ final class CategoriesViewController: UIViewController {
     }()
     
     // MARK: - Initialization
-    init() {
-        self.params = GeometricParams(cellCount: 1, leftInset: 0, rightInset: 0, cellSpacing: 0)
+    init(
+        delegate: CategoriesViewModelDelegate?,
+        selectedCategories: TrackerCategory?
+    ) {
+        viewModel = CategoriesViewModel(
+            selectedCategories: selectedCategories,
+            delegate: delegate
+        )
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -57,36 +77,40 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
-        subSettingsCollectionsView()
+        viewModel.updateClosure = { [weak self] in
+            print("Update closure called")
+            guard let self else { return }
+            self.categoriesTableView.reloadData()
+            self.updateNotFoundedCategories()
+        }
         settingsConstraints()
     }
     
     // MARK: - Actions
     @objc private func tapAddCategory(){
-        let jump = NewCategoryViewController()
-        jump.modalPresentationStyle = .pageSheet
-        present(jump, animated: true)
+        let newCategoryViewController = NewCategoryViewController()
+        newCategoryViewController.delegate = self
+        newCategoryViewController.modalPresentationStyle = .pageSheet
+        present(newCategoryViewController, animated: true)
+    }
+    
+    //MARK:  - Public Methods
+    func updateNotFoundedCategories()  {
+        categoriesTableView.isHidden = viewModel.isTableViewHidden
     }
     
     //MARK:  - Private Methods
-    private func subSettingsCollectionsView() {
-        categoriesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        categoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.cellID)
-        categoriesCollectionView.dataSource = self
-        categoriesCollectionView.delegate = self
-        categoriesCollectionView.layer.cornerRadius = 16
-        categoriesCollectionView.allowsMultipleSelection = false
-    }
-    
     private func settingsConstraints() {
         view.addSubview(scrollView)
         scrollView.addSubview(labeltitle)
-        scrollView.addSubview(categoriesCollectionView)
+        scrollView.addSubview(categoriesTableView)
         scrollView.addSubview(addCategory)
+        
+        
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         labeltitle.translatesAutoresizingMaskIntoConstraints = false
-        categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        categoriesTableView.translatesAutoresizingMaskIntoConstraints = false
         addCategory.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -99,10 +123,10 @@ final class CategoriesViewController: UIViewController {
             labeltitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             labeltitle.heightAnchor.constraint(equalToConstant: 22),
             
-            categoriesCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
-            categoriesCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            categoriesCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            categoriesCollectionView.heightAnchor.constraint(equalToConstant: 150), //Пока так, потом придеться проставить зависимость от напонения
+            categoriesTableView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
+            categoriesTableView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            categoriesTableView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            categoriesTableView.bottomAnchor.constraint(equalTo: addCategory.topAnchor, constant: -16),
             
             addCategory.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategory.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
@@ -112,59 +136,96 @@ final class CategoriesViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource
-extension CategoriesViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return trackerViewController.categories.count
+// MARK: - UITableViewDataSource
+extension CategoriesViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let count = viewModel.categories.count
+        updateNotFoundedCategories()
+        return count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCell.cellID, for: indexPath) as? CategoryCell else { fatalError("Failed to cast UICollectionViewCell to CategoriesCell") }
-        cell.renamingLabelBasic(nameView: "\(trackerViewController.categories[indexPath.row].title)")
-        if indexPath.row == 0 {
-            cell.divider.backgroundColor = .backgroundDay
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.cellID,for: indexPath) as? CategoryCell else {fatalError("Could not cast to CategoryCell")}
+        cell.renamingLabelBasic(nameView: "\(viewModel.categories[indexPath.row].title)")
+       
+        if indexPath.row == viewModel.categories.count - 1 {
+            cell.contentView.clipsToBounds = true
+            cell.contentView.layer.cornerRadius = 16
+            cell.contentView.layer.maskedCorners = [
+                .layerMaxXMaxYCorner,
+                .layerMinXMaxYCorner
+            ]
+        } else if indexPath.row == 0 {
+            cell.contentView.clipsToBounds = true
+            cell.contentView.layer.cornerRadius = 16
+            cell.contentView.layer.maskedCorners = [
+                .layerMaxXMinYCorner,
+                .layerMinXMinYCorner
+            ]
+        } else {
+            cell.contentView.layer.cornerRadius = 0
         }
-        cell.jump = { [self] in
-            self.updateCategories(categoryIndex: indexPath.row)
-            onCategoriesUpdated?(trackerViewController.categories[indexPath.row])
-            checkButtonValidation?()
-            dismiss(animated: true, completion: nil)
+
+        if viewModel.categories.count == 1 {
+            cell.contentView.layer.maskedCorners = [
+                .layerMaxXMinYCorner,
+                .layerMinXMinYCorner,
+                .layerMaxXMaxYCorner,
+                .layerMinXMaxYCorner
+            ]
         }
+
+        cell.selectionStyle = .none
         return cell
     }
-}
-
-// MARK: - UICollectionViewDelegateFlowLayout
-extension CategoriesViewController: UICollectionViewDelegateFlowLayout {
-    //отступы от края коллекции
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, 
-                            left: params.leftInset,
-                            bottom: 0,
-                            right: params.rightInset)
-    }
-    // размеры ячейки
-    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = categoriesCollectionView.frame.width - params.paddingWidth
-        let availableHeight = categoriesCollectionView.frame.height
-        let cellWidth =  availableWidth / CGFloat(params.cellCount)
-        let cellHeight = availableHeight / CGFloat(trackerViewController.categories.count)
-        return CGSize(width: cellWidth, height: cellHeight)
-    }
-    // расстояние между ячейками по вертикали
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(0)
-    }
-    // расстояние между ячейками по горизонтали
-    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(params.cellSpacing)
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        1
     }
 }
 
-extension CategoriesViewController {
-    func updateCategories(categoryIndex: Int) {
-//        let category = trackerViewController.categories[categoryIndex].title
-        
-        categoriesCollectionView.reloadItems(at: [IndexPath(row: categoryIndex, section: 0)])
+// MARK: - UITableViewDelegate
+extension CategoriesViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? CategoryCell  {
+            cell.selectImageCheck(image: "imageCheckMark")
+            let selectedCategoryTitle = cell.getSelectedCategoryTitle()
+            viewModel.selectCategory(with: selectedCategoryTitle)
+//            onCategoriesUpdated?(viewModel.categories[indexPath.row])
+            checkButtonValidation?()
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.dismiss(animated: true, completion: nil)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let separatorInset: CGFloat = 16
+        let separatorWidth = tableView.bounds.width - separatorInset * 2
+        let separatorHeight: CGFloat = 1.0
+        let separatorX = separatorInset
+        let separatorY = cell.frame.height - separatorHeight
+
+        let isLastCell = indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1
+
+        if !isLastCell {
+            let separatorView = UIView(frame: CGRect(x: separatorX, y: separatorY, width: separatorWidth, height: separatorHeight))
+            separatorView.backgroundColor = .ypGray
+            cell.addSubview(separatorView)
+        }
+    }
+}
+
+// MARK: - NewCategoryViewControllerDelegate
+extension CategoriesViewController: NewCategoryViewControllerDelegate {
+    func addCategory(_ category: TrackerCategory) {
+        viewModel.selectCategory(with: category.title)
+        viewModel.selectedCategories(category)
+        categoriesTableView.reloadData()
     }
 }

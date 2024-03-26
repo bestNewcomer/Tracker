@@ -8,9 +8,7 @@
 import UIKit
 
 final class TrackerViewController: UIViewController {
-    //MARK:  - Public Properties
-    var categories: [TrackerCategory] = [TrackerCategory(title: "По умолчанию", trackersArray: [])]
-    
+  
     //MARK:  - Private Properties
     private var trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private let params: GeometricParams
@@ -93,9 +91,9 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func tapFilterSelection () {
-        let jump = FilterViewController()
-        jump.modalPresentationStyle = .pageSheet
-        present(jump, animated: true)
+//        let jump = FilterViewController()
+//        jump.modalPresentationStyle = .pageSheet
+//        present(jump, animated: true)
     }
     
     

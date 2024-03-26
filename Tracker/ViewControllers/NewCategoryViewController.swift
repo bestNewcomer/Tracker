@@ -8,9 +8,18 @@
 import Foundation
 import UIKit
 
+protocol NewCategoryViewControllerDelegate: AnyObject {
+    func addCategory(_ category: TrackerCategory)
+}
+
 final class NewCategoryViewController: UIViewController {
     
+    
+    weak var delegate: NewCategoryViewControllerDelegate?
+    
     //MARK:  - Private Properties
+    private let trackerCategoryStore = TrackerCategoryStore.shared
+    
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
         label.customizeHeader(nameHeader: "Новая категория")
@@ -27,6 +36,8 @@ final class NewCategoryViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.delegate = self
         textField.resignFirstResponder()
+        textField.clearButtonMode = .whileEditing
+        textField.addTarget(self, action: #selector(textFieldTapped(sender:)), for: .editingChanged)
         return textField
     }()
     
@@ -44,7 +55,7 @@ final class NewCategoryViewController: UIViewController {
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
-        button.backgroundColor = .ypBlackDay
+        button.backgroundColor = .ypGray
         button.addTarget(self, action: #selector(tapAddCategory), for: .touchUpInside)
         return button
     }()
@@ -60,7 +71,26 @@ final class NewCategoryViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func tapAddCategory(){
+        guard let title = textField.text else { return }
+        let category = TrackerCategory(
+            title: title,
+            trackersArray: []
+        )
+        try? trackerCategoryStore.addNewTrackerCategory(category)
+        delegate?.addCategory(category)
+        dismiss(animated: true)
         
+    }
+    
+    @objc private func textFieldTapped(sender: AnyObject) {
+        guard let text = textField.text else { return }
+        if text.isEmpty {
+            readyButton.backgroundColor = .ypGray
+            readyButton.isEnabled = false
+        } else {
+            readyButton.backgroundColor = .ypBlackDay
+            readyButton.isEnabled = true
+        }
     }
     
     //MARK:  - Private Methods
@@ -115,6 +145,11 @@ extension NewCategoryViewController: UITextFieldDelegate {
                 labelRestrictions.removeFromSuperview()
             }
         }
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
         return true
     }
 }
