@@ -79,7 +79,6 @@ final class TrackerViewController: UIViewController {
         reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
         settingsCollectionView()
         navBarTracker()
-        
         completedTracker = trackerRecordStore.trackerRecords
         trackerStore.delegate = self
         trackerCategoryStore.delegate = self
@@ -135,7 +134,8 @@ final class TrackerViewController: UIViewController {
         trackersCollectionView.backgroundColor = .ypWhiteDay
         trackersCollectionView.dataSource = self
         trackersCollectionView.delegate = self
-        
+//        trackersCollectionView.allowsMultipleSelection = false
+                
         view.addSubview(trackersCollectionView)
         view.addSubview(filterButton)
         
@@ -173,23 +173,77 @@ final class TrackerViewController: UIViewController {
         stubLabel.isHidden = true
     }
     
-    //    private func isTrackerCompletedOnCurrentDate(trackerId: UUID) -> Bool {
-    //        return completedTracker.contains(where: { $0.idRecord == trackerId && Calendar.current.isDate($0.dateRecord, inSameDayAs: currentDate)})
-    //    }
-    
-    private func makeSecure(indexPath: IndexPath) {
-        //let cell = trackersCollectionView.cellForItem(at: indexPath) as? TrackerCollectionCell
-        //cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
+    func setupContextMenu(_ indexPath: IndexPath) -> UIMenu {
+        let tracker: Tracker
+
+        if indexPath.section == 0 {
+            tracker = pinnedTrackers[indexPath.row]
+        } else {
+            tracker = visibleCategories[indexPath.section - 1].visibleTrackers(filterString: searchText, pin: false)[indexPath.row]
+        }
+
+        let pinActionTitle = tracker.isPinned == true ? "Открепить" : "Закрепить"
+        let pinAction = UIAction(title: pinActionTitle, image: nil) { [weak self] action in
+            guard let self = self else { return }
+            do {
+                try self.trackerStore.changeTrackerPinStatus(tracker)
+                self.reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
+                self.trackersCollectionView.reloadData()
+            } catch {
+                print("Error pinning tracker: \(error)")
+            }
+        }
+
+        let editAction = UIAction(title: "Редактировать") { [weak self] action in
+            let editTrackerViewController = CreatingTrackerViewController()
+            editTrackerViewController.editTracker = tracker
+            editTrackerViewController.editTrackerDate = self?.datePicker.date ?? Date()
+            editTrackerViewController.category = tracker.category
+            self?.present(editTrackerViewController, animated: true)
+        }
+
+        let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
+            self?.showAlert(tracker: tracker)
+        }
+        return UIMenu(children: [pinAction, editAction, deleteAction])
     }
     
-    private func makeEdit(indexPath: IndexPath) {
-        //let cell = trackersCollectionView.cellForItem(at: indexPath) as? TrackerCollectionCell
-        //cell?.titleLabel.font = UIFont.italicSystemFont(ofSize: 17)
+    func showAlert(tracker: Tracker) {
+        let alert = UIAlertController(
+            title: nil,
+            message: "Уверены, что хотите удалить трекер?",
+            preferredStyle: .actionSheet
+        )
+        
+        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            self?.deleteTracker(tracker)
+        }
+        alert.addAction(deleteAction)
+
+        let cancelAction = UIAlertAction(
+            title: "Отменить",
+            style: .cancel) { _ in
+
+            }
+
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true, completion: nil)
     }
     
-    private func makeDelete(indexPath: IndexPath) {
-        //let cell = trackersCollectionView.cellForItem(at: indexPath) as? TrackerCollectionCell
-        //cell?.titleLabel.font = UIFont.italicSystemFont(ofSize: 17)
+    func deleteTracker(_ tracker: Tracker) {
+        try? self.trackerStore.deleteTracker(tracker)
+        trackerRecordStore.reload()
+        do {
+            try trackerStore.deleteTracker(tracker)
+        } catch {
+            print("Ошибка при удалении трекера: \(error)")
+        }
+
+        do {
+            try trackerRecordStore.deleteAllTrackerRecords(with: tracker.id)
+        } catch {
+            print("Ошибка при удалении записей: \(error)")
+        }
     }
     
     private func updateView() {
@@ -284,7 +338,7 @@ extension TrackerViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         let count = visibleCategories.count
         trackersCollectionView.isHidden = count == 0 && pinnedTrackers.count == 0
-        filterButton.isHidden = collectionView.isHidden && selectedFilter == nil
+        filterButton.isHidden = trackersCollectionView.isHidden && selectedFilter == nil
         return count + 1
     }
     
@@ -338,25 +392,13 @@ extension TrackerViewController: UICollectionViewDelegate {
             fatalError("Unexpected element kind")
         }
     }
-    // контекстное меню ячейки
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-        guard indexPaths.count > 0 else {
-            return nil
+     
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let identifier = "\(indexPath.row):\(indexPath.section)" as NSString
+
+        return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
+            return self.setupContextMenu(indexPath)
         }
-        let indexPath = indexPaths[0]
-        return UIContextMenuConfiguration(actionProvider: { actions in
-            return UIMenu(children: [
-                UIAction(title: "tracker_context_menu_pin_button".localized) { [weak self] _ in
-                    self?.makeSecure(indexPath: indexPath)
-                },
-                UIAction(title: "tracker_context_menu_edit_button".localized) { [weak self] _ in
-                    self?.makeEdit(indexPath: indexPath)
-                },
-                UIAction(title: "tracker_context_menu_delete_button".localized) { [weak self] _ in
-                    self?.makeDelete(indexPath: indexPath) // добавить красный цвет
-                },
-            ])
-        })
     }
 }
 
@@ -390,10 +432,6 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
             return .zero
         }
         return CGSize(width: collectionView.frame.width, height: 30)
-//        let indexPath = IndexPath(row: 2, section: section)
-//        let headerView = self.collectionView(trackersCollectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-//        
-//        return headerView.systemLayoutSizeFitting(CGSize(width: trackersCollectionView.frame.width,height: UIView.layoutFittingExpandedSize.height),withHorizontalFittingPriority: .required,verticalFittingPriority: .fittingSizeLevel)
     }
 }
 

@@ -19,13 +19,15 @@ final class CreatingTrackerViewController: UIViewController {
     weak var delegate: NewTrackerCreationDelegate?
     var onCompletion: (() -> Void)?
     var habitIndicator = true
+    var editTracker: Tracker?
+    var editTrackerDate: Date?
+    var category: TrackerCategory?
     
     //MARK:  - Private Properties
     private var emojisCollectionView: UICollectionView!
     private var colorsCollectionView: UICollectionView!
     private let params: GeometricParams
     private var selectedSchedule: [DaysOfWeek] = []
-    private var category: TrackerCategory?
     private var completedTracker: [TrackerRecord] = []
     private let trackerRecordStore = TrackerRecordStore()
     private var formattedSchedule: String = "" {

@@ -14,6 +14,10 @@ struct Tracker {
     let emoji: String
     let timetable: [DaysOfWeek]?
     let isPinned: Bool?
+    
+    var category: TrackerCategory? {
+        return TrackerCategoryStore().category(forTracker: self)
+    }
 }
 
 

@@ -24,13 +24,13 @@ final class TrackerCell: UICollectionViewCell {
     private var previousImage = UIImage(named: "imageCheckMark")!
     private let buttonImage = UIImage(named: "addSkillButton")!
     
-    private var colorTopCell: UIView = {
+    var colorTopCell: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
         return view
     }()
     
-    private var smileyLabel: UILabel = {
+    private lazy var smileyLabel: UILabel = {
         let label = UILabel()
         label.layer.cornerRadius = 12
         label.clipsToBounds = true
@@ -42,7 +42,7 @@ final class TrackerCell: UICollectionViewCell {
         return label
     }()
     
-    private var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.numberOfLines = 0
@@ -52,7 +52,7 @@ final class TrackerCell: UICollectionViewCell {
         return label
     }()
     
-    private var counterLabel: UILabel = {
+    private lazy var counterLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)

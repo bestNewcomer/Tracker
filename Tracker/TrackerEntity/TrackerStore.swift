@@ -81,6 +81,16 @@ final class TrackerStore: NSObject {
         try context.save()
     }
     
+    func changeTrackerPinStatus(_ tracker: Tracker) throws {
+        let trackerIndex = fetchedResultsController.fetchedObjects?.firstIndex { $0.id == tracker.id }
+
+        if let index = trackerIndex {
+            fetchedResultsController.fetchedObjects?[index].isPinned = !(fetchedResultsController.fetchedObjects?[index].isPinned ?? false)
+            try context.save()
+
+        }
+    }
+    
     func updateExistingTracker(_ trackerCoreData: TrackerCoreData, with tracker: Tracker) {
         trackerCoreData.id = tracker.id
         trackerCoreData.name = tracker.name

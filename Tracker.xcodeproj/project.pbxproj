@@ -241,11 +241,11 @@
 				0EE4667E2B4C93C7002D8D37 /* MainTabBarController.swift */,
 				0E346CE92B83B811000E28C9 /* ViewControllers */,
 				0E2F81B72BADC2CA0057FA3B /* ViewModel */,
+				0E5257722BA0671000CA92F5 /* CollectionCells */,
 				0E346CEA2B83B896000E28C9 /* SpecialElements */,
 				0E71CE452B62A67A0099C261 /* Models */,
 				0E0BEF6E2BA9B31C0074E0AC /* TrackerEntity */,
 				0E2F81DB2BB1DB7F0057FA3B /* Resources */,
-				0E5257722BA0671000CA92F5 /* CollectionCells */,
 				0E5257732BA067A300CA92F5 /* Assistans */,
 			);
 			path = Tracker;
