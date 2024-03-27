@@ -12,6 +12,7 @@ struct Schedule {
     
     var scheduleText: String {
         let daysText = markedDays.map { $0.reductions }
+        if markedDays.count == 7 {return "Каждый день"}
         return daysText.joined(separator: ", ")
     }
     

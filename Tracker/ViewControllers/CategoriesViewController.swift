@@ -5,17 +5,30 @@
 //  Created by Ринат Шарафутдинов on 12.03.2024.
 //
 
-import Foundation
 import UIKit
 
 final class CategoriesViewController: UIViewController {
     
     // MARK: - Public Properties
-    
     var checkButtonValidation: (() -> Void)?
     
     //MARK:  - Private Properties
     private var viewModel: CategoriesViewModel
+    
+    private lazy var  stubImage: UIImageView = {
+        let image = UIImageView(image: UIImage(named: "imageTrackerStub"))
+        return image
+    }()
+    
+    private lazy var  stubLabel: UILabel = {
+        let label = UILabel()
+        label.text = "category_placeholder".localized
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .ypBlackDay
+        return label
+    }()
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -77,6 +90,7 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
+      
         viewModel.updateClosure = { [weak self] in
             print("Update closure called")
             guard let self else { return }
@@ -84,6 +98,7 @@ final class CategoriesViewController: UIViewController {
             self.updateNotFoundedCategories()
         }
         settingsConstraints()
+        trackerStub()
     }
     
     // MARK: - Actions
@@ -97,9 +112,30 @@ final class CategoriesViewController: UIViewController {
     //MARK:  - Public Methods
     func updateNotFoundedCategories()  {
         categoriesTableView.isHidden = viewModel.isTableViewHidden
+        stubImage.isHidden = !viewModel.isTableViewHidden
+        stubLabel.isHidden = !viewModel.isTableViewHidden
     }
     
     //MARK:  - Private Methods
+    private func trackerStub () {
+        view.addSubview(stubImage)
+        view.addSubview(stubLabel)
+        
+        stubLabel.translatesAutoresizingMaskIntoConstraints = false
+        stubImage.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            stubImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            stubImage.widthAnchor.constraint(equalToConstant: 80),
+            stubImage.heightAnchor.constraint(equalToConstant: 80),
+            stubLabel.topAnchor.constraint(equalTo: stubImage.bottomAnchor, constant: 8),
+            stubLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        ])
+        stubImage.isHidden = true
+        stubLabel.isHidden = true
+    }
+    
     private func settingsConstraints() {
         view.addSubview(scrollView)
         scrollView.addSubview(labeltitle)
@@ -146,7 +182,9 @@ extension CategoriesViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.cellID,for: indexPath) as? CategoryCell else {fatalError("Could not cast to CategoryCell")}
-        cell.renamingLabelBasic(nameView: "\(viewModel.categories[indexPath.row].title)")
+        let category = viewModel.categories[indexPath.row]
+//        let active = viewModel.selectedCategories == category
+        cell.config(nameView: category.title, isActive: true)
         
         if indexPath.row == viewModel.categories.count - 1 {
             cell.contentView.clipsToBounds = true
@@ -178,10 +216,6 @@ extension CategoriesViewController: UITableViewDataSource {
         cell.selectionStyle = .none
         return cell
     }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        1
-    }
 }
 
 // MARK: - UITableViewDelegate
@@ -192,7 +226,8 @@ extension CategoriesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? CategoryCell  {
-            cell.selectImageCheck(image: "imageCheckMark")
+            let active = true
+            cell.configImage(isActive: active)
             let selectedCategoryTitle = cell.getSelectedCategoryTitle()
             viewModel.selectCategory(with: selectedCategoryTitle)
             checkButtonValidation?()
@@ -226,3 +261,4 @@ extension CategoriesViewController: NewCategoryViewControllerDelegate {
         categoriesTableView.reloadData()
     }
 }
+

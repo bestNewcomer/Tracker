@@ -20,6 +20,7 @@ final class TrackerViewController: UIViewController {
     private let trackerStore = TrackerStore.shared
     private let trackerCategoryStore = TrackerCategoryStore.shared
     private let trackerRecordStore = TrackerRecordStore.shared
+    private var selectedFilter: Filter?
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -58,11 +59,11 @@ final class TrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //view.backgroundColor = .ypWhiteDay
+        view.backgroundColor = .ypWhiteDay
         
         hideKeyboard()
         trackerStub()
-        reloadVisibleCategories()
+        reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
         settingsCollectionView()
         navBarTracker()
         
@@ -86,13 +87,14 @@ final class TrackerViewController: UIViewController {
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         currentDate = sender.date
-        reloadVisibleCategories()
+        reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
     }
     
     @objc private func tapFilterSelection () {
-//        let jump = FilterViewController()
-//        jump.modalPresentationStyle = .pageSheet
-//        present(jump, animated: true)
+      let filterViewController = FilterViewController()
+        filterViewController.selectedFilter = selectedFilter
+        filterViewController.delegate = self
+        present(filterViewController, animated: true)
     }
     
     
@@ -208,22 +210,58 @@ final class TrackerViewController: UIViewController {
         stubImage.image = UIImage(named: isSearching ? "imageSearchStub" : "imageTrackerStub")
     }
     
-    private func reloadVisibleCategories() {
-        var newCategories = [TrackerCategory]()
-        visibleCategories = trackerCategoryStore.trackerCategories
+    private func updateNotFoundedFilter(filter: Filter) {
+        var isNotFounded = false
+        if selectedFilter == filter {
+            isNotFounded = true
+        }
 
-        for category in visibleCategories {
+//        if isNotFounded {
+//            collectionView.backgroundView = trackerNotFoundedView
+//        }
+    }
+    
+    private func reloadVisibleCategories(with categories: [TrackerCategory]) {
+        var newCategories = [TrackerCategory]()
+
+        for category in categories {
             var newTrackers = [Tracker]()
             for tracker in category.visibleTrackers(filterString: searchText) {
                 guard let timetable = tracker.timetable else { return }
                 let timetableIntegers = timetable.map { $0.rawValue }
                 if let day = DaysOfWeek(rawValue: currentDate.toWeekday().rawValue),
-                   timetableIntegers.contains(day.rawValue) &&
-                    (searchText.isEmpty || tracker.name.lowercased().contains(searchText.lowercased())) {
-                    newTrackers.append(tracker)
+                   timetableIntegers.contains(day.rawValue) {
+                    if selectedFilter == .completed {
+                        updateNotFoundedFilter(filter: .completed)
+                        if !completedTracker.contains(where: { record in
+                            record.idRecord == tracker.id &&
+                            record.dateRecord.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+                        }) {
+                            continue
+                        }
+                    }
+                    if selectedFilter == .completed {
+                        updateNotFoundedFilter(filter: .completed)
+                        if !completedTracker.contains(where: { record in
+                            record.idRecord == tracker.id &&
+                            record.dateRecord.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+                        }) {
+                            continue
+                        }
+                    }
+                    if selectedFilter == .incompleted {
+                        updateNotFoundedFilter(filter: .incompleted)
+                        if completedTracker.contains(where: { record in
+                            record.idRecord == tracker.id &&
+                            record.dateRecord.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+                        }) {
+                            continue
+                        }
+                        newTrackers.append(tracker)
+                    }
                 }
             }
-            
+
             if newTrackers.count > 0 {
                 let newCategory = TrackerCategory(
                     title: category.title,
@@ -374,7 +412,7 @@ extension TrackerViewController: NewTrackerCreationDelegate {
                 trackersArray: [tracker]
             ))
         }
-        reloadVisibleCategories()
+        reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
     }
 }
 // MARK: - TrackersCellDelgate
@@ -390,7 +428,7 @@ extension TrackerViewController: TrackerCellDelegate {
             completedTracker.append(TrackerRecord(dateRecord: datePicker.date, idRecord: id))
             try? trackerRecordStore.addNewTracker(TrackerRecord(dateRecord: datePicker.date, idRecord: id))
         }
-        reloadVisibleCategories()
+        reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
         trackersCollectionView.reloadData()
         trackerRecordStore.reload()
     }
@@ -438,7 +476,7 @@ extension TrackerViewController: UISearchBarDelegate, UISearchControllerDelegate
         searchBar.endEditing(true)
         searchBar.setShowsCancelButton(false, animated: true)
         self.searchText = ""
-        reloadVisibleCategories()
+        reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
         
     }
 }
@@ -446,7 +484,7 @@ extension TrackerViewController: UISearchBarDelegate, UISearchControllerDelegate
 // MARK: - TrackerStoreDelegate
 extension TrackerViewController: TrackerStoreDelegate {
     func store(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
-        reloadVisibleCategories()
+        reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
         trackersCollectionView.reloadData()
     }
 }
@@ -454,7 +492,7 @@ extension TrackerViewController: TrackerStoreDelegate {
 // MARK: - TrackerCategoryStoreDelegate
 extension TrackerViewController: TrackerCategoryStoreDelegate {
     func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
-        reloadVisibleCategories()
+        reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
         trackersCollectionView.reloadData()
     }
 }
@@ -479,3 +517,22 @@ extension TrackerViewController {
     }
 }
 
+extension TrackerViewController: FilterViewControllerDelegate {
+    func filterSelected(filter: Filter) {
+        selectedFilter = filter
+        searchText = ""
+
+        switch filter {
+        case .all:
+            reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
+        case .completed:
+            reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
+        case .incompleted:
+            reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
+        case .today:
+            datePicker.date = Date()
+            datePickerValueChanged(datePicker)
+            reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
+        }
+    }
+}

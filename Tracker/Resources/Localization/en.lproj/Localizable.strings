@@ -46,6 +46,7 @@ schedule_title = "Schedule";
 schedule_ready_button = "Ready";
 
 //MARK:  - CategoriesViewController
+category_placeholder = "Habits and events can be combined by meaning";
 category_title = "Category";
 category_add_button = "Add category";
 
@@ -57,10 +58,6 @@ newCategory_ready_button = "Ready";
 
 //MARK:  - FilterViewController
 filter_title = "Filters";
-filter_all = "All trackers";
-filter_today = "Trackers for today";
-filter_finished = "Completed";
-filter_unfinished = "Not completed";
 
 //MARK:  - OnboardingViewController
 onboarding_firstPageText = "Track only what you want";
@@ -82,3 +79,6 @@ thursdayShort = "Thurs";
 fridayShort = "Fri";
 saturdayShort = "Sat";
 sundayShort = "Sun";
+
+//MARK:  - Filter
+filter_title = "Filters";

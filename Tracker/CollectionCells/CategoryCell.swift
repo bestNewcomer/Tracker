@@ -24,13 +24,8 @@ final class CategoryCell: UITableViewCell {
         let imVi = UIImageView()
         imVi.image = UIImage()
         imVi.contentMode = .scaleAspectFit
+        imVi.image = UIImage(named: "imageCheckMark")
         return imVi
-    }()
-    
-    var divider: UIView = {
-        let view = UIView()
-        view.backgroundColor = .ypGray
-        return view
     }()
     
     // MARK: - Initializers
@@ -50,8 +45,18 @@ final class CategoryCell: UITableViewCell {
     }
     
     // MARK: - Public Methods
-    func renamingLabelBasic(nameView: String) {
+    func config(nameView: String, isActive: Bool) {
         labelBasic.text = nameView
+        imageCheck.isHidden = !isActive
+    }
+    
+    func config(nameView: String) {
+        labelBasic.text = nameView
+    }
+    
+    func configImage(isActive: Bool) {
+        imageCheck.isHidden = !isActive
+
     }
     
     func getSelectedCategoryTitle() -> String {

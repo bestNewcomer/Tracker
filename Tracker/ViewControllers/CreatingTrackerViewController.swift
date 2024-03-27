@@ -7,14 +7,12 @@
 
 import UIKit
 
-
 protocol NewTrackerCreationDelegate: AnyObject {
     func trackerCreated(_ tracker: Tracker, _ category: String)
     
 }
 
 final class CreatingTrackerViewController: UIViewController {
-    
     // MARK: - Public Properties
     let emojis  = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
     let colors: [UIColor] = [.colorSelection1,.colorSelection2,.colorSelection3,.colorSelection4,.colorSelection5,.colorSelection6,.colorSelection7,.colorSelection8,.colorSelection9,.colorSelection10,.colorSelection11,.colorSelection12,.colorSelection13,.colorSelection14,.colorSelection15,.colorSelection16,.colorSelection17,.colorSelection18]
@@ -212,16 +210,19 @@ final class CreatingTrackerViewController: UIViewController {
     }
     
     func updateButtonSchedule() {
-        let schedule = ScheduleViewController()
-        schedule.onScheduleUpdated = { [weak self] updatedSchedule in
-            self?.selectedSchedule = updatedSchedule
-            self?.formattedSchedule = Schedule(markedDays: updatedSchedule).scheduleText
-            self?.viewSchedule.renamingLabelBasic(nameView: "creatingTracker_timetable_button".localized)
-            self?.viewSchedule.renamingLabelSecondary(surnameView: self?.formattedSchedule ?? "Schedule not working")
-        }
-        schedule.modalPresentationStyle = .pageSheet
-        present(schedule, animated: true)
+        let scheduleViewController = ScheduleViewController(daysWeek: selectedSchedule)
+        scheduleViewController.delegate = self
+        viewSchedule.renamingLabelSecondary(surnameView: formattedSchedule)
+        scheduleViewController.modalPresentationStyle = .pageSheet
+        present(scheduleViewController, animated: true)
     }
+//        schedule.onScheduleUpdated = { [weak self] updatedSchedule in
+//            self?.selectedSchedule = updatedSchedule
+//            self?.formattedSchedule = Schedule(markedDays: updatedSchedule).scheduleText
+//            self?.viewSchedule.renamingLabelBasic(nameView: "creatingTracker_timetable_button".localized)
+//            self?.viewSchedule.renamingLabelSecondary(surnameView: self?.formattedSchedule ?? "Schedule not working")
+//        }
+       
     
     func updateButtonCategories() {
         let categoriesViewController = CategoriesViewController(delegate: self, selectedCategories: category)
@@ -523,4 +524,13 @@ extension CreatingTrackerViewController: CategoriesViewModelDelegate {
         formattedCategories = category.title
         self.viewCategories.renamingLabelSecondary(surnameView: self.formattedCategories)
     }
+}
+
+// MARK: - ScheduleViewControllerDelegate
+extension CreatingTrackerViewController: ScheduleViewControllerDelegate {
+    func didSelectSchedule(activeDays: [DaysOfWeek]) {
+        self.selectedSchedule = activeDays
+        formattedSchedule = Schedule(markedDays: activeDays).scheduleText
+        self.viewSchedule.renamingLabelSecondary(surnameView: self.formattedSchedule)
+}
 }

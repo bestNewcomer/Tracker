@@ -24,6 +24,7 @@
 		0E2F81CE2BB1C1E30057FA3B /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F81CC2BB1C1E30057FA3B /* Localizable.stringsdict */; };
 		0E2F81D82BB1DACC0057FA3B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F81D62BB1DACC0057FA3B /* InfoPlist.strings */; };
 		0E2F81DC2BB1F6910057FA3B /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F81D32BB1DA710057FA3B /* Info.plist */; };
+		0E4B17E22BB3C18E00F49AD0 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4B17E12BB3C18E00F49AD0 /* Filter.swift */; };
 		0E5257672B9885D200CA92F5 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257662B9885D200CA92F5 /* ScheduleViewController.swift */; };
 		0E5257692B9F576700CA92F5 /* DaySwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5257682B9F576700CA92F5 /* DaySwitch.swift */; };
 		0E52576B2B9F681300CA92F5 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E52576A2B9F681300CA92F5 /* ScheduleCell.swift */; };
@@ -72,6 +73,7 @@
 		0E2F81D52BB1DA9E0057FA3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Base; path = Base.lproj/Info.plist; sourceTree = "<group>"; };
 		0E2F81D72BB1DACC0057FA3B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0E2F81D92BB1DAFA0057FA3B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0E4B17E12BB3C18E00F49AD0 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		0E5257662B9885D200CA92F5 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		0E5257682B9F576700CA92F5 /* DaySwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaySwitch.swift; sourceTree = "<group>"; };
 		0E52576A2B9F681300CA92F5 /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				0E71CE482B62A7200099C261 /* TrackerCategory.swift */,
 				0E71CE4A2B62AA8E0099C261 /* TrackerRecord.swift */,
 				0EFAECFA2B93887900628EDB /* DaysOfWeek.swift */,
+				0E4B17E12BB3C18E00F49AD0 /* Filter.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -356,6 +359,7 @@
 				0E5257672B9885D200CA92F5 /* ScheduleViewController.swift in Sources */,
 				0E0BEF772BA9B3C10074E0AC /* TrackerRecordStore.swift in Sources */,
 				0ECB12E62B6EA22000994637 /* TrackerCell.swift in Sources */,
+				0E4B17E22BB3C18E00F49AD0 /* Filter.swift in Sources */,
 				0E5257752BA0682100CA92F5 /* CategoryCell.swift in Sources */,
 				0E52576B2B9F681300CA92F5 /* ScheduleCell.swift in Sources */,
 				0E776B3F2B7F3A7F000C9EB4 /* SpecialHeader.swift in Sources */,

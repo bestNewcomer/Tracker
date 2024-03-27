@@ -47,6 +47,7 @@ schedule_title = "Расписание";
 schedule_ready_button = "Готово";
 
 //MARK: - CategoriesViewController
+category_placeholder = "Привычки и события можно объединить по смыслу";
 category_title = "Категория";
 category_add_button = "Добавить категорию";
 
@@ -56,12 +57,9 @@ newCategory_searchBar_placeholder = "Введите название треке�
 newCategory_limit_text = "Ограничение 38 символов";
 newCategory_ready_button = "Готово";
 
+
 //MARK: - FilterViewController
 filter_title = "Фильтры";
-filter_all = "Все трекеры";
-filter_today = "Трекеры на сегодня";
-filter_finished = "Завершенные";
-filter_unfinished = "Не завершенные";
 
 //MARK: - OnboardingViewController
 onboarding_firstPageText = "Отслеживайте только то, что хотите";
@@ -83,6 +81,12 @@ thursdayShort = "Чт";
 fridayShort = "Пт";
 saturdayShort = "Сб";
 sundayShort = "Вс";
+
+//MARK: - Filter
+filter_all = "Все трекеры";
+filter_today = "Трекеры на сегодня";
+filter_finished = "Завершенные";
+filter_unfinished = "Не завершенные";
 
 
 

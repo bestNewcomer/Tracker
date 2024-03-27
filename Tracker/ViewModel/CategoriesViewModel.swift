@@ -12,50 +12,52 @@ protocol CategoriesViewModelDelegate: AnyObject {
 }
 
 final class CategoriesViewModel {
+    // MARK: - Public Properties
     var updateClosure: (() -> Void)?
-
+    var isTableViewHidden: Bool {
+        return categories.isEmpty
+    }
+    //MARK:  - Private Properties
     private(set) var categories = [TrackerCategory]() {
         didSet {
             updateClosure?()
         }
     }
-
-    var isTableViewHidden: Bool {
-        return categories.isEmpty
-    }
-
-    private(set) var selectedCategories: TrackerCategory?
+    
+    private(set) var selectedCategories: TrackerCategory? 
     private let trackerCategoryStore = TrackerCategoryStore.shared
     private weak var delegate: CategoriesViewModelDelegate?
-
-    // MARK: - Lifecycle
+    
+    // MARK: - Initialization
     init(
         selectedCategories: TrackerCategory?,
         delegate: CategoriesViewModelDelegate?
     ) {
         self.selectedCategories = selectedCategories
         self.delegate = delegate
-
+        
         trackerCategoryStore.delegate = self
         categories = trackerCategoryStore.trackerCategories
     }
-
+    
+    //MARK: - Public Methods
     func selectCategory(with title: String) {
         let category = TrackerCategory(title: title, trackersArray: [])
         delegate?.didSelectCategory(category: category)
     }
-
+    
     func selectedCategories(_ category: TrackerCategory) {
         selectedCategories = category
         delegate?.didSelectCategory(category: category)
         updateClosure?()
     }
-
+    
     func deleteCategory(_ category: TrackerCategory) {
         try? self.trackerCategoryStore.deleteCategory(category)
     }
 }
 
+//MARK: - TrackerCategoryStoreDelegate
 extension CategoriesViewModel: TrackerCategoryStoreDelegate {
     func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
         print("Categories updated")
