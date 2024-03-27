@@ -22,12 +22,14 @@ final class CreatingTrackerViewController: UIViewController {
     var editTracker: Tracker?
     var editTrackerDate: Date?
     var category: TrackerCategory?
+    var editTrackerTitle = "Редактирование привычки"
     
     //MARK:  - Private Properties
     private var emojisCollectionView: UICollectionView!
     private var colorsCollectionView: UICollectionView!
     private let params: GeometricParams
     private var selectedSchedule: [DaysOfWeek] = []
+    private let trackerStore = TrackerStore()
     private var completedTracker: [TrackerRecord] = []
     private let trackerRecordStore = TrackerRecordStore()
     private var formattedSchedule: String = "" {
@@ -146,7 +148,8 @@ final class CreatingTrackerViewController: UIViewController {
     
     private lazy var  createButton: UIButton = {
         let button = UIButton()
-        button.setTitle("creatingTracker_create_button".localized, for: .normal)
+        let title = editTracker == nil ? "creatingTracker_create_button".localized : "Сохранить"
+        button.setTitle(title, for: .normal)
         button.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -171,6 +174,7 @@ final class CreatingTrackerViewController: UIViewController {
         view.backgroundColor = .ypWhiteDay
         
         hubitOrIrregular()
+        setupEditTracker()
         subSettingsCollectionsView()
         settings()
         nameTextField.delegate = self
@@ -185,30 +189,51 @@ final class CreatingTrackerViewController: UIViewController {
     
     @objc
     private func tapСreateButton(){
-        let trackerName = nameTextField.text ?? ""
+       
         guard let categoryName = category?.title else {
             return
         }
+        let tracker: Tracker?
+        if editTracker == nil {
+            guard let trackerName = nameTextField.text, !trackerName.isEmpty,
+                  let color = selectedColor else {
+                return
+            }
         
-        let tracker = Tracker(
+        tracker = Tracker(
             id: UUID(),
             name: trackerName,
-            color: selectedColor ?? .colorSelection1,
+            color: color,
             emoji: selectedEmoji,
-            timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday, ], 
+            timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
             isPinned: false
         )
+            guard let tracker = tracker else { return }
+            
         delegate?.trackerCreated(tracker, categoryName)
         onCompletion?()
-        dismiss(animated: false, completion: nil)
+        } else {
+            guard let editTracker = editTracker else { return }
+            let color = ColorConvert.convertColorToString(color: selectedColor ?? .black)
+            
+            try? trackerStore.updateTracker(
+                newTitle: nameTextField.text ?? "",
+                newEmoji: selectedEmoji,
+                newColor: color,
+                newSchedule: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+                categoryTitle: category?.title ?? "Без категории",
+                editableTracker: editTracker
+            )
+        }
+        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
     //MARK:  - Public Methods
     func hubitOrIrregular() {
         if habitIndicator == true {
-            labelTitle.customizeHeader(nameHeader: "creatingTracker_habit_title".localized)
+            labelTitle.customizeHeader(nameHeader: editTracker == nil ? "creatingTracker_habit_title".localized : editTrackerTitle)
         } else {
-            labelTitle.customizeHeader(nameHeader: "creatingTracker_hirregular_title".localized)
+            labelTitle.customizeHeader(nameHeader: editTracker == nil ? "creatingTracker_hirregular_title".localized : editTrackerTitle)
         }
     }
     
@@ -219,13 +244,6 @@ final class CreatingTrackerViewController: UIViewController {
         scheduleViewController.modalPresentationStyle = .pageSheet
         present(scheduleViewController, animated: true)
     }
-//        schedule.onScheduleUpdated = { [weak self] updatedSchedule in
-//            self?.selectedSchedule = updatedSchedule
-//            self?.formattedSchedule = Schedule(markedDays: updatedSchedule).scheduleText
-//            self?.viewSchedule.renamingLabelBasic(nameView: "creatingTracker_timetable_button".localized)
-//            self?.viewSchedule.renamingLabelSecondary(surnameView: self?.formattedSchedule ?? "Schedule not working")
-//        }
-       
     
     func updateButtonCategories() {
         let categoriesViewController = CategoriesViewController(delegate: self, selectedCategories: category)
@@ -237,6 +255,24 @@ final class CreatingTrackerViewController: UIViewController {
     }
     
     //MARK:  - Private Methods
+    private func setupEditTracker() {
+        if let editTracker = editTracker {
+            selectedSchedule = editTracker.timetable ?? []
+            nameTextField.text = editTracker.name
+            selectedEmoji = editTracker.emoji
+            selectedColor = editTracker.color
+            didSelectSchedule(activeDays: selectedSchedule)
+            formattedCategories = selectedC?.title ?? ""
+//            completedDaysLabel.isHidden = false
+            completedTracker = trackerRecordStore.trackerRecords
+            let completedCount = completedTracker.filter({ record in
+                record.idRecord == editTracker.id
+            }).count
+//            completedDaysLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberValue", comment: "дней"), completedCount)
+        }
+    }
+
+    
     private func subSettingsCollectionsView() {
         emojisCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         emojisCollectionView.register(EmojiAndColorCell.self, forCellWithReuseIdentifier: EmojiAndColorCell.cellID)

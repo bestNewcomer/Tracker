@@ -105,9 +105,10 @@ final class TrackerCell: UICollectionViewCell {
                        emoji: String,
                        completedDays: Int,    
                        isCompleted: Bool,
-                       isPinned: Bool) {
+                       isPinned: Bool,
+                       interaction: UIInteraction) {
         let completedDaysText = convertCompletedDays(completedDays)
-        
+        colorTopCell.addInteraction(interaction)
         trackerId = id
         titleLabel.text = name
         colorTopCell.backgroundColor = color

@@ -134,8 +134,7 @@ final class TrackerViewController: UIViewController {
         trackersCollectionView.backgroundColor = .ypWhiteDay
         trackersCollectionView.dataSource = self
         trackersCollectionView.delegate = self
-//        trackersCollectionView.allowsMultipleSelection = false
-                
+        
         view.addSubview(trackersCollectionView)
         view.addSubview(filterButton)
         
@@ -175,13 +174,13 @@ final class TrackerViewController: UIViewController {
     
     func setupContextMenu(_ indexPath: IndexPath) -> UIMenu {
         let tracker: Tracker
-
+        
         if indexPath.section == 0 {
             tracker = pinnedTrackers[indexPath.row]
         } else {
             tracker = visibleCategories[indexPath.section - 1].visibleTrackers(filterString: searchText, pin: false)[indexPath.row]
         }
-
+        
         let pinActionTitle = tracker.isPinned == true ? "Открепить" : "Закрепить"
         let pinAction = UIAction(title: pinActionTitle, image: nil) { [weak self] action in
             guard let self = self else { return }
@@ -193,7 +192,7 @@ final class TrackerViewController: UIViewController {
                 print("Error pinning tracker: \(error)")
             }
         }
-
+        
         let editAction = UIAction(title: "Редактировать") { [weak self] action in
             let editTrackerViewController = CreatingTrackerViewController()
             editTrackerViewController.editTracker = tracker
@@ -201,7 +200,7 @@ final class TrackerViewController: UIViewController {
             editTrackerViewController.category = tracker.category
             self?.present(editTrackerViewController, animated: true)
         }
-
+        
         let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
             self?.showAlert(tracker: tracker)
         }
@@ -219,13 +218,13 @@ final class TrackerViewController: UIViewController {
             self?.deleteTracker(tracker)
         }
         alert.addAction(deleteAction)
-
+        
         let cancelAction = UIAlertAction(
             title: "Отменить",
             style: .cancel) { _ in
-
+                
             }
-
+        
         alert.addAction(cancelAction)
         self.present(alert, animated: true, completion: nil)
     }
@@ -238,12 +237,14 @@ final class TrackerViewController: UIViewController {
         } catch {
             print("Ошибка при удалении трекера: \(error)")
         }
-
+        
         do {
             try trackerRecordStore.deleteAllTrackerRecords(with: tracker.id)
         } catch {
             print("Ошибка при удалении записей: \(error)")
         }
+        trackerRecordStore.reload()
+        trackersCollectionView.reloadData()
     }
     
     private func updateView() {
@@ -326,7 +327,7 @@ final class TrackerViewController: UIViewController {
 
 // MARK: - UICollectionViewDataSource
 extension TrackerViewController: UICollectionViewDataSource {
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if section == 0 {
             return pinnedTrackers.count
@@ -334,7 +335,7 @@ extension TrackerViewController: UICollectionViewDataSource {
             return visibleCategories[section - 1].visibleTrackers(filterString: searchText, pin: false).count
         }
     }
-
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         let count = visibleCategories.count
         trackersCollectionView.isHidden = count == 0 && pinnedTrackers.count == 0
@@ -346,7 +347,7 @@ extension TrackerViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.cellID, for: indexPath) as? TrackerCell else { fatalError("Failed to cast UICollectionViewCell to TrackersCell")
         }
         let tracker: Tracker
-
+        
         if indexPath.section == 0 {
             tracker = pinnedTrackers[indexPath.row]
         } else {
@@ -358,6 +359,7 @@ extension TrackerViewController: UICollectionViewDataSource {
             trackerRecord.dateRecord.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
         })
         let completedDays = completedTracker.filter {$0.idRecord == tracker.id}.count
+        let interaction = UIContextMenuInteraction(delegate: self)
         
         cell.customizeCell(
             tracker.id,
@@ -366,7 +368,8 @@ extension TrackerViewController: UICollectionViewDataSource {
             emoji: tracker.emoji,
             completedDays: completedDays,
             isCompleted: isCompleted,
-            isPinned: tracker.isPinned ?? false
+            isPinned: tracker.isPinned ?? false,
+            interaction: interaction
         )
         return cell
     }
@@ -382,7 +385,7 @@ extension TrackerViewController: UICollectionViewDelegate {
             else { fatalError("Failed to cast UICollectionReusableView to TrackersHeader") }
             
             if indexPath.section == 0 {
-                header.titleLabel.text = "tracker_pinned_header"
+                header.titleLabel.text = "tracker_pinned_header".localized
             } else {
                 header.titleLabel.text = visibleCategories[indexPath.section - 1].title
             }
@@ -392,11 +395,19 @@ extension TrackerViewController: UICollectionViewDelegate {
             fatalError("Unexpected element kind")
         }
     }
-     
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        let identifier = "\(indexPath.row):\(indexPath.section)" as NSString
-
-        return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
+}
+extension TrackerViewController: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        configurationForMenuAtLocation location: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard
+            let location = interaction.view?.convert(location, to: trackersCollectionView),
+            let indexPath = trackersCollectionView.indexPathForItem(at: location)
+                
+        else { return nil }
+        
+        return UIContextMenuConfiguration(previewProvider: nil) { _ in
             return self.setupContextMenu(indexPath)
         }
     }
@@ -417,11 +428,11 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
         let heightPerItem = widthPerItem * (148 / 176)
         return CGSize(width: widthPerItem, height: heightPerItem)
     }
-   
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return CGFloat(0)
     }
-   
+    
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return params.cellSpacing
     }
@@ -467,6 +478,7 @@ extension TrackerViewController: NewTrackerCreationDelegate {
         reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
     }
 }
+
 // MARK: - TrackersCellDelgate
 extension TrackerViewController: TrackerCellDelegate {
     func trackerCompleted(id: UUID) {
@@ -491,7 +503,7 @@ extension TrackerViewController: UISearchBarDelegate, UISearchControllerDelegate
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         isSearching = !searchText.isEmpty
         if searchText.isEmpty {
-            visibleCategories = trackerCategoryStore.trackerCategories
+            visibleCategories = trackerCategoryStore.predicateFetch(trackerTitle: searchText)
         } else {
             visibleCategories = trackerCategoryStore.trackerCategories.map { category in
                 let filteredTrackers = category.trackersArray.filter { tracker in
