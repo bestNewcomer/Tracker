@@ -116,12 +116,10 @@ extension FilterViewController: UITableViewDelegate {
         if let cell = tableView.cellForRow(at: indexPath) as? CategoryCell {
             let active = true
             cell.configImage(isActive: active)
+            
             let filter = filters[indexPath.row]
             delegate?.filterSelected(filter: filter)
-            tableView.deselectRow(at: indexPath, animated: true)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.dismiss(animated: true, completion: nil)
+            dismiss(animated: true)
         }
     }
     
@@ -129,7 +127,7 @@ extension FilterViewController: UITableViewDelegate {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryCell else {
             fatalError("Could not cast to FiltersCell")
         }
-        let active = false
+        let active = true
         cell.configImage(isActive: active)
     }
     

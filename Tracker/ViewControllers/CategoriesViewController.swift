@@ -182,9 +182,9 @@ extension CategoriesViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.cellID,for: indexPath) as? CategoryCell else {fatalError("Could not cast to CategoryCell")}
-        let category = viewModel.categories[indexPath.row]
-//        let active = viewModel.selectedCategories == category
-        cell.config(nameView: category.title, isActive: true)
+        let category = viewModel.categories[indexPath.row].title
+        let active = viewModel.selectedCategories?.title.contains(category)
+        cell.config(nameView: category, isActive: active ?? false)
         
         if indexPath.row == viewModel.categories.count - 1 {
             cell.contentView.clipsToBounds = true

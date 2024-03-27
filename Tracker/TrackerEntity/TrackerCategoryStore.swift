@@ -94,13 +94,15 @@ final class TrackerCategoryStore: NSObject {
                 let color = trackerCoreDataColor,
                 let emoji = trackerCoreData.emoji
             else { fatalError("Ищи ошибку!!!") }
+            let pinned = trackerCoreData.isPinned
             
             return Tracker(
                 id: id,
                 name: name,
                 color: color,
                 emoji: emoji,
-                timetable: trackerCoreData.timetable?.compactMap { DaysOfWeek(rawValue: $0) }
+                timetable: trackerCoreData.timetable?.compactMap { DaysOfWeek(rawValue: $0) },
+                isPinned: pinned
             )
         } ?? []
         return TrackerCategory(

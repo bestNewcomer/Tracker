@@ -17,6 +17,7 @@ tracker_title = "Трекеры";
 tracker_searchBar_placeholder = "Поиск";
 tracker_isSearching_yes_placeholder = "Ничего не найдено";
 tracker_isSearching_no_placeholder = "Что будем отслеживать?";
+tracker_pinned_header = "Закрепленные"
 tracker_context_menu_pin_button = "Закрепить";
 tracker_context_menu_edit_button = "Редактировать";
 tracker_context_menu_delete_button = "Удалить";

@@ -193,7 +193,8 @@ final class CreatingTrackerViewController: UIViewController {
             name: trackerName,
             color: selectedColor ?? .colorSelection1,
             emoji: selectedEmoji,
-            timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday, ]
+            timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday, ], 
+            isPinned: false
         )
         delegate?.trackerCreated(tracker, categoryName)
         onCompletion?()

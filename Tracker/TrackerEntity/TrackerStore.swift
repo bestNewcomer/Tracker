@@ -128,12 +128,15 @@ final class TrackerStore: NSObject {
             let timetable = tracker.timetable
         else { throw TrackerError.decodeError }
         
+        let pinned = tracker.isPinned
+        
         return Tracker(
             id: id,
             name: name,
             color: color,
             emoji: emoji,
-            timetable:  timetable.compactMap { DaysOfWeek(rawValue: $0) }
+            timetable:  timetable.compactMap { DaysOfWeek(rawValue: $0) }, 
+            isPinned: pinned
         )
     }
     

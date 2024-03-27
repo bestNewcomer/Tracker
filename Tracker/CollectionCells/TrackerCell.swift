@@ -70,6 +70,13 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
+    private lazy var pinImageView: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "imagePinned")
+        image.isHidden = false
+        return image
+    }()
+    
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -97,7 +104,8 @@ final class TrackerCell: UICollectionViewCell {
                        color: UIColor?,
                        emoji: String,
                        completedDays: Int,    
-                       isCompleted: Bool) {
+                       isCompleted: Bool,
+                       isPinned: Bool) {
         let completedDaysText = convertCompletedDays(completedDays)
         
         trackerId = id
@@ -106,6 +114,7 @@ final class TrackerCell: UICollectionViewCell {
         countButtom.backgroundColor = color
         smileyLabel.text = emoji
         counterLabel.text = completedDaysText
+        pinImageView.isHidden = !isPinned
         isCompleted ? countButtom.setImage(previousImage, for: .normal) : countButtom.setImage(buttonImage, for: .normal)
     }
     
@@ -118,8 +127,10 @@ final class TrackerCell: UICollectionViewCell {
         contentView.addSubview(colorTopCell)
         colorTopCell.addSubview(smileyLabel)
         colorTopCell.addSubview(titleLabel)
+        colorTopCell.addSubview(pinImageView)
         contentView.addSubview(counterLabel)
         contentView.addSubview(countButtom)
+        
     }
     
     private func cellElementSettings(){
@@ -128,6 +139,7 @@ final class TrackerCell: UICollectionViewCell {
         smileyLabel.translatesAutoresizingMaskIntoConstraints = false
         counterLabel.translatesAutoresizingMaskIntoConstraints = false
         countButtom.translatesAutoresizingMaskIntoConstraints = false
+        pinImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             colorTopCell.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -154,6 +166,11 @@ final class TrackerCell: UICollectionViewCell {
             countButtom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant:  -12),
             countButtom.heightAnchor.constraint(equalToConstant: 34),
             countButtom.widthAnchor.constraint(equalToConstant: 34),
+            
+            pinImageView.centerYAnchor.constraint(equalTo: smileyLabel.centerYAnchor),
+            pinImageView.trailingAnchor.constraint(equalTo: colorTopCell.trailingAnchor, constant:  -12),
+            pinImageView.heightAnchor.constraint(equalToConstant: 12),
+            pinImageView.widthAnchor.constraint(equalToConstant: 8),
         ])
     }
 }

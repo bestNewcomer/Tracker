@@ -16,6 +16,7 @@ tracker_title = "Trackers";
 tracker_searchBar_placeholder = "Search";
 tracker_isSearching_yes_placeholder = "Nothing found";
 tracker_isSearching_no_placeholder = "What will we track?";
+tracker_pinned_header = "Pinned"
 tracker_context_menu_pin_button = "Pin";
 tracker_context_menu_edit_button = "Edit";
 tracker_context_menu_delete_button = "Delete";
