@@ -36,8 +36,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0E170D5A2BB5E91300AE91C4"
-               BuildableName = "AlpabetTests.xctest"
-               BlueprintName = "AlpabetTests"
+               BuildableName = "TrackerTests.xctest"
+               BlueprintName = "TrackerTests"
                ReferencedContainer = "container:Tracker.xcodeproj">
             </BuildableReference>
          </TestableReference>

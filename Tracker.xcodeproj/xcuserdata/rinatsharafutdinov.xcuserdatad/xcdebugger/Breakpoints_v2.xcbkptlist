@@ -258,6 +258,36 @@
             endingLineNumber = "507"
             landmarkName = "searchBar(_:textDidChange:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "ED197BCE-FF3D-4790-A18B-BBCF41079EDF - 8b800541b1a9dbdd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/TrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "507"
+                  endingLineNumber = "507">
+               </Location>
+               <Location
+                  uuid = "ED197BCE-FF3D-4790-A18B-BBCF41079EDF - 6f3b51c713ca774f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Tracker.TrackerCategory) -&gt; Tracker.TrackerCategory in Tracker.TrackerViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/TrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "507"
+                  endingLineNumber = "507">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -274,6 +304,36 @@
             endingLineNumber = "508"
             landmarkName = "searchBar(_:textDidChange:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "74C7F0DC-E0FC-410A-82BB-BDB884996D29 - 6f3b51c713ca776e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Tracker.TrackerCategory) -&gt; Tracker.TrackerCategory in Tracker.TrackerViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/TrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "508"
+                  endingLineNumber = "508">
+               </Location>
+               <Location
+                  uuid = "74C7F0DC-E0FC-410A-82BB-BDB884996D29 - e4f78fecd4c83605"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Tracker.Tracker) -&gt; Swift.Bool in closure #1 (Tracker.TrackerCategory) -&gt; Tracker.TrackerCategory in Tracker.TrackerViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/TrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "508"
+                  endingLineNumber = "508">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -338,6 +398,36 @@
             endingLineNumber = "512"
             landmarkName = "searchBar(_:textDidChange:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "1DD1DAD4-9CF9-4884-BAB3-C37FC567138D - 8b800541b1a9c478"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/TrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "512"
+                  endingLineNumber = "512">
+               </Location>
+               <Location
+                  uuid = "1DD1DAD4-9CF9-4884-BAB3-C37FC567138D - 45bdd308a994d93d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Tracker.TrackerCategory) -&gt; Swift.Bool in Tracker.TrackerViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/TrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "512"
+                  endingLineNumber = "512">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -418,6 +508,50 @@
             endingLineNumber = "303"
             landmarkName = "setupSelectedCells()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D0E1DB78-9529-428C-92B1-D65C8BF9F773 - fe001cace863700b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.CreatingTrackerViewController.setupSelectedCells() -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/CreatingTrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "303"
+                  endingLineNumber = "303">
+               </Location>
+               <Location
+                  uuid = "D0E1DB78-9529-428C-92B1-D65C8BF9F773 - fe001cace863700b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.CreatingTrackerViewController.setupSelectedCells() -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/CreatingTrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "303"
+                  endingLineNumber = "303">
+               </Location>
+               <Location
+                  uuid = "D0E1DB78-9529-428C-92B1-D65C8BF9F773 - e3b6846c5759952b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (__C.UIColor) -&gt; Swift.Bool in Tracker.CreatingTrackerViewController.setupSelectedCells() -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rinatsharafutdinov/Documents/%D0%9E%D0%B1%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5/Tracker/Tracker/ViewControllers/CreatingTrackerViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "303"
+                  endingLineNumber = "303">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
