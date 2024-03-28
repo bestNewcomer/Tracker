@@ -300,7 +300,6 @@ final class TrackerViewController: UIViewController {
                         }) {
                             continue
                         }
-                        newTrackers.append(tracker)
                     }
                     if tracker.isPinned == true {
                         pinnedTrackers.append(tracker)

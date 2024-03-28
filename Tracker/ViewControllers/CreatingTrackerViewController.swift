@@ -32,17 +32,19 @@ final class CreatingTrackerViewController: UIViewController {
     private let trackerStore = TrackerStore()
     private var completedTracker: [TrackerRecord] = []
     private let trackerRecordStore = TrackerRecordStore()
-    private var formattedSchedule: String = "" {
+    private var selectedCellEmoji: IndexPath? = nil
+    private var selectedCellColor: IndexPath? = nil
+    private var formattedSchedule: String? = nil {
         didSet {
             checkButtonValidation()
         }
     }
-    private var formattedCategories: String = "" {
+    private var formattedCategories: String? = nil {
         didSet {
             checkButtonValidation()
         }
     }
-    private var selectedEmoji: String = "" {
+    private var selectedEmoji: String? = nil {
         didSet {
             checkButtonValidation()
         }
@@ -65,6 +67,16 @@ final class CreatingTrackerViewController: UIViewController {
         return scrollView
     }()
     
+    private lazy var completedDaysLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(named: "ypBlackDay")
+        label.text = "дней"
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
+    
     private lazy var contentView: UIView = {
         let contentView = UIView()
         contentView.frame.size = contentSize
@@ -72,9 +84,9 @@ final class CreatingTrackerViewController: UIViewController {
     }()
     
     private var contentSize: CGSize {
-        CGSize(width: view.frame.width, height: view.frame.height + 164) //+38
+        CGSize(width: view.frame.width, height: view.frame.height + 128)
     }
-    
+        
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "creatingTracker_textField_placeholder".localized
@@ -131,6 +143,7 @@ final class CreatingTrackerViewController: UIViewController {
         let stackView = UIStackView()
         stackView.distribution = .fillProportionally
         stackView.spacing = 8
+        stackView.backgroundColor = .ypWhiteDay
         return stackView
     }()
     
@@ -181,6 +194,11 @@ final class CreatingTrackerViewController: UIViewController {
         checkButtonValidation()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        setupSelectedCells()
+    }
+    
     // MARK: - Actions
     @objc
     private func tapСancelButton(){
@@ -189,7 +207,7 @@ final class CreatingTrackerViewController: UIViewController {
     
     @objc
     private func tapСreateButton(){
-       
+        
         guard let categoryName = category?.title else {
             return
         }
@@ -199,26 +217,26 @@ final class CreatingTrackerViewController: UIViewController {
                   let color = selectedColor else {
                 return
             }
-        
-        tracker = Tracker(
-            id: UUID(),
-            name: trackerName,
-            color: color,
-            emoji: selectedEmoji,
-            timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-            isPinned: false
-        )
+            
+            tracker = Tracker(
+                id: UUID(),
+                name: trackerName,
+                color: color,
+                emoji: selectedEmoji ?? "",
+                timetable: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+                isPinned: false
+            )
             guard let tracker = tracker else { return }
             
-        delegate?.trackerCreated(tracker, categoryName)
-        onCompletion?()
+            delegate?.trackerCreated(tracker, categoryName)
+            onCompletion?()
         } else {
             guard let editTracker = editTracker else { return }
             let color = ColorConvert.convertColorToString(color: selectedColor ?? .black)
             
             try? trackerStore.updateTracker(
                 newTitle: nameTextField.text ?? "",
-                newEmoji: selectedEmoji,
+                newEmoji: selectedEmoji ?? "",
                 newColor: color,
                 newSchedule: habitIndicator ? selectedSchedule : [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
                 categoryTitle: category?.title ?? "Без категории",
@@ -240,7 +258,7 @@ final class CreatingTrackerViewController: UIViewController {
     func updateButtonSchedule() {
         let scheduleViewController = ScheduleViewController(daysWeek: selectedSchedule)
         scheduleViewController.delegate = self
-        viewSchedule.renamingLabelSecondary(surnameView: formattedSchedule)
+        viewSchedule.renamingLabelSecondary(surnameView: formattedSchedule ?? "")
         scheduleViewController.modalPresentationStyle = .pageSheet
         present(scheduleViewController, animated: true)
     }
@@ -248,9 +266,9 @@ final class CreatingTrackerViewController: UIViewController {
     func updateButtonCategories() {
         let categoriesViewController = CategoriesViewController(delegate: self, selectedCategories: category)
         viewCategories.renamingLabelBasic(nameView: "creatingTracker_category_button".localized)
-            viewCategories.renamingLabelSecondary(surnameView: formattedCategories)
-            categoriesViewController.modalPresentationStyle = .pageSheet
-            present(categoriesViewController, animated: true)
+        viewCategories.renamingLabelSecondary(surnameView: formattedCategories ?? "")
+        categoriesViewController.modalPresentationStyle = .pageSheet
+        present(categoriesViewController, animated: true)
         
     }
     
@@ -258,20 +276,38 @@ final class CreatingTrackerViewController: UIViewController {
     private func setupEditTracker() {
         if let editTracker = editTracker {
             selectedSchedule = editTracker.timetable ?? []
+            didSelectSchedule(activeDays: selectedSchedule)
             nameTextField.text = editTracker.name
             selectedEmoji = editTracker.emoji
             selectedColor = editTracker.color
-            didSelectSchedule(activeDays: selectedSchedule)
-            formattedCategories = selectedC?.title ?? ""
-//            completedDaysLabel.isHidden = false
+            guard let category = editTracker.category else {return}
+            didSelectCategory(category: category)
+            completedDaysLabel.isHidden = false
             completedTracker = trackerRecordStore.trackerRecords
             let completedCount = completedTracker.filter({ record in
                 record.idRecord == editTracker.id
             }).count
-//            completedDaysLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberValue", comment: "дней"), completedCount)
+            completedDaysLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberValue", comment: "дней"), completedCount)
         }
     }
-
+    
+    private func setupSelectedCells() {
+        guard let indexPathEmoji = emojis.firstIndex(where: {$0 == selectedEmoji}) else { return }
+        let cellEmoji = self.emojisCollectionView.cellForItem(at: IndexPath(row: indexPathEmoji, section: 0))
+        cellEmoji?.backgroundColor = UIColor(named: "ypLightGray")
+        cellEmoji?.layer.cornerRadius = 16
+        selectedCellEmoji = IndexPath(row: indexPathEmoji, section: 0)
+        
+        let color = ColorConvert.convertColorToString(color: selectedColor ?? .red)
+        if let selectedColor = selectedColor,
+           let indexPathColor = colors.firstIndex(where: { ColorConvert.convertColorToString(color: $0) == color }) {
+            let cellColor = self.colorsCollectionView.cellForItem(at: IndexPath(row: indexPathColor, section: 0))
+                cellColor?.layer.borderWidth = 3
+                cellColor?.layer.cornerRadius = 16
+                cellColor?.layer.borderColor = selectedColor.withAlphaComponent(0.5).cgColor
+                selectedCellColor = IndexPath(row: indexPathColor, section: 0)
+        }
+    }
     
     private func subSettingsCollectionsView() {
         emojisCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -292,14 +328,15 @@ final class CreatingTrackerViewController: UIViewController {
     }
     
     private func settings() {
+        contentView.frame.size = contentSize
         view.addSubview(scrollView)
         view.addSubview(labelTitle)
+        view.addSubview(lowerStackView)
         scrollView.addSubview(contentView)
         contentView.addSubview(nameTextField)
         contentView.addSubview(stackView)
         scrollView.addSubview(emojisCollectionView)
         scrollView.addSubview(colorsCollectionView)
-        contentView.addSubview(lowerStackView)
         lowerStackView.addArrangedSubview(cancelButton)
         lowerStackView.addArrangedSubview(createButton)
         
@@ -310,15 +347,11 @@ final class CreatingTrackerViewController: UIViewController {
         colorsCollectionView.translatesAutoresizingMaskIntoConstraints = false
         lowerStackView.translatesAutoresizingMaskIntoConstraints = false
         
+        
         NSLayoutConstraint.activate([
             labelTitle.topAnchor.constraint(equalTo: view.topAnchor),
             labelTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             labelTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            nameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 87),
-            nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
-            nameTextField.heightAnchor.constraint(equalToConstant: 75),
             
             emojisCollectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 32),
             emojisCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
@@ -330,9 +363,9 @@ final class CreatingTrackerViewController: UIViewController {
             colorsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
             colorsCollectionView.heightAnchor.constraint(equalToConstant: 222),
             
-            lowerStackView.topAnchor.constraint(equalTo: colorsCollectionView.bottomAnchor, constant: 16),
-            lowerStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            lowerStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            lowerStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
+            lowerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            lowerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             lowerStackView.heightAnchor.constraint(equalToConstant: 60),
         ])
         
@@ -355,6 +388,30 @@ final class CreatingTrackerViewController: UIViewController {
                 stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
                 stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
                 stackView.heightAnchor.constraint(equalToConstant: 75),
+            ])
+        }
+        
+        if completedDaysLabel.isHidden == false {
+            contentView.addSubview(completedDaysLabel)
+            completedDaysLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            NSLayoutConstraint.activate([
+                completedDaysLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 87),
+                completedDaysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                completedDaysLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+                completedDaysLabel.heightAnchor.constraint(equalToConstant: 38),
+                
+                nameTextField.topAnchor.constraint(equalTo: completedDaysLabel.bottomAnchor, constant: 40),
+                nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+                nameTextField.heightAnchor.constraint(equalToConstant: 75),
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                nameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 87),
+                nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+                nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -16),
+                nameTextField.heightAnchor.constraint(equalToConstant: 75),
             ])
         }
     }
@@ -494,9 +551,19 @@ extension CreatingTrackerViewController: UICollectionViewDelegate {
         let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCell
         
         if collectionView == emojisCollectionView {
+            if selectedCellEmoji != nil {
+                collectionView.deselectItem(at: selectedCellEmoji!, animated: true)
+                collectionView.cellForItem(at: selectedCellEmoji!)?.backgroundColor = UIColor(named: "ypWhiteDay")
+            }
+            selectedCellEmoji = indexPath
             selectedEmoji = emojis[indexPath.item]
             cell?.allocationCell(emojiCell: true, allocationColor: .ypLightGray)
         } else {
+            if selectedCellColor != nil {
+                collectionView.deselectItem(at: selectedCellColor!, animated: true)
+                collectionView.cellForItem(at: selectedCellColor!)?.layer.borderColor = UIColor(named: "ypWhiteDay")?.withAlphaComponent(0.5).cgColor
+            }
+            selectedCellColor = indexPath
             selectedColor = colors[indexPath.item]
             cell?.allocationCell(emojiCell: false, allocationColor: selectedColor ?? .black)
         }
@@ -507,8 +574,13 @@ extension CreatingTrackerViewController: UICollectionViewDelegate {
         
         if collectionView == emojisCollectionView {
             cell?.contentView.backgroundColor = .ypWhiteDay
+            selectedCellEmoji = nil
+            selectedEmoji = nil
         } else {
             cell?.contentView.layer.borderColor = UIColor.ypWhiteDay.cgColor
+            cell?.contentView.backgroundColor = .ypWhiteDay
+            selectedCellColor = nil
+            selectedColor = nil
         }
     }
 }
@@ -561,7 +633,7 @@ extension CreatingTrackerViewController: CategoriesViewModelDelegate {
     func didSelectCategory(category: TrackerCategory) {
         self.category = category
         formattedCategories = category.title
-        self.viewCategories.renamingLabelSecondary(surnameView: self.formattedCategories)
+        self.viewCategories.renamingLabelSecondary(surnameView: self.formattedCategories ?? "")
     }
 }
 
@@ -570,6 +642,6 @@ extension CreatingTrackerViewController: ScheduleViewControllerDelegate {
     func didSelectSchedule(activeDays: [DaysOfWeek]) {
         self.selectedSchedule = activeDays
         formattedSchedule = Schedule(markedDays: activeDays).scheduleText
-        self.viewSchedule.renamingLabelSecondary(surnameView: self.formattedSchedule)
-}
+        self.viewSchedule.renamingLabelSecondary(surnameView: self.formattedSchedule ?? "")
+    }
 }
