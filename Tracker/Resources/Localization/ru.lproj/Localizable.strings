@@ -15,16 +15,22 @@ tracker_placeholder = "Что будем отслеживать?";
 tracker_filtre_button_title = "Фильтры";
 tracker_title = "Трекеры";
 tracker_searchBar_placeholder = "Поиск";
+tracker_context_menu_unpin_button = "Открепить";
+tracker_context_menu_pin_button = "Закрепить";
+tracker_context_menu_edit_button = "Редактировать";
+tracker_context_menu_delete_alert = "Уверены, что хотите удалить трекер?";
+tracker_context_menu_delete_button = "Удалить";
+tracker_context_menu_cancel_alert = "Отменить";
+tracker_delete_error_tracker = "Ошибка при удалении трекера: \(error)";
+tracker_delete_error_record = "Ошибка при удалении записей: \(error)";
 tracker_isSearching_yes_placeholder = "Ничего не найдено";
 tracker_isSearching_no_placeholder = "Что будем отслеживать?";
 tracker_pinned_header = "Закрепленные";
-tracker_context_menu_pin_button = "Закрепить";
-tracker_context_menu_edit_button = "Редактировать";
-tracker_context_menu_delete_button = "Удалить";
 
 //MARK: - StatisticsViewController
 statistics_title = "Статистика";
 statistics_placeholder = "Анализировать пока нечего";
+statistics_trackersCompleted = "Трекеров завершено";
 
 //MARK: - ChoiceTrackerViewController
 choiceTracker_title = "Создание трекера";

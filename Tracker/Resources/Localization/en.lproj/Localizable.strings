@@ -14,16 +14,22 @@ tracker_datepicker = "en_EN";
 tracker_filtre_button_title = "Filters";
 tracker_title = "Trackers";
 tracker_searchBar_placeholder = "Search";
+tracker_context_menu_unpin_button = "Unpin";
+tracker_context_menu_pin_button = "Pin";
+tracker_context_menu_edit_button = "Edit";
+tracker_context_menu_delete_alert = "Are you sure you want to delete the tracker?";
+tracker_context_menu_delete_button = "Delete";
+tracker_context_menu_cancel_alert = "Cancel";
+tracker_delete_error_tracker = "Error when deleting tracker: \(error)";
+tracker_delete_error_record = "Error when deleting records: \(error)";
 tracker_isSearching_yes_placeholder = "Nothing found";
 tracker_isSearching_no_placeholder = "What will we track?";
 tracker_pinned_header = "Pinned";
-tracker_context_menu_pin_button = "Pin";
-tracker_context_menu_edit_button = "Edit";
-tracker_context_menu_delete_button = "Delete";
 
 //MARK:  - StatisticsViewController
 statistics_title = "Statistics";
 statistics_placeholder = "There is nothing to analyze yet";
+statistics_trackersCompleted = "Trackers сompleted";
 
 //MARK:  - ChoiceTrackerViewController
 choiceTracker_title = "Creating a tracker";

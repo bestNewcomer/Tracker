@@ -181,7 +181,7 @@ final class TrackerViewController: UIViewController {
             tracker = visibleCategories[indexPath.section - 1].visibleTrackers(filterString: searchText, pin: false)[indexPath.row]
         }
         
-        let pinActionTitle = tracker.isPinned == true ? "Открепить" : "Закрепить"
+        let pinActionTitle = tracker.isPinned == true ? "tracker_context_menu_unpin_button".localized : "tracker_context_menu_pin_button".localized
         let pinAction = UIAction(title: pinActionTitle, image: nil) { [weak self] action in
             guard let self = self else { return }
             do {
@@ -193,7 +193,7 @@ final class TrackerViewController: UIViewController {
             }
         }
         
-        let editAction = UIAction(title: "Редактировать") { [weak self] action in
+        let editAction = UIAction(title: "tracker_context_menu_edit_button".localized) { [weak self] action in
             let editTrackerViewController = CreatingTrackerViewController()
             editTrackerViewController.editTracker = tracker
             editTrackerViewController.editTrackerDate = self?.datePicker.date ?? Date()
@@ -201,7 +201,7 @@ final class TrackerViewController: UIViewController {
             self?.present(editTrackerViewController, animated: true)
         }
         
-        let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
+        let deleteAction = UIAction(title: "tracker_context_menu_delete_button".localized, image: nil, attributes: .destructive) { [weak self] action in
             self?.showAlert(tracker: tracker)
         }
         return UIMenu(children: [pinAction, editAction, deleteAction])
@@ -210,17 +210,17 @@ final class TrackerViewController: UIViewController {
     func showAlert(tracker: Tracker) {
         let alert = UIAlertController(
             title: nil,
-            message: "Уверены, что хотите удалить трекер?",
+            message: "tracker_context_menu_delete_alert".localized,
             preferredStyle: .actionSheet
         )
         
-        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: "tracker_context_menu_delete_button".localized, style: .destructive) { [weak self] _ in
             self?.deleteTracker(tracker)
         }
         alert.addAction(deleteAction)
         
         let cancelAction = UIAlertAction(
-            title: "Отменить",
+            title: "tracker_context_menu_cancel_alert".localized,
             style: .cancel) { _ in
                 
             }
@@ -235,13 +235,13 @@ final class TrackerViewController: UIViewController {
         do {
             try trackerStore.deleteTracker(tracker)
         } catch {
-            print("Ошибка при удалении трекера: \(error)")
+            print("tracker_delete_error_tracker".localized)
         }
         
         do {
             try trackerRecordStore.deleteAllTrackerRecords(with: tracker.id)
         } catch {
-            print("Ошибка при удалении записей: \(error)")
+            print("Оtracker_delete_error_record".localized)
         }
         trackerRecordStore.reload()
         trackersCollectionView.reloadData()

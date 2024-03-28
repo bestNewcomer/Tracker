@@ -108,7 +108,7 @@ final class TrackerRecordStore: NSObject {
     
     func deleteAllTrackerRecords(with trackerID: UUID) throws {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(format: "id == %@", trackerID as CVarArg)
+        request.predicate = NSPredicate(format: "recordId == %@", trackerID as CVarArg)
         do {
             let allRecords = try context.fetch(request)
             for record in allRecords {

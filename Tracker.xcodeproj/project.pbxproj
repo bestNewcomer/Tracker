@@ -20,7 +20,6 @@
 		0E2F81B92BADC2F40057FA3B /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F81B82BADC2F40057FA3B /* CategoriesViewModel.swift */; };
 		0E2F81BC2BB169990057FA3B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F81BA2BB169990057FA3B /* Localizable.strings */; };
 		0E2F81C32BB1A4870057FA3B /* Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F81C22BB1A4870057FA3B /* Localized.swift */; };
-		0E2F81CB2BB1B6710057FA3B /* DaysString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F81CA2BB1B6710057FA3B /* DaysString.swift */; };
 		0E2F81CE2BB1C1E30057FA3B /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F81CC2BB1C1E30057FA3B /* Localizable.stringsdict */; };
 		0E2F81D82BB1DACC0057FA3B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F81D62BB1DACC0057FA3B /* InfoPlist.strings */; };
 		0E2F81DC2BB1F6910057FA3B /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F81D32BB1DA710057FA3B /* Info.plist */; };
@@ -67,7 +66,6 @@
 		0E2F81BB2BB169990057FA3B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		0E2F81BE2BB16AD10057FA3B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		0E2F81C22BB1A4870057FA3B /* Localized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localized.swift; sourceTree = "<group>"; };
-		0E2F81CA2BB1B6710057FA3B /* DaysString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysString.swift; sourceTree = "<group>"; };
 		0E2F81CD2BB1C1E30057FA3B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		0E2F81CF2BB1C4DD0057FA3B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		0E2F81D52BB1DA9E0057FA3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Base; path = Base.lproj/Info.plist; sourceTree = "<group>"; };
@@ -200,7 +198,6 @@
 				0E5257682B9F576700CA92F5 /* DaySwitch.swift */,
 				0E0BEF7C2BAA71640074E0AC /* ColorConvert.swift */,
 				0E2F81C22BB1A4870057FA3B /* Localized.swift */,
-				0E2F81CA2BB1B6710057FA3B /* DaysString.swift */,
 			);
 			path = Assistans;
 			sourceTree = "<group>";
@@ -333,7 +330,6 @@
 				0E776B392B7BD677000C9EB4 /* SpecialView.swift in Sources */,
 				0E2F81C32BB1A4870057FA3B /* Localized.swift in Sources */,
 				0E2F81B42BAD56030057FA3B /* OnboardingSinglePageViewController.swift in Sources */,
-				0E2F81CB2BB1B6710057FA3B /* DaysString.swift in Sources */,
 				0E0BEF752BA9B3B00074E0AC /* TrackerCategoryStore.swift in Sources */,
 				0E8F6F922B91031D0098DF38 /* GeometricParams.swift in Sources */,
 				0E8479262B02877A00FDEE72 /* TrackerViewController.swift in Sources */,
