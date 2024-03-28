@@ -9,9 +9,9 @@ import UIKit
 import Foundation
 
 final class WindowNavigationViewController: UIViewController {
-    
-    // MARK: - Properties
     @UserDefaultsBacked(key: "isOnboardingShown")
+    
+    //MARK: - Public Properties
     private var onboardingOn: Bool?
     
     // MARK: - Lifecycle
@@ -26,7 +26,7 @@ final class WindowNavigationViewController: UIViewController {
         }
     }
     
-    // MARK: - Methods
+    //MARK: - Private Methods
     private func showOnboardingViewController() {
         let onboardingViewController = OnboardingViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         UIApplication.shared.windows.first?.rootViewController = onboardingViewController

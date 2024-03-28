@@ -284,6 +284,7 @@
 				0E8479212B02877A00FDEE72 /* AppDelegate.swift */,
 				0E8479232B02877A00FDEE72 /* SceneDelegate.swift */,
 				0EE4667E2B4C93C7002D8D37 /* MainTabBarController.swift */,
+				0E170D702BB5FAB200AE91C4 /* Analytics.swift */,
 				0E346CE92B83B811000E28C9 /* ViewControllers */,
 				0E2F81B72BADC2CA0057FA3B /* ViewModel */,
 				0E5257722BA0671000CA92F5 /* CollectionCells */,
@@ -292,7 +293,6 @@
 				0E0BEF6E2BA9B31C0074E0AC /* TrackerEntity */,
 				0E5257732BA067A300CA92F5 /* Assistans */,
 				0E2F81DB2BB1DB7F0057FA3B /* Resources */,
-				0E170D702BB5FAB200AE91C4 /* Analytics.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";

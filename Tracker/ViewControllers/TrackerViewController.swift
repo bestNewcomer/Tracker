@@ -22,6 +22,7 @@ final class TrackerViewController: UIViewController {
     private let trackerRecordStore = TrackerRecordStore.shared
     private var selectedFilter: Filter?
     private var pinnedTrackers: [Tracker] = []
+    private let analytics = Analytics()
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -83,10 +84,17 @@ final class TrackerViewController: UIViewController {
         trackerStore.delegate = self
         trackerCategoryStore.delegate = self
         trackerRecordStore.delegate = self
+        analytics.report(event: .open, params: ["Screen" : "Main"])
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analytics.report(event: .close, params: ["Screen" : "Main"])
     }
     
     // MARK: - Actions
     @objc private func pressAddSkillButton () {
+        analytics.report(event: .click, params: ["Screen" : "Main", "Item" : Items.add_track.rawValue])
         let jump = ChoiceTrackerViewController()
         jump.delegate = self
         jump.modalPresentationStyle = .pageSheet
@@ -102,6 +110,7 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func tapFilterSelection () {
+        analytics.report(event: .click, params: ["Screen" : "Main", "Item" : Items.filter.rawValue])
         let filterViewController = FilterViewController()
         filterViewController.selectedFilter = selectedFilter
         filterViewController.delegate = self
@@ -194,6 +203,7 @@ final class TrackerViewController: UIViewController {
         }
         
         let editAction = UIAction(title: "tracker_context_menu_edit_button".localized) { [weak self] action in
+            self?.analytics.report(event: .click, params: ["Screen" : "Main", "Item" : Items.filter.rawValue])
             let editTrackerViewController = CreatingTrackerViewController()
             editTrackerViewController.editTracker = tracker
             editTrackerViewController.editTrackerDate = self?.datePicker.date ?? Date()
@@ -203,6 +213,7 @@ final class TrackerViewController: UIViewController {
         
         let deleteAction = UIAction(title: "tracker_context_menu_delete_button".localized, image: nil, attributes: .destructive) { [weak self] action in
             self?.showAlert(tracker: tracker)
+            self?.analytics.report(event: .click, params: ["Screen" : "Main", "Item" : Items.delete.rawValue])
         }
         return UIMenu(children: [pinAction, editAction, deleteAction])
     }
@@ -490,6 +501,7 @@ extension TrackerViewController: TrackerCellDelegate {
         } else {
             completedTracker.append(TrackerRecord(dateRecord: datePicker.date, idRecord: id))
             try? trackerRecordStore.addNewTracker(TrackerRecord(dateRecord: datePicker.date, idRecord: id))
+            self.analytics.report(event: .click, params: ["Screen" : "Main", "Item" : Items.track.rawValue])
         }
         reloadVisibleCategories(with: trackerCategoryStore.trackerCategories)
         trackersCollectionView.reloadData()
