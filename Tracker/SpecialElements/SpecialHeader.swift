@@ -17,7 +17,6 @@ final class SpecialHeader: UILabel {
     
     var labelSpecial: UILabel = {
         let label = UILabel()
-        label.text = "Создание трекера"
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         label.textColor = .ypBlackDay
         return label

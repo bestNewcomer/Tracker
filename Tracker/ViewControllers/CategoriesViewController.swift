@@ -5,17 +5,30 @@
 //  Created by Ринат Шарафутдинов on 12.03.2024.
 //
 
-import Foundation
 import UIKit
 
 final class CategoriesViewController: UIViewController {
     
     // MARK: - Public Properties
-//    var onCategoriesUpdated: ((TrackerCategory) -> Void)?
     var checkButtonValidation: (() -> Void)?
     
     //MARK:  - Private Properties
     private var viewModel: CategoriesViewModel
+    
+    private lazy var  stubImage: UIImageView = {
+        let image = UIImageView(image: UIImage(named: "imageTrackerStub"))
+        return image
+    }()
+    
+    private lazy var  stubLabel: UILabel = {
+        let label = UILabel()
+        label.text = "category_placeholder".localized
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .ypBlackDay
+        return label
+    }()
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -25,7 +38,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
-        label.customizeHeader(nameHeader: "Категория")
+        label.customizeHeader(nameHeader: "category_title".localized)
         return label
     }()
     
@@ -47,7 +60,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var addCategory: UIButton = {
         let button = UIButton()
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle("category_add_button".localized, for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -77,6 +90,7 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
+      
         viewModel.updateClosure = { [weak self] in
             print("Update closure called")
             guard let self else { return }
@@ -84,6 +98,7 @@ final class CategoriesViewController: UIViewController {
             self.updateNotFoundedCategories()
         }
         settingsConstraints()
+        trackerStub()
     }
     
     // MARK: - Actions
@@ -97,9 +112,30 @@ final class CategoriesViewController: UIViewController {
     //MARK:  - Public Methods
     func updateNotFoundedCategories()  {
         categoriesTableView.isHidden = viewModel.isTableViewHidden
+        stubImage.isHidden = !viewModel.isTableViewHidden
+        stubLabel.isHidden = !viewModel.isTableViewHidden
     }
     
     //MARK:  - Private Methods
+    private func trackerStub () {
+        view.addSubview(stubImage)
+        view.addSubview(stubLabel)
+        
+        stubLabel.translatesAutoresizingMaskIntoConstraints = false
+        stubImage.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            stubImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            stubImage.widthAnchor.constraint(equalToConstant: 80),
+            stubImage.heightAnchor.constraint(equalToConstant: 80),
+            stubLabel.topAnchor.constraint(equalTo: stubImage.bottomAnchor, constant: 8),
+            stubLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        ])
+        stubImage.isHidden = true
+        stubLabel.isHidden = true
+    }
+    
     private func settingsConstraints() {
         view.addSubview(scrollView)
         scrollView.addSubview(labeltitle)
@@ -146,8 +182,10 @@ extension CategoriesViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.cellID,for: indexPath) as? CategoryCell else {fatalError("Could not cast to CategoryCell")}
-        cell.renamingLabelBasic(nameView: "\(viewModel.categories[indexPath.row].title)")
-       
+        let category = viewModel.categories[indexPath.row].title
+        let active = viewModel.selectedCategories?.title.contains(category)
+        cell.config(nameView: category, isActive: active ?? false)
+        
         if indexPath.row == viewModel.categories.count - 1 {
             cell.contentView.clipsToBounds = true
             cell.contentView.layer.cornerRadius = 16
@@ -165,7 +203,7 @@ extension CategoriesViewController: UITableViewDataSource {
         } else {
             cell.contentView.layer.cornerRadius = 0
         }
-
+        
         if viewModel.categories.count == 1 {
             cell.contentView.layer.maskedCorners = [
                 .layerMaxXMinYCorner,
@@ -174,13 +212,9 @@ extension CategoriesViewController: UITableViewDataSource {
                 .layerMinXMaxYCorner
             ]
         }
-
+        
         cell.selectionStyle = .none
         return cell
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        1
     }
 }
 
@@ -189,13 +223,13 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? CategoryCell  {
-            cell.selectImageCheck(image: "imageCheckMark")
+            let active = true
+            cell.configImage(isActive: active)
             let selectedCategoryTitle = cell.getSelectedCategoryTitle()
             viewModel.selectCategory(with: selectedCategoryTitle)
-//            onCategoriesUpdated?(viewModel.categories[indexPath.row])
             checkButtonValidation?()
             tableView.deselectRow(at: indexPath, animated: true)
         }
@@ -203,16 +237,14 @@ extension CategoriesViewController: UITableViewDelegate {
             self?.dismiss(animated: true, completion: nil)
         }
     }
-
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let separatorInset: CGFloat = 16
         let separatorWidth = tableView.bounds.width - separatorInset * 2
         let separatorHeight: CGFloat = 1.0
         let separatorX = separatorInset
         let separatorY = cell.frame.height - separatorHeight
-
         let isLastCell = indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1
-
         if !isLastCell {
             let separatorView = UIView(frame: CGRect(x: separatorX, y: separatorY, width: separatorWidth, height: separatorHeight))
             separatorView.backgroundColor = .ypGray
@@ -229,3 +261,4 @@ extension CategoriesViewController: NewCategoryViewControllerDelegate {
         categoriesTableView.reloadData()
     }
 }
+

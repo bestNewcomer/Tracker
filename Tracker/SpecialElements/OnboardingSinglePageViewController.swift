@@ -9,7 +9,7 @@ import UIKit
 
 final class OnboardingSinglePageViewController: UIViewController {
     
-    // MARK: - Elements
+    //MARK: - Public Properties
     lazy var onboardImage: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -28,6 +28,9 @@ final class OnboardingSinglePageViewController: UIViewController {
         return label
     }()
     
+    //MARK: - Private Properties
+    private let analytics = Analytics()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +38,7 @@ final class OnboardingSinglePageViewController: UIViewController {
         applyConstraint()
     }
     
-    // MARK: - Layout & Setting
+    //MARK: - Private Methods
     private func addSubView() {
         [onboardImage, textLabel].forEach { view.addSubview($0) }
     }

@@ -1,0 +1,99 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Ринат Шарафутдинов on 25.03.2024.
+  
+*/
+//MARK: - MainTabBarController
+mainTabBarController_tracker_title = "Трекеры";
+mainTabBarController_statistics_title = "Статистика";
+
+//MARK: - TrackerViewController
+tracker_datepicker = "ru_RU";
+tracker_placeholder = "Что будем отслеживать?";
+tracker_filtre_button_title = "Фильтры";
+tracker_title = "Трекеры";
+tracker_searchBar_placeholder = "Поиск";
+tracker_context_menu_unpin_button = "Открепить";
+tracker_context_menu_pin_button = "Закрепить";
+tracker_context_menu_edit_button = "Редактировать";
+tracker_context_menu_delete_alert = "Уверены, что хотите удалить трекер?";
+tracker_context_menu_delete_button = "Удалить";
+tracker_context_menu_cancel_alert = "Отменить";
+tracker_delete_error_tracker = "Ошибка при удалении трекера: \(error)";
+tracker_delete_error_record = "Ошибка при удалении записей: \(error)";
+tracker_isSearching_yes_placeholder = "Ничего не найдено";
+tracker_isSearching_no_placeholder = "Что будем отслеживать?";
+tracker_pinned_header = "Закрепленные";
+
+//MARK: - StatisticsViewController
+statistics_title = "Статистика";
+statistics_placeholder = "Анализировать пока нечего";
+statistics_trackersCompleted = "Трекеров завершено";
+
+//MARK: - ChoiceTrackerViewController
+choiceTracker_title = "Создание трекера";
+choiceTracker_habit_button = "Привычка";
+choiceTracker_irregular_button = "Нерегулярное событие";
+
+//MARK: - CreatingTrackerViewController
+creatingTracker_textField_placeholder = "Введите название трекера";
+creatingTracker_limit_text = "Ограничение 38 символов";
+creatingTracker_category_button = "Категория";
+creatingTracker_timetable_button = "Расписание";
+creatingTracker_cancel_button = "Отменить";
+creatingTracker_create_button = "Создать";
+creatingTracker_habit_title = "Новая привычка";
+creatingTracker_hirregular_title = "Новое нерегулярное событие";
+creatingTracker_collectionEmoji_header = "Emoji";
+creatingTracker_collectionColor_header = "Цвет";
+
+//MARK: - ScheduleViewController
+schedule_title = "Расписание";
+schedule_ready_button = "Готово";
+
+//MARK: - CategoriesViewController
+category_placeholder = "Привычки и события можно объединить по смыслу";
+category_title = "Категория";
+category_add_button = "Добавить категорию";
+
+//MARK: - NewCategoryViewController
+newCategory_title = "Новая категория";
+newCategory_searchBar_placeholder = "Введите название трекера";
+newCategory_limit_text = "Ограничение 38 символов";
+newCategory_ready_button = "Готово";
+
+
+//MARK: - FilterViewController
+filter_title = "Фильтры";
+
+//MARK: - OnboardingViewController
+onboarding_firstPageText = "Отслеживайте только то, что хотите";
+onboarding_secondPageText = "Даже если это не литры воды и йога";
+onboarding_button = "Вот это технологии!";
+
+//MARK: - DaysOfWeek
+monday = "Понедельник";
+tuesday = "Вторник";
+wednesday = "Среда";
+thursday = "Четверг";
+friday = "Пятница";
+saturday = "Суббота";
+sunday = "Воскресенье";
+mondayShort = "Пн";
+tuesdayShort = "Вт";
+wednesdayShort = "Ср";
+thursdayShort = "Чт";
+fridayShort = "Пт";
+saturdayShort = "Сб";
+sundayShort = "Вс";
+
+//MARK: - Filter
+filter_all = "Все трекеры";
+filter_today = "Трекеры на сегодня";
+filter_finished = "Завершенные";
+filter_unfinished = "Не завершенные";
+
+
+

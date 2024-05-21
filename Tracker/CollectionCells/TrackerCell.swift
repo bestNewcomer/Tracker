@@ -24,13 +24,13 @@ final class TrackerCell: UICollectionViewCell {
     private var previousImage = UIImage(named: "imageCheckMark")!
     private let buttonImage = UIImage(named: "addSkillButton")!
     
-    private var colorTopCell: UIView = {
+    var colorTopCell: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
         return view
     }()
     
-    private var smileyLabel: UILabel = {
+    private lazy var smileyLabel: UILabel = {
         let label = UILabel()
         label.layer.cornerRadius = 12
         label.clipsToBounds = true
@@ -42,7 +42,7 @@ final class TrackerCell: UICollectionViewCell {
         return label
     }()
     
-    private var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.numberOfLines = 0
@@ -52,10 +52,9 @@ final class TrackerCell: UICollectionViewCell {
         return label
     }()
     
-    private var counterLabel: UILabel = {
+    private lazy var counterLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.text = "0 день"
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackDay
         return label
@@ -69,6 +68,13 @@ final class TrackerCell: UICollectionViewCell {
         button.layer.cornerRadius = 16
         button.tintColor = .ypWhiteDay
         return button
+    }()
+    
+    private lazy var pinImageView: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "imagePinned")
+        image.isHidden = false
+        return image
     }()
     
     // MARK: - Initializers
@@ -98,23 +104,34 @@ final class TrackerCell: UICollectionViewCell {
                        color: UIColor?,
                        emoji: String,
                        completedDays: Int,    
-                       isCompleted: Bool) {
+                       isCompleted: Bool,
+                       isPinned: Bool,
+                       interaction: UIInteraction) {
+        let completedDaysText = convertCompletedDays(completedDays)
+        colorTopCell.addInteraction(interaction)
         trackerId = id
         titleLabel.text = name
         colorTopCell.backgroundColor = color
         countButtom.backgroundColor = color
         smileyLabel.text = emoji
-        counterLabel.text = "\(completedDays) дней"
+        counterLabel.text = completedDaysText
+        pinImageView.isHidden = !isPinned
         isCompleted ? countButtom.setImage(previousImage, for: .normal) : countButtom.setImage(buttonImage, for: .normal)
     }
     
+    private func convertCompletedDays(_ completedDays: Int) -> String {
+        let formatString = NSLocalizedString("numberValue", comment: "Completed days of Tracker")
+        return String.localizedStringWithFormat(formatString, completedDays)
+    }
     // MARK: - Private Methods
     private func addSubView(){
         contentView.addSubview(colorTopCell)
         colorTopCell.addSubview(smileyLabel)
         colorTopCell.addSubview(titleLabel)
+        colorTopCell.addSubview(pinImageView)
         contentView.addSubview(counterLabel)
         contentView.addSubview(countButtom)
+        
     }
     
     private func cellElementSettings(){
@@ -123,6 +140,7 @@ final class TrackerCell: UICollectionViewCell {
         smileyLabel.translatesAutoresizingMaskIntoConstraints = false
         counterLabel.translatesAutoresizingMaskIntoConstraints = false
         countButtom.translatesAutoresizingMaskIntoConstraints = false
+        pinImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             colorTopCell.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -149,6 +167,11 @@ final class TrackerCell: UICollectionViewCell {
             countButtom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant:  -12),
             countButtom.heightAnchor.constraint(equalToConstant: 34),
             countButtom.widthAnchor.constraint(equalToConstant: 34),
+            
+            pinImageView.centerYAnchor.constraint(equalTo: smileyLabel.centerYAnchor),
+            pinImageView.trailingAnchor.constraint(equalTo: colorTopCell.trailingAnchor, constant:  -12),
+            pinImageView.heightAnchor.constraint(equalToConstant: 12),
+            pinImageView.widthAnchor.constraint(equalToConstant: 8),
         ])
     }
 }

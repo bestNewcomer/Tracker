@@ -6,18 +6,18 @@
 //
 
 import UIKit
-import SwiftUI
+
+protocol ScheduleViewControllerDelegate: AnyObject {
+    func didSelectSchedule(activeDays: [DaysOfWeek])
+}
 
 final class ScheduleViewController: UIViewController {
     // MARK: - Public Properties
-   
     var daysWeek: Set<DaysOfWeek> = []
-    var onScheduleUpdated: (([DaysOfWeek]) -> Void)?
     var checkButtonValidation: (() -> Void)?
-    //MARK:  - Private Properties
-    private var scheduleCollectionView: UICollectionView!
-    private let params: GeometricParams
+    weak var delegate: ScheduleViewControllerDelegate?
     
+    //MARK:  - Private Properties
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .ypWhiteDay
@@ -26,13 +26,29 @@ final class ScheduleViewController: UIViewController {
     
     private lazy var labeltitle: SpecialHeader = {
         let label = SpecialHeader()
-        label.customizeHeader(nameHeader: "Расписание")
+        label.customizeHeader(nameHeader: "schedule_title".localized)
         return label
+    }()
+    
+    private lazy var scheduleTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(
+            ScheduleCell.self,
+            forCellReuseIdentifier: ScheduleCell.cellID
+        )
+        tableView.backgroundColor = .clear
+        tableView.layer.cornerRadius = 16
+        tableView.separatorStyle = .none
+        tableView.allowsMultipleSelection = false
+        tableView.showsVerticalScrollIndicator = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        return tableView
     }()
     
     private lazy var readyButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("schedule_ready_button".localized, for: .normal)
         button.setTitleColor(.ypWhiteDay, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -42,11 +58,11 @@ final class ScheduleViewController: UIViewController {
     }()
     
     // MARK: - Initialization
-    init() {
-        self.params = GeometricParams(cellCount: 1, leftInset: 0, rightInset: 0, cellSpacing: 0)
+    init(daysWeek: [DaysOfWeek]) {
         super.init(nibName: nil, bundle: nil)
+        self.daysWeek = Set(daysWeek)
     }
-    
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -56,37 +72,31 @@ final class ScheduleViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhiteDay
-        subSettingsCollectionsView()
         settingsConstraints()
-        
-        scheduleCollectionView.register(ScheduleCell.self, forCellWithReuseIdentifier: ScheduleCell.cellID)
     }
     
     // MARK: - Actions
     @objc private func tapReadyButton(){
-        let weekDays = Array(daysWeek)
-        onScheduleUpdated?(weekDays)
+        let days = Array(daysWeek).sorted { (day1, day2) -> Bool in
+            guard let weekday1 = DaysOfWeek.allCases.firstIndex(of: day1),
+                  let weekday2 = DaysOfWeek.allCases.firstIndex(of: day2) else { return false }
+            return weekday1 < weekday2
+        }
+        delegate?.didSelectSchedule(activeDays: days)
         checkButtonValidation?()
         dismiss(animated: true, completion: nil)
     }
     
     //MARK:  - Private Methods
-    private func subSettingsCollectionsView() {
-        scheduleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        scheduleCollectionView.dataSource = self
-        scheduleCollectionView.delegate = self
-        scheduleCollectionView.layer.cornerRadius = 16
-    }
-    
     private func settingsConstraints() {
         view.addSubview(scrollView)
         scrollView.addSubview(labeltitle)
-        scrollView.addSubview(scheduleCollectionView)
+        scrollView.addSubview(scheduleTableView)
         scrollView.addSubview(readyButton)
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         labeltitle.translatesAutoresizingMaskIntoConstraints = false
-        scheduleCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        scheduleTableView.translatesAutoresizingMaskIntoConstraints = false
         readyButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -99,10 +109,10 @@ final class ScheduleViewController: UIViewController {
             labeltitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             labeltitle.heightAnchor.constraint(equalToConstant: 22),
             
-            scheduleCollectionView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
-            scheduleCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            scheduleCollectionView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            scheduleCollectionView.heightAnchor.constraint(equalToConstant: 525),
+            scheduleTableView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 87),
+            scheduleTableView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            scheduleTableView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            scheduleTableView.heightAnchor.constraint(equalToConstant: 525),
             
             readyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             readyButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
@@ -112,76 +122,50 @@ final class ScheduleViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource
-extension ScheduleViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+// MARK: - UITableViewDataSource
+extension ScheduleViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 7
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScheduleCell.cellID, for: indexPath) as? ScheduleCell else { fatalError("Failed to cast UICollectionViewCell to ScheduleCell") }
-        cell.renamingLabelBasic(nameView: DaysOfWeek.allCases[indexPath.row].translation, isOn: daysWeek.contains(DaysOfWeek.allCases[indexPath.row]))
-        
-        if indexPath.row == 0 {
-            cell.divider.backgroundColor = .backgroundDay
-        }
-        
-        cell.onSwitchChanged = { [weak self] isOn in
-            self?.updateSchedule(forDay: indexPath.row, isOn: isOn)
-        }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleCell.cellID,for: indexPath) as? ScheduleCell else {fatalError("Could not cast to CategoryCell")}
+        let day = DaysOfWeek.allCases[indexPath.row]
+        cell.config(with: day, nameView: day.translation, isOn: daysWeek.contains(day))
+        cell.delegate = self
         return cell
     }
 }
 
-// MARK: - UICollectionViewDelegate
-extension ScheduleViewController: UICollectionViewDelegate {
-}
-
-// MARK: - UICollectionViewDelegateFlowLayout
-extension ScheduleViewController: UICollectionViewDelegateFlowLayout {
-    //отступы от края коллекции
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0,
-                            left: params.leftInset,
-                            bottom: 0,
-                            right: params.rightInset)
+// MARK: - UITableViewDelegate
+extension ScheduleViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
     }
-    // размеры ячейки
-    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = scheduleCollectionView.frame.width - params.paddingWidth
-        let availableHeight = scheduleCollectionView.frame.height
-        let cellWidth =  availableWidth / CGFloat(params.cellCount)
-        let cellHeight = availableHeight / CGFloat(7)
-        return CGSize(width: cellWidth, height: cellHeight)
-    }
-    // расстояние между ячейками по вертикали
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(0)
-    }
-    // расстояние между ячейками по горизонтали
-    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(params.cellSpacing)
-    }
-}
-
-extension ScheduleViewController {
-    func updateSchedule(forDay dayIndex: Int, isOn: Bool) {
-        let day = DaysOfWeek.allCases[dayIndex]
-        
-        if isOn {
-            if !daysWeek.contains(day) {
-                daysWeek.insert(day)
-//                daysWeek.sorted(by: { $0.rawValue < $1.rawValue })
-            }
-        } else {
-            for day in daysWeek {
-                if day == day {
-                    daysWeek.remove(day)
-                    break
-                }
-            }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let separatorInset: CGFloat = 16
+        let separatorWidth = tableView.bounds.width - separatorInset * 2
+        let separatorHeight: CGFloat = 1.0
+        let separatorX = separatorInset
+        let separatorY = cell.frame.height - separatorHeight
+        let isLastCell = indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1
+        if !isLastCell {
+            let separatorView = UIView(frame: CGRect(x: separatorX, y: separatorY, width: separatorWidth, height: separatorHeight))
+            separatorView.backgroundColor = .ypGray
+            cell.addSubview(separatorView)
         }
-        scheduleCollectionView.reloadItems(at: [IndexPath(row: dayIndex, section: 0)])
+    }
+}
+
+// MARK: - ScheduleCellDelegate
+extension ScheduleViewController: ScheduleCellDelegate {
+    func didTapSwitch(days: DaysOfWeek, active: Bool) {
+        if active {
+            daysWeek.insert(days)
+        } else {
+            daysWeek.remove(days)
+        }
     }
 }
 

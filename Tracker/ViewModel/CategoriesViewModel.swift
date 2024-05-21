@@ -24,7 +24,12 @@ final class CategoriesViewModel {
         return categories.isEmpty
     }
 
-    private(set) var selectedCategories: TrackerCategory?
+    private(set) var selectedCategories: TrackerCategory? = nil {
+        didSet {
+            guard let selectedCategories else { return }
+            delegate?.didSelectCategory(category: selectedCategories)
+        }
+    }
     private let trackerCategoryStore = TrackerCategoryStore.shared
     private weak var delegate: CategoriesViewModelDelegate?
 

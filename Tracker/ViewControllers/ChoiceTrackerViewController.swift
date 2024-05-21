@@ -50,7 +50,7 @@ final class ChoiceTrackerViewController: UIViewController {
     private func settingsView () {
         let headerLabel: SpecialHeader = {
             let label = SpecialHeader()
-            label.customizeHeader(nameHeader: "Создание трекера")
+            label.customizeHeader(nameHeader: "choiceTracker_title".localized)
             return label
         }()
         
@@ -58,9 +58,9 @@ final class ChoiceTrackerViewController: UIViewController {
             let button = UIButton()
             button.layer.cornerRadius = 16
             button.backgroundColor = .ypBlackDay
-            button.setTitle("Привычка", for: .normal)
+            button.setTitle("choiceTracker_habit_button".localized, for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-            button.tintColor = .ypWhiteDay
+            button.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
             button.addTarget(self, action: #selector(Self.tapCreatingButton), for: .touchUpInside)
             return button
         }()
@@ -69,9 +69,9 @@ final class ChoiceTrackerViewController: UIViewController {
             let button = UIButton()
             button.layer.cornerRadius = 16
             button.backgroundColor = .ypBlackDay
-            button.setTitle("Нерегулярное событие", for: .normal)
+            button.setTitle("choiceTracker_irregular_button".localized, for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-            button.tintColor = .ypWhiteDay
+            button.setTitleColor(UIColor(named: "ypWhiteDay"), for: .normal)
             button.addTarget(self, action: #selector(Self.tapIrregularButton), for: .touchUpInside)
             return button
         }()
@@ -85,7 +85,6 @@ final class ChoiceTrackerViewController: UIViewController {
         irregularButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            //headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             headerLabel.topAnchor.constraint(equalTo: view.topAnchor),
             headerLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             headerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),

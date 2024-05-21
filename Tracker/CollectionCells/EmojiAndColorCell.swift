@@ -37,7 +37,7 @@ final class EmojiAndColorCell: UICollectionViewCell {
     // MARK: - Actions
     @objc
     private func tapСell(){
-        print("Кнопка создания работает")
+    
     }
    
     // MARK: - Public Methods
